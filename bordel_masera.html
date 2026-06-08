@@ -430,9 +430,76 @@ const SK = { items:'bm_items_v5', cl:'bm_cl_v2', vyjezd:'bm_vyjezd_v1', buy:'bm_
 let items=[], clData={}, vHistory=[], buyList=[], prices=[], clients=[], destinations=[];
 let selLoc=ALL_LOCS[0].id, moveTarget=null, curTransport='autem';
 
+// localStorage (vše kromě fotek)
 function load(key,def){ try{ return JSON.parse(localStorage.getItem(key))||def; }catch{ return def; } }
 function save(key,val){ localStorage.setItem(key,JSON.stringify(val)); }
 function loadAll(){ items=load(SK.items,[]); clData=load(SK.cl,{}); vHistory=load(SK.vyjezd,[]); buyList=load(SK.buy,[]); prices=load(SK.prices,[]); clients=load(SK.clients,[]); destinations=load(SK.destinations,[{id:1,name:'Valašské Meziříčí',km:0,pozn:'Masérna'}]); }
+
+// ===== INDEXEDDB pro fotky =====
+const DB_NAME = 'bordelMaserDB';
+const DB_VER  = 1;
+const STORE   = 'photos';
+let db = null;
+
+function openDB() {
+  return new Promise(function(resolve, reject) {
+    if (db) { resolve(db); return; }
+    var req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = function(e) {
+      e.target.result.createObjectStore(STORE, { keyPath: 'id' });
+    };
+    req.onsuccess = function(e) { db = e.target.result; resolve(db); };
+    req.onerror   = function(e) { reject(e); };
+  });
+}
+
+function dbSavePhoto(itemId, photoIdx, dataUrl) {
+  return openDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      var id = itemId + '_' + photoIdx;
+      var tx = db.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).put({ id: id, data: dataUrl });
+      tx.oncomplete = resolve;
+      tx.onerror = reject;
+    });
+  });
+}
+
+function dbDeletePhoto(itemId, photoIdx) {
+  return openDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      var id = itemId + '_' + photoIdx;
+      var tx = db.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).delete(id);
+      tx.oncomplete = resolve;
+      tx.onerror = reject;
+    });
+  });
+}
+
+function dbGetPhotos(itemId, count) {
+  return openDB().then(function(db) {
+    var promises = [];
+    for (var i = 0; i < count; i++) {
+      promises.push(new Promise(function(resolve, reject) {
+        var id = itemId + '_' + arguments[0];
+        var tx = db.transaction(STORE, 'readonly');
+        var req = tx.objectStore(STORE).get(id);
+        req.onsuccess = function() { resolve(req.result ? req.result.data : null); };
+        req.onerror = function() { resolve(null); };
+      }.bind(null, i)));
+    }
+    return Promise.all(promises);
+  });
+}
+
+function dbDeleteAllPhotos(itemId, count) {
+  var promises = [];
+  for (var i = 0; i < count; i++) {
+    promises.push(dbDeletePhoto(itemId, i));
+  }
+  return Promise.all(promises);
+}
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function getLoc(id){ return ALL_LOCS.find(l=>l.id===id); }
 function rgba(hex,a){ const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16); return `rgba(${r},${g},${b},${a})`; }
@@ -892,80 +959,80 @@ function toggleDetail(id) {
 }
 
 function buildItemDetail(id) {
-  const it = items.find(function(i){ return i.id === id; });
-  const el = document.getElementById('item-' + id);
+  var it = items.find(function(i){ return i.id === id; });
+  var el = document.getElementById('item-' + id);
   if (!it || !el) return;
 
-  // remove old detail if exists
-  const old = el.querySelector('.item-detail');
-  if (old) old.remove();
+  var count = it.photoCount || 0;
+  dbGetPhotos(id, count).then(function(photos) {
+    // remove old detail
+    var oldDet = el.querySelector('.item-detail');
+    if (oldDet) oldDet.remove();
 
-  const det = document.createElement('div');
-  det.className = 'item-detail';
+    var det = document.createElement('div');
+    det.className = 'item-detail';
 
-  // header
-  const hdr = document.createElement('div');
-  hdr.style.cssText = 'font-size:0.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px';
-  hdr.textContent = 'Detail · ' + it.name;
-  det.appendChild(hdr);
+    // header
+    var hdr = document.createElement('div');
+    hdr.style.cssText = 'font-size:0.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px';
+    hdr.textContent = 'Detail · ' + it.name;
+    det.appendChild(hdr);
 
-  // photos row
-  const photoRow = document.createElement('div');
-  photoRow.className = 'item-detail-photos';
-  photoRow.id = 'photos-' + id;
-  var photos = it.photos || [];
-  photos.forEach(function(p, pi) {
-    var wrap = document.createElement('div');
-    wrap.className = 'photo-thumb-wrap';
-    var img = document.createElement('img');
-    img.className = 'item-detail-photo';
-    img.src = p;
-    img.onclick = function(){ openLightbox(p); };
-    var del = document.createElement('button');
-    del.className = 'photo-del-btn';
-    del.textContent = '×';
-    del.onclick = function(){ deletePhoto(id, pi); };
-    wrap.appendChild(img);
-    wrap.appendChild(del);
-    photoRow.appendChild(wrap);
+    // photos row
+    var photoRow = document.createElement('div');
+    photoRow.className = 'item-detail-photos';
+    photoRow.id = 'photos-' + id;
+
+    photos.forEach(function(p, pi) {
+      if (!p) return; // deleted
+      var wrap = document.createElement('div');
+      wrap.className = 'photo-thumb-wrap';
+      var img = document.createElement('img');
+      img.className = 'item-detail-photo';
+      img.src = p;
+      img.onclick = (function(src){ return function(){ openLightbox(src); }; })(p);
+      var del = document.createElement('button');
+      del.className = 'photo-del-btn';
+      del.textContent = '×';
+      del.onclick = (function(idx){ return function(){ deletePhoto(id, idx); }; })(pi);
+      wrap.appendChild(img);
+      wrap.appendChild(del);
+      photoRow.appendChild(wrap);
+    });
+
+    // add photo — label wrapper (nejspolehlivější na mobilu)
+    var label = document.createElement('label');
+    label.className = 'photo-add-btn';
+    label.innerHTML = '<span style="font-size:1.3rem">📸</span><span>Přidat foto</span>';
+    var fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.style.display = 'none';
+    fileInput.onchange = function(){ addPhoto(id, fileInput); };
+    label.appendChild(fileInput);
+    photoRow.appendChild(label);
+    det.appendChild(photoRow);
+
+    // textarea
+    var ta = document.createElement('textarea');
+    ta.className = 'item-detail-note-input';
+    ta.id = 'detail-note-' + id;
+    ta.placeholder = 'Podrobná poznámka — jak věc používat, kam patří v tašce, stav...';
+    ta.value = it.detailNote || '';
+    ta.style.marginBottom = '8px';
+    det.appendChild(ta);
+
+    // save button
+    var saveBtn = document.createElement('button');
+    saveBtn.className = 'btn';
+    saveBtn.type = 'button';
+    saveBtn.style.cssText = 'padding:6px 14px;font-size:0.8rem';
+    saveBtn.textContent = '💾 Uložit poznámku';
+    saveBtn.onclick = function(){ saveDetailNote(id); };
+    det.appendChild(saveBtn);
+
+    el.appendChild(det);
   });
-
-  // add photo button
-  var addBtn = document.createElement('button');
-  addBtn.className = 'photo-add-btn';
-  addBtn.type = 'button';
-  addBtn.innerHTML = '<span style="font-size:1.3rem">📸</span><span>Přidat foto</span>';
-
-  var fileInput = document.createElement('input');
-  fileInput.type = 'file';
-  fileInput.accept = 'image/*';
-  fileInput.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0';
-  fileInput.onchange = function(){ addPhoto(id, fileInput); };
-  addBtn.onclick = function(e){ e.preventDefault(); e.stopPropagation(); fileInput.click(); };
-
-  photoRow.appendChild(addBtn);
-  photoRow.appendChild(fileInput);
-  det.appendChild(photoRow);
-
-  // textarea
-  var ta = document.createElement('textarea');
-  ta.className = 'item-detail-note-input';
-  ta.id = 'detail-note-' + id;
-  ta.placeholder = 'Podrobná poznámka — jak věc používat, kam patří v tašce, stav...';
-  ta.value = it.detailNote || '';
-  ta.style.marginBottom = '8px';
-  det.appendChild(ta);
-
-  // save button
-  var saveBtn = document.createElement('button');
-  saveBtn.className = 'btn';
-  saveBtn.type = 'button';
-  saveBtn.style.cssText = 'padding:6px 14px;font-size:0.8rem';
-  saveBtn.textContent = '💾 Uložit poznámku';
-  saveBtn.onclick = function(){ saveDetailNote(id); };
-  det.appendChild(saveBtn);
-
-  el.appendChild(det);
 }
 
 function addPhoto(id, input) {
@@ -975,7 +1042,7 @@ function addPhoto(id, input) {
   reader.onload = function(e) {
     var img = new Image();
     img.onload = function() {
-      var MAX = 800;
+      var MAX = 1200;
       var canvas = document.createElement('canvas');
       var w = img.width, h = img.height;
       if (w > MAX || h > MAX) {
@@ -984,15 +1051,19 @@ function addPhoto(id, input) {
       }
       canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      var dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+      var dataUrl = canvas.toDataURL('image/jpeg', 0.8);
       var it = items.find(function(i){ return i.id === id; });
       if (!it) return;
-      if (!it.photos) it.photos = [];
-      it.photos.push(dataUrl);
-      input.value = '';
-      try { save(SK.items, items); }
-      catch(err) { alert('Fotka je příliš velká. Zkus jinou.'); it.photos.pop(); return; }
-      buildItemDetail(id);
+      if (!it.photoCount) it.photoCount = 0;
+      var idx = it.photoCount;
+      dbSavePhoto(id, idx, dataUrl).then(function() {
+        it.photoCount = idx + 1;
+        save(SK.items, items);
+        input.value = '';
+        buildItemDetail(id);
+      }).catch(function(err) {
+        alert('Chyba při ukládání fotky: ' + err);
+      });
     };
     img.src = e.target.result;
   };
@@ -1001,10 +1072,11 @@ function addPhoto(id, input) {
 
 function deletePhoto(id, idx) {
   var it = items.find(function(i){ return i.id === id; });
-  if (!it || !it.photos) return;
-  it.photos.splice(idx, 1);
-  save(SK.items, items);
-  buildItemDetail(id);
+  if (!it) return;
+  // mark as deleted by storing null
+  dbSavePhoto(id, idx, null).then(function() {
+    buildItemDetail(id);
+  });
 }
 
 function saveDetailNote(id) {
