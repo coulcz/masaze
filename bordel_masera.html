@@ -202,6 +202,13 @@
   <button class="tab-btn"         onclick="switchTab('nakup',this)">🛒 Nákup</button>
   <button class="tab-btn"         onclick="switchTab('slon',this)">🐘 Slon</button>
 </div>
+<div style="display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap">
+  <button class="btn secondary" style="font-size:0.8rem;padding:7px 16px" onclick="exportData()">📤 Export dat</button>
+  <label class="btn secondary" style="font-size:0.8rem;padding:7px 16px;cursor:pointer;margin:0">
+    📥 Import dat
+    <input type="file" accept=".json" style="display:none" onchange="importData(this)" />
+  </label>
+</div>
 
 <!-- ======= SOUPIS ======= -->
 <div class="tab-content" id="tab-soupis">
@@ -1457,6 +1464,120 @@ function renderGalerie() {
     card.appendChild(body);
     grid.appendChild(card);
   });
+}
+
+// ===== EXPORT / IMPORT =====
+function exportData() {
+  // export localStorage data
+  var data = {
+    version: 1,
+    exported: new Date().toLocaleString('cs-CZ'),
+    items:        load(SK.items, []),
+    cl:           load(SK.cl, {}),
+    vyjezd:       load(SK.vyjezd, []),
+    buy:          load(SK.buy, []),
+    prices:       load(SK.prices, []),
+    clients:      load(SK.clients, []),
+    destinations: load(SK.destinations, []),
+    galerie:      load(SK.galerie, []),
+  };
+
+  // also export photos from IndexedDB
+  openDB().then(function(db) {
+    var tx = db.transaction(STORE, 'readonly');
+    var req = tx.objectStore(STORE).getAll();
+    req.onsuccess = function() {
+      data.photos = req.result || [];
+      var json = JSON.stringify(data, null, 2);
+      var blob = new Blob([json], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'bordel_masera_' + new Date().toLocaleDateString('cs-CZ').replace(/\./g,'-') + '.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+    req.onerror = function() {
+      // export without photos
+      var json = JSON.stringify(data, null, 2);
+      var blob = new Blob([json], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'bordel_masera_' + new Date().toLocaleDateString('cs-CZ').replace(/\./g,'-') + '.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+  });
+}
+
+function importData(input) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      if (!data.version) { alert('❌ Neplatný soubor!'); return; }
+
+      // merge or overwrite?
+      var choice = confirm('OK = Prepsat vse, Zrusit = Sloucit | ' + file.name);
+
+      if (choice) {
+        // overwrite
+        if (data.items)        save(SK.items, data.items);
+        if (data.cl)           save(SK.cl, data.cl);
+        if (data.vyjezd)       save(SK.vyjezd, data.vyjezd);
+        if (data.buy)          save(SK.buy, data.buy);
+        if (data.prices)       save(SK.prices, data.prices);
+        if (data.clients)      save(SK.clients, data.clients);
+        if (data.destinations) save(SK.destinations, data.destinations);
+        if (data.galerie)      save(SK.galerie, data.galerie);
+      } else {
+        // merge - add items that don't exist yet (by id)
+        function mergeArr(key, imported) {
+          if (!imported) return;
+          var existing = load(key, []);
+          var existingIds = existing.map(function(i){ return i.id; });
+          var newItems = imported.filter(function(i){ return existingIds.indexOf(i.id) === -1; });
+          save(key, existing.concat(newItems));
+        }
+        mergeArr(SK.items, data.items);
+        mergeArr(SK.vyjezd, data.vyjezd);
+        mergeArr(SK.buy, data.buy);
+        mergeArr(SK.prices, data.prices);
+        mergeArr(SK.clients, data.clients);
+        mergeArr(SK.destinations, data.destinations);
+        mergeArr(SK.galerie, data.galerie);
+      }
+
+      // import photos to IndexedDB
+      if (data.photos && data.photos.length) {
+        openDB().then(function(db) {
+          var tx = db.transaction(STORE, 'readwrite');
+          data.photos.forEach(function(p) {
+            tx.objectStore(STORE).put(p);
+          });
+          tx.oncomplete = function() {
+            alert('✅ Import hotov! Fotky: ' + data.photos.length);
+            loadAll(); buildUI(); renderSoupis(); renderCl(); renderHistory(); renderBuy(); renderPrices(); renderClients(); renderDest(); renderGalerie();
+          };
+        });
+      } else {
+        alert('✅ Import hotov!');
+        loadAll(); buildUI(); renderSoupis(); renderCl(); renderHistory(); renderBuy(); renderPrices(); renderClients(); renderDest(); renderGalerie();
+      }
+
+      input.value = '';
+    } catch(err) {
+      alert('❌ Chyba při importu: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
 }
 
 // ===== KEYBOARD SHORTCUTS =====
