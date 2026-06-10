@@ -1,0 +1,1249 @@
+╔══════════════════════════════════════════════════════════════╗
+║         EVIDENCE MASÉRŮ – MOBILNÍ MASÉRNA                   ║
+║         Vyplň prosím své údaje a pošli zpět. Díky!          ║
+╚══════════════════════════════════════════════════════════════╝
+
+Návod:
+  • Vyplň údaje za dvojtečku na každém řádku
+  • Pokud pole nevyplníš, nech ho prázdné
+  • Dovednosti piš oddělené čárkou
+  • Soubor pošli zpět na: [tvůj e-mail nebo WhatsApp]
+
+══════════════════════════════════════════════════════════════
+1. HLAVNÍ MĚSTO PRAHA
+══════════════════════════════════════════════════════════════
+
+  ── Praha ──────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+══════════════════════════════════════════════════════════════
+2. STŘEDOČESKÝ KRAJ
+══════════════════════════════════════════════════════════════
+
+  ── Benešov ────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Beroun ─────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Kladno ─────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Kolín ──────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Kutná Hora ─────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Mělník ─────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Mladá Boleslav ─────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Nymburk ────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Praha-východ ───────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Praha-západ ────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Příbram ────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Rakovník ───────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+══════════════════════════════════════════════════════════════
+3. JIHOČESKÝ KRAJ
+══════════════════════════════════════════════════════════════
+
+  ── České Budějovice ───────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Český Krumlov ──────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Jindřichův Hradec ──────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Písek ──────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Prachatice ─────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Strakonice ─────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Tábor ──────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+══════════════════════════════════════════════════════════════
+4. PLZEŇSKÝ KRAJ
+══════════════════════════════════════════════════════════════
+
+  ── Domažlice ──────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Klatovy ────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Plzeň-jih ──────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Plzeň-město ────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Plzeň-sever ────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Rokycany ───────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Tachov ─────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+══════════════════════════════════════════════════════════════
+5. KARLOVARSKÝ KRAJ
+══════════════════════════════════════════════════════════════
+
+  ── Cheb ───────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Karlovy Vary ───────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Sokolov ────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+══════════════════════════════════════════════════════════════
+6. ÚSTECKÝ KRAJ
+══════════════════════════════════════════════════════════════
+
+  ── Děčín ──────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Chomutov ───────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Litoměřice ─────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Louny ──────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Most ───────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Teplice ────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Ústí nad Labem ─────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+══════════════════════════════════════════════════════════════
+7. LIBERECKÝ KRAJ
+══════════════════════════════════════════════════════════════
+
+  ── Česká Lípa ─────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Jablonec nad Nisou ─────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Liberec ────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Semily ─────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+══════════════════════════════════════════════════════════════
+8. KRÁLOVÉHRADECKÝ KRAJ
+══════════════════════════════════════════════════════════════
+
+  ── Hradec Králové ─────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Jičín ──────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Náchod ─────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Rychnov nad Kněžnou ────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Trutnov ────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+══════════════════════════════════════════════════════════════
+9. PARDUBICKÝ KRAJ
+══════════════════════════════════════════════════════════════
+
+  ── Chrudim ────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Pardubice ──────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Svitavy ────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Ústí nad Orlicí ────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+══════════════════════════════════════════════════════════════
+10. KRAJ VYSOČINA
+══════════════════════════════════════════════════════════════
+
+  ── Havlíčkův Brod ─────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Jihlava ────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Pelhřimov ──────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Třebíč ─────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Žďár nad Sázavou ───────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+══════════════════════════════════════════════════════════════
+11. JIHOMORAVSKÝ KRAJ
+══════════════════════════════════════════════════════════════
+
+  ── Blansko ────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Brno-město ─────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Brno-venkov ────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Břeclav ────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Hodonín ────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Vyškov ─────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Znojmo ─────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+══════════════════════════════════════════════════════════════
+12. OLOMOUCKÝ KRAJ
+══════════════════════════════════════════════════════════════
+
+  ── Jeseník ────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Olomouc ────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Prostějov ──────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Přerov ─────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Šumperk ────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+══════════════════════════════════════════════════════════════
+13. ZLÍNSKÝ KRAJ
+══════════════════════════════════════════════════════════════
+
+  ── Kroměříž ───────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Uherské Hradiště ───────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Vsetín ─────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Zlín ───────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+══════════════════════════════════════════════════════════════
+14. MORAVSKOSLEZSKÝ KRAJ
+══════════════════════════════════════════════════════════════
+
+  ── Bruntál ────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Frýdek-Místek ──────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Karviná ────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Nový Jičín ─────────────────────────────────────────────
+  Město: Kopřivnice              
+  Jméno maséra: Martin Kresta      
+  Telefon:  pracovní 728 356 819           
+  E-mail:   kresta.m@gmail.com          
+  Web:      https://mobilnimaserna.cz/
+  Web:      nový web https://mobilnimaserna.lovable.app/        
+  Facebook:           
+  Instagram:          
+  Typ (Já/)
+  Mobilní masér: ano , masérna Valašské Meziříčí      
+  Dovednosti: Sportovní masér , poskytuji SOS masáže        
+  Cena od–do (Kč):    
+  Délka masáže (min): SOS masáže 10.min , sportovní masáže  90.min
+  Poznámka:           
+
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Opava ──────────────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+  ── Ostrava-město ──────────────────────────────────────────
+  Město:              
+  Jméno maséra:       
+  Telefon:            
+  E-mail:             
+  Web:                
+  Facebook:           
+  Instagram:          
+  Typ (Já/Kolega):    
+  Mobilní masér:      
+  Dovednosti:         
+  Cena od–do (Kč):    
+  Délka masáže (min): 
+  Poznámka:           
+
+══════════════════════════════════════════════════════════════
+NÁPOVĚDA – DOVEDNOSTI (vypiš co umíš)
+══════════════════════════════════════════════════════════════
+  Klasická masáž, Sportovní masáž, Relaxační masáž,
+  Lymfatická masáž, Reflexní terapie, Thajská masáž,
+  Hot stone, Trigger point, Baňkování,
+  Myofasciální terapie, Aromaterapie, Prenatální masáž,
+  Čínská masáž, Kraniosakrální terapie
+
+══════════════════════════════════════════════════════════════
+Děkuji za vyplnění! Pošli zpět na: ____________________
+══════════════════════════════════════════════════════════════
