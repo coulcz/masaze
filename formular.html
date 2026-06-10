@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Registrace maséra – Mobilní masérna</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#fff;--bg2:#f5f5f3;--bg3:#eeecea;--txt:#1a1a18;--txt2:#6b6b67;--brd:rgba(0,0,0,.12);--brd2:rgba(0,0,0,.22);--blue:#185FA5;--green:#1D9E75;--red:#A32D2D;--r:8px;--rl:12px}
+@media(prefers-color-scheme:dark){:root{--bg:#1c1c1a;--bg2:#252523;--bg3:#2e2e2b;--txt:#f0ede8;--txt2:#a8a89e;--brd:rgba(255,255,255,.12);--brd2:rgba(255,255,255,.22)}}
+body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;color:var(--txt);background:var(--bg3);min-height:100vh;padding:20px 10px}
+.wrap{max-width:660px;margin:0 auto}
+.header{text-align:center;margin-bottom:24px}
+.logo{font-size:28px;margin-bottom:8px}
+.header h1{font-size:22px;font-weight:500;margin-bottom:6px}
+.header p{font-size:13px;color:var(--txt2)}
+.progress{width:100%;height:5px;background:var(--bg2);border-radius:3px;margin-bottom:20px;overflow:hidden}
+.pbar{height:100%;background:var(--blue);border-radius:3px;transition:width .3s;width:0%}
+.card{background:var(--bg);border:.5px solid var(--brd);border-radius:var(--rl);padding:20px;margin-bottom:14px}
+.card h2{font-size:14px;font-weight:500;margin-bottom:14px;padding-bottom:10px;border-bottom:.5px solid var(--brd)}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;color:var(--txt2);margin-bottom:4px;font-weight:500}
+.field input,.field select,.field textarea{width:100%;font-size:13px;padding:8px 10px;border-radius:var(--r);border:.5px solid var(--brd2);background:var(--bg2);color:var(--txt);outline:none;transition:border-color .15s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);background:var(--bg)}
+.field textarea{resize:vertical;min-height:80px;line-height:1.5}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:480px){.r2,.r3{grid-template-columns:1fr}}
+.stags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.stag{font-size:12px;padding:4px 10px;border-radius:20px;background:var(--bg2);border:.5px solid var(--brd);color:var(--txt2);cursor:pointer;user-select:none;transition:all .15s}
+.stag:hover{border-color:var(--blue);color:var(--blue)}
+.stag.on{background:#E6F1FB;color:#0C447C;border-color:var(--blue)}
+.crow-in{display:flex;gap:6px;margin-top:4px}
+.crow-in input{flex:1;font-size:13px;padding:7px 10px;border-radius:var(--r);border:.5px solid var(--brd2);background:var(--bg2);color:var(--txt);outline:none}
+.crow-in input:focus{border-color:var(--blue)}
+.crow-in button{font-size:13px;padding:7px 12px;border-radius:var(--r);cursor:pointer;border:.5px solid var(--brd2);background:var(--bg2);color:var(--txt);white-space:nowrap}
+.submit-btn{width:100%;font-size:14px;padding:13px;border-radius:var(--r);cursor:pointer;border:none;background:var(--blue);color:#fff;font-weight:500;margin-top:8px;transition:background .1s}
+.submit-btn:hover{background:#0C447C}
+.submit-btn:disabled{background:#888;cursor:not-allowed}
+.success{background:#E1F5EE;border:.5px solid var(--green);border-radius:var(--rl);padding:30px;text-align:center;display:none}
+.success .ico{font-size:40px;margin-bottom:12px}
+.success h2{color:#085041;font-size:20px;margin-bottom:8px}
+.success p{color:#0F6E56;font-size:13px;line-height:1.7}
+.req{color:var(--red)}
+.hint{font-size:11px;color:var(--txt2);margin-top:3px}
+.social-row{display:flex;align-items:center}
+.social-row .pre{font-size:12px;color:var(--txt2);background:var(--bg3);border:.5px solid var(--brd2);border-right:none;padding:8px;border-radius:var(--r) 0 0 var(--r);white-space:nowrap}
+.social-row input{border-radius:0 var(--r) var(--r) 0!important}
+.mob-toggle{display:flex;gap:8px;margin-top:4px}
+.mob-opt{flex:1;text-align:center;padding:9px;border-radius:var(--r);border:.5px solid var(--brd2);cursor:pointer;font-size:13px;color:var(--txt2);transition:all .15s;user-select:none}
+.mob-opt:hover{border-color:var(--blue)}
+.mob-opt.ano{background:#E1F5EE;color:#085041;border-color:var(--green);font-weight:500}
+.mob-opt.ne{background:#FCEBEB;color:#791F1F;border-color:var(--red);font-weight:500}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="logo">🧘</div>
+    <h1>Registrace maséra</h1>
+    <p>Mobilní masérna · vyplň prosím své údaje</p>
+  </div>
+  <div class="progress"><div class="pbar" id="pbar"></div></div>
+
+  <form id="frm" onsubmit="odeslat(event)">
+
+    <div class="card">
+      <h2>📍 Lokalita</h2>
+      <div class="r2">
+        <div class="field">
+          <label>Kraj <span class="req">*</span></label>
+          <select id="kraj" required onchange="fillOk();upd()">
+            <option value="">– vyberte kraj –</option>
+            <option>Hlavní město Praha</option>
+            <option>Středočeský</option>
+            <option>Jihočeský</option>
+            <option>Plzeňský</option>
+            <option>Karlovarský</option>
+            <option>Ústecký</option>
+            <option>Liberecký</option>
+            <option>Královéhradecký</option>
+            <option>Pardubický</option>
+            <option>Vysočina</option>
+            <option>Jihomoravský</option>
+            <option>Olomoucký</option>
+            <option>Zlínský</option>
+            <option>Moravskoslezský</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Okres <span class="req">*</span></label>
+          <select id="okres" required onchange="upd()">
+            <option value="">– nejdřív kraj –</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Město / obec <span class="req">*</span></label>
+        <input type="text" id="mesto" placeholder="např. Ostrava – Poruba" required oninput="upd()">
+        <div class="hint">Konkrétní město kde působíte</div>
+      </div>
+      <div class="field">
+        <label>Mobilní masér?</label>
+        <div class="mob-toggle">
+          <div class="mob-opt" id="m-ano" onclick="setMob('ano')">✓ Ano – jedu za klientem</div>
+          <div class="mob-opt" id="m-ne" onclick="setMob('ne')">✗ Ne – klient jede za mnou</div>
+        </div>
+        <input type="hidden" id="mobilni" value="">
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>👤 Kontaktní údaje</h2>
+      <div class="r2">
+        <div class="field">
+          <label>Jméno a příjmení <span class="req">*</span></label>
+          <input type="text" id="jmeno" placeholder="Jana Nováková" required oninput="upd()">
+        </div>
+        <div class="field">
+          <label>Telefon <span class="req">*</span></label>
+          <input type="tel" id="telefon" placeholder="+420 777 123 456" required oninput="upd()">
+        </div>
+      </div>
+      <div class="field">
+        <label>E-mail</label>
+        <input type="email" id="email" placeholder="jana@masaze.cz">
+      </div>
+      <div class="field">
+        <label>Web / rezervační systém</label>
+        <input type="text" id="web" placeholder="www.moje-masaze.cz">
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📱 Sociální sítě</h2>
+      <div class="field">
+        <label>Facebook</label>
+        <div class="social-row">
+          <span class="pre">facebook.com/</span>
+          <input type="text" id="facebook" placeholder="jmeno.prijmeni">
+        </div>
+      </div>
+      <div class="field">
+        <label>Instagram</label>
+        <div class="social-row">
+          <span class="pre">instagram.com/</span>
+          <input type="text" id="instagram" placeholder="masaze_jana">
+        </div>
+      </div>
+      <div class="field">
+        <label>TikTok</label>
+        <div class="social-row">
+          <span class="pre">tiktok.com/@</span>
+          <input type="text" id="tiktok" placeholder="masaze_jana">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>💆 Dovednosti a služby</h2>
+      <div class="field">
+        <label>Vyberte dovednosti <span class="req">*</span></label>
+        <div class="stags" id="stags"></div>
+        <div class="hint">Klikni pro výběr · více možností</div>
+      </div>
+      <div class="field">
+        <label>Vlastní dovednost</label>
+        <div class="crow-in">
+          <input type="text" id="vlastni" placeholder="např. Hawajská masáž…">
+          <button type="button" onclick="addVlastni()">+ Přidat</button>
+        </div>
+      </div>
+      <div class="r3">
+        <div class="field">
+          <label>Cena od (Kč)</label>
+          <input type="number" id="cena-od" placeholder="600" min="0">
+        </div>
+        <div class="field">
+          <label>Cena do (Kč)</label>
+          <input type="number" id="cena-do" placeholder="1200" min="0">
+        </div>
+        <div class="field">
+          <label>Délka (min)</label>
+          <input type="number" id="delka" placeholder="60" min="15" step="15">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📝 Poznámka</h2>
+      <div class="field">
+        <label>Dostupnost, certifikáty, specializace…</label>
+        <textarea id="poznamka" placeholder="např. Pracuji Po–Pá, mám certifikát XY…"></textarea>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn" id="sbtn">Odeslat registraci →</button>
+  </form>
+
+  <div class="success" id="ok">
+    <div class="ico">🎉</div>
+    <h2>Díky za registraci!</h2>
+    <p>Tvoje údaje byly úspěšně odeslány.<br>Brzy se ti ozveme!</p>
+  </div>
+</div>
+
+<script>
+// ── KONFIGURACE ──────────────────────────────────────────────
+// Nahraď svým GitHub Personal Access Token
+// github.com → Settings → Developer settings → Personal access tokens
+const OWNER = "coulcz";
+const REPO  = "masaze";
+const TOKEN = "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";
+// ─────────────────────────────────────────────────────────────
+
+const OKR={
+  "Hlavní město Praha":["Praha"],
+  "Středočeský":["Benešov","Beroun","Kladno","Kolín","Kutná Hora","Mělník","Mladá Boleslav","Nymburk","Praha-východ","Praha-západ","Příbram","Rakovník"],
+  "Jihočeský":["České Budějovice","Český Krumlov","Jindřichův Hradec","Písek","Prachatice","Strakonice","Tábor"],
+  "Plzeňský":["Domažlice","Klatovy","Plzeň-jih","Plzeň-město","Plzeň-sever","Rokycany","Tachov"],
+  "Karlovarský":["Cheb","Karlovy Vary","Sokolov"],
+  "Ústecký":["Děčín","Chomutov","Litoměřice","Louny","Most","Teplice","Ústí nad Labem"],
+  "Liberecký":["Česká Lípa","Jablonec nad Nisou","Liberec","Semily"],
+  "Královéhradecký":["Hradec Králové","Jičín","Náchod","Rychnov nad Kněžnou","Trutnov"],
+  "Pardubický":["Chrudim","Pardubice","Svitavy","Ústí nad Orlicí"],
+  "Vysočina":["Havlíčkův Brod","Jihlava","Pelhřimov","Třebíč","Žďár nad Sázavou"],
+  "Jihomoravský":["Blansko","Brno-město","Brno-venkov","Břeclav","Hodonín","Vyškov","Znojmo"],
+  "Olomoucký":["Jeseník","Olomouc","Prostějov","Přerov","Šumperk"],
+  "Zlínský":["Kroměříž","Uherské Hradiště","Vsetín","Zlín"],
+  "Moravskoslezský":["Bruntál","Frýdek-Místek","Karviná","Nový Jičín","Opava","Ostrava-město"]
+};
+const DSK=["Klasická masáž","Sportovní masáž","Relaxační masáž","Lymfatická masáž","Reflexní terapie","Thajská masáž","Hot stone","Trigger point","Baňkování","Myofasciální terapie","Aromaterapie","Prenatální masáž","Čínská masáž","Kraniosakrální terapie"];
+let selSk=new Set(), vlastniSk=[];
+
+function fillOk(){
+  const k=document.getElementById("kraj").value;
+  const s=document.getElementById("okres");
+  s.innerHTML='<option value="">– vyberte okres –</option>';
+  if(k&&OKR[k])OKR[k].forEach(o=>{const op=document.createElement("option");op.value=o;op.textContent=o;s.appendChild(op);});
+}
+function setMob(v){
+  document.getElementById("mobilni").value=v;
+  document.getElementById("m-ano").className="mob-opt"+(v==="ano"?" ano":"");
+  document.getElementById("m-ne").className="mob-opt"+(v==="ne"?" ne":"");
+  upd();
+}
+function buildTags(){
+  const w=document.getElementById("stags");
+  [...DSK,...vlastniSk].forEach(s=>{
+    if(w.querySelector(`[data-v="${s}"]`))return;
+    const sp=document.createElement("span");
+    sp.className="stag"+(selSk.has(s)?" on":"");
+    sp.textContent=s;sp.dataset.v=s;
+    sp.onclick=()=>{selSk.has(s)?selSk.delete(s):selSk.add(s);sp.classList.toggle("on");upd();};
+    w.appendChild(sp);
+  });
+}
+function addVlastni(){
+  const v=document.getElementById("vlastni").value.trim();
+  if(!v||DSK.includes(v)||vlastniSk.includes(v))return;
+  vlastniSk.push(v);selSk.add(v);
+  document.getElementById("vlastni").value="";
+  buildTags();upd();
+}
+document.getElementById("vlastni").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();addVlastni();}});
+
+function upd(){
+  const req=["kraj","okres","mesto","jmeno","telefon"];
+  const f=req.filter(id=>document.getElementById(id).value.trim()!=="").length;
+  const sk=selSk.size>0?1:0;
+  document.getElementById("pbar").style.width=Math.round((f+sk)/(req.length+1)*100)+"%";
+}
+
+// ── ODESLAT → GitHub Issue + uložit do data.json ─────────────
+async function odeslat(e){
+  e.preventDefault();
+  const btn=document.getElementById("sbtn");
+  if(selSk.size===0){alert("Vyber alespoň jednu dovednost.");return;}
+
+  btn.disabled=true;btn.textContent="Odesílám…";
+
+  const d={
+    id: Date.now(),
+    datum: new Date().toISOString(),
+    kraj: document.getElementById("kraj").value,
+    okres: document.getElementById("okres").value,
+    mesto: document.getElementById("mesto").value,
+    mobilni: document.getElementById("mobilni").value||"neuvedeno",
+    jmeno: document.getElementById("jmeno").value,
+    telefon: document.getElementById("telefon").value,
+    email: document.getElementById("email").value,
+    web: document.getElementById("web").value,
+    facebook: document.getElementById("facebook").value,
+    instagram: document.getElementById("instagram").value,
+    tiktok: document.getElementById("tiktok").value,
+    dovednosti: [...selSk].join(", "),
+    cena_od: document.getElementById("cena-od").value,
+    cena_do: document.getElementById("cena-do").value,
+    delka: document.getElementById("delka").value,
+    poznamka: document.getElementById("poznamka").value,
+    stav: "nový"
+  };
+
+  const headers={
+    "Authorization":`token ${TOKEN}`,
+    "Accept":"application/vnd.github.v3+json",
+    "Content-Type":"application/json"
+  };
+
+  try {
+    // 1. Vytvoř GitHub Issue
+    const issueBody=`
+## 📍 Lokalita
+| | |
+|--|--|
+| **Kraj** | ${d.kraj} |
+| **Okres** | ${d.okres} |
+| **Město** | ${d.mesto} |
+| **Mobilní masér** | ${d.mobilni} |
+
+## 👤 Kontakt
+| | |
+|--|--|
+| **Jméno** | ${d.jmeno} |
+| **Telefon** | ${d.telefon} |
+| **E-mail** | ${d.email||"–"} |
+| **Web** | ${d.web||"–"} |
+
+## 📱 Sociální sítě
+| | |
+|--|--|
+| **Facebook** | ${d.facebook?`[facebook.com/${d.facebook}](https://facebook.com/${d.facebook})`:"–"} |
+| **Instagram** | ${d.instagram?`[instagram.com/${d.instagram}](https://instagram.com/${d.instagram})`:"–"} |
+| **TikTok** | ${d.tiktok?`[tiktok.com/@${d.tiktok}](https://tiktok.com/@${d.tiktok})`:"–"} |
+
+## 💆 Dovednosti
+**${d.dovednosti}**
+
+| Cena od | Cena do | Délka |
+|---------|---------|-------|
+| ${d.cena_od||"–"} Kč | ${d.cena_do||"–"} Kč | ${d.delka||"–"} min |
+
+## 📝 Poznámka
+${d.poznamka||"–"}
+
+---
+*ID: ${d.id} · Odesláno: ${new Date().toLocaleString("cs-CZ")}*`;
+
+    await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/issues`,{
+      method:"POST",headers,
+      body:JSON.stringify({
+        title:`🧘 Nový masér: ${d.jmeno} – ${d.okres} (${d.kraj})`,
+        body:issueBody,
+        labels:["masér"]
+      })
+    });
+
+    // 2. Načti aktuální data.json a přidej záznam
+    const getFile=await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/data.json`,{headers});
+    let maseri=[];
+    let sha="";
+    if(getFile.ok){
+      const fileData=await getFile.json();
+      sha=fileData.sha;
+      const decoded=JSON.parse(atob(fileData.content.replace(/\n/g,"")));
+      maseri=decoded.maseri||[];
+    }
+    maseri.push(d);
+
+    const newContent={
+      maseri,
+      aktualizovano:new Date().toISOString(),
+      verze:"1.0"
+    };
+    const encoded=btoa(unescape(encodeURIComponent(JSON.stringify(newContent,null,2))));
+
+    await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/data.json`,{
+      method:"PUT",headers,
+      body:JSON.stringify({
+        message:`Nový masér: ${d.jmeno} – ${d.okres}`,
+        content:encoded,
+        sha:sha
+      })
+    });
+
+    // Úspěch
+    document.getElementById("frm").style.display="none";
+    document.getElementById("ok").style.display="block";
+
+  } catch(err){
+    console.error(err);
+    alert("Nepodařilo se odeslat. Zkontroluj připojení a zkus znovu.");
+    btn.disabled=false;btn.textContent="Odeslat registraci →";
+  }
+}
+
+buildTags();
+</script>
+</body>
+</html>
