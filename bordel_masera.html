@@ -157,6 +157,17 @@
   .item-note-editor input, .item-note-editor select { font-size: 0.78rem; padding: 3px 8px; flex: 1; min-width: 100px; }
   .item-note-editor select { flex: 0 0 auto; }
 
+  /* GALERIE */
+  .gal-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); transition: transform 0.15s; }
+  .gal-card:hover { transform: translateY(-2px); }
+  .gal-card-img { width: 100%; height: 130px; object-fit: cover; background: var(--bg); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 2.5rem; }
+  .gal-card-img img { width: 100%; height: 130px; object-fit: cover; display: block; }
+  .gal-card-body { padding: 10px 12px; }
+  .gal-card-name { font-size: 0.86rem; font-weight: 600; margin-bottom: 4px; }
+  .gal-card-note { font-size: 0.74rem; color: var(--muted); font-style: italic; margin-bottom: 8px; }
+  .gal-card-status { font-size: 0.7rem; padding: 2px 8px; border-radius: 999px; background: rgba(122,154,106,0.15); color: var(--green); font-weight: 600; display: inline-block; margin-bottom: 8px; }
+  .gal-card-actions { display: flex; gap: 5px; flex-wrap: wrap; }
+
   /* ITEM DETAIL */
   .item-detail { width:100%; margin-top:6px; padding:10px 12px; background:var(--surface); border-radius:9px; border:1px solid var(--border); animation:slideIn 0.2s ease; }
   .item-detail-photos { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
@@ -184,7 +195,8 @@
 </header>
 
 <div class="tabs">
-  <button class="tab-btn active"  onclick="switchTab('soupis',this)">📦 Soupis</button>
+  <button class="tab-btn active"  onclick="switchTab('galerie',this)">📸 Galerie</button>
+  <button class="tab-btn"         onclick="switchTab('soupis',this)">📦 Soupis</button>
   <button class="tab-btn"         onclick="switchTab('checklist',this)">✅ Checklist</button>
   <button class="tab-btn"         onclick="switchTab('vyjezd',this)">🗺️ Výjezd</button>
   <button class="tab-btn"         onclick="switchTab('nakup',this)">🛒 Nákup</button>
@@ -192,7 +204,7 @@
 </div>
 
 <!-- ======= SOUPIS ======= -->
-<div class="tab-content active" id="tab-soupis">
+<div class="tab-content" id="tab-soupis">
   <div class="stats" id="stats-bar"></div>
   <div class="section-card">
     <div class="section-title">+ Přidat položku</div>
@@ -231,6 +243,39 @@
     <input type="text" id="searchInput" placeholder="🔍 Hledat věc..." oninput="renderSoupis()" style="width:100%;background:var(--bg)" />
   </div>
   <div id="soupis-sections"></div>
+</div>
+
+<!-- ======= GALERIE ======= -->
+<div class="tab-content active" id="tab-galerie">
+  <div class="section-card">
+    <div class="section-title">📸 Přidat novou věc</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:12px">
+      <div class="field"><div class="label">Název věci</div><input type="text" id="gal-name" placeholder="Název..." maxlength="80" /></div>
+      <div class="field"><div class="label">Číslo položky (prázdné = auto)</div><input type="number" id="gal-num" placeholder="auto" min="1" /></div>
+      <div class="field"><div class="label">Poznámka</div><input type="text" id="gal-note" placeholder="Poznámka..." maxlength="120" /></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+      <label class="photo-add-btn" style="width:90px;height:90px">
+        <span style="font-size:1.5rem">📸</span>
+        <span>Přidat foto</span>
+        <input type="file" accept="image/*" id="gal-photo-input" style="display:none" onchange="galPhotoSelected(this)" />
+      </label>
+      <div id="gal-photo-preview" style="display:none">
+        <img id="gal-preview-img" style="width:90px;height:90px;object-fit:cover;border-radius:10px;border:1px solid var(--border)" />
+      </div>
+    </div>
+    <button class="btn" onclick="galAdd()">+ Přidat do galerie</button>
+  </div>
+
+  <div class="section-card">
+    <div class="row" style="justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <div class="section-title" style="margin:0">📦 Věci ke zařazení</div>
+      <div class="row" style="gap:6px">
+        <input type="text" id="gal-search" placeholder="🔍 Hledat..." oninput="renderGalerie()" style="width:160px" />
+      </div>
+    </div>
+    <div id="gal-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px"></div>
+  </div>
 </div>
 
 <!-- ======= CHECKLIST ======= -->
@@ -426,14 +471,14 @@ const SECTIONS = [
 const ALL_LOCS = SECTIONS.flatMap(s=>s.locs);
 
 // ===== STORAGE =====
-const SK = { items:'bm_items_v5', cl:'bm_cl_v2', vyjezd:'bm_vyjezd_v1', buy:'bm_buy_v1', prices:'bm_prices_v1', clients:'bm_clients_v1', destinations:'bm_dest_v1' };
-let items=[], clData={}, vHistory=[], buyList=[], prices=[], clients=[], destinations=[];
+const SK = { items:'bm_items_v5', cl:'bm_cl_v2', vyjezd:'bm_vyjezd_v1', buy:'bm_buy_v1', prices:'bm_prices_v1', clients:'bm_clients_v1', destinations:'bm_dest_v1', galerie:'bm_galerie_v1' };
+let items=[], clData={}, vHistory=[], buyList=[], prices=[], clients=[], destinations=[], galerie=[];
 let selLoc=ALL_LOCS[0].id, moveTarget=null, curTransport='autem';
 
 // localStorage (vše kromě fotek)
 function load(key,def){ try{ return JSON.parse(localStorage.getItem(key))||def; }catch{ return def; } }
 function save(key,val){ localStorage.setItem(key,JSON.stringify(val)); }
-function loadAll(){ items=load(SK.items,[]); clData=load(SK.cl,{}); vHistory=load(SK.vyjezd,[]); buyList=load(SK.buy,[]); prices=load(SK.prices,[]); clients=load(SK.clients,[]); destinations=load(SK.destinations,[{id:1,name:'Valašské Meziříčí',km:0,pozn:'Masérna'}]); }
+function loadAll(){ items=load(SK.items,[]); clData=load(SK.cl,{}); vHistory=load(SK.vyjezd,[]); buyList=load(SK.buy,[]); prices=load(SK.prices,[]); clients=load(SK.clients,[]); destinations=load(SK.destinations,[{id:1,name:'Valašské Meziříčí',km:0,pozn:'Masérna'}]); galerie=load(SK.galerie,[]); }
 
 // ===== INDEXEDDB pro fotky =====
 const DB_NAME = 'bordelMaserDB';
@@ -1034,31 +1079,21 @@ function buildItemDetail(id) {
     saveBtn.onclick = function(e){ e.stopPropagation(); saveDetailNote(id); };
     det.appendChild(saveBtn);
 
-    // debug log
-    var logDiv = document.createElement('div');
-    logDiv.id = 'photo-log-' + id;
-    logDiv.style.cssText = 'margin-top:8px;padding:6px 10px;background:var(--bg);border-radius:8px;border:1px solid var(--border);min-height:20px';
-    logDiv.innerHTML = '<div style="font-size:0.7rem;color:var(--muted)">📋 Log fotky:</div>';
-    det.appendChild(logDiv);
+    var noteLog = document.createElement('div');
+    noteLog.id = 'note-log-' + id;
+    noteLog.style.cssText = 'margin-top:8px;padding:6px 10px;background:var(--bg);border-radius:8px;border:1px solid var(--border);min-height:16px';
+    noteLog.innerHTML = '<div style="font-size:0.7rem;color:var(--muted)">📋 Log poznámky:</div>';
+    det.appendChild(noteLog);
 
     el.appendChild(det);
   });
 }
 
-function addPhotoLog(id, msg, ok) {
-  var el = document.getElementById('photo-log-' + id);
-  if (!el) return;
-  var cls = ok === true ? 'color:green;font-weight:bold' : ok === false ? 'color:red;font-weight:bold' : 'color:#888';
-  el.innerHTML += '<div style="' + cls + ';font-size:0.74rem">' + msg + '</div>';
-}
-
 function addPhoto(id, input) {
   var file = input.files[0];
-  if (!file) { addPhotoLog(id, '❌ Žádný soubor vybrán', false); return; }
-  addPhotoLog(id, '✅ Soubor: ' + file.name + ' (' + Math.round(file.size/1024) + ' KB)', true);
+  if (!file) return;
   var reader = new FileReader();
   reader.onload = function(e) {
-    addPhotoLog(id, '✅ FileReader OK', true);
     var img = new Image();
     img.onload = function() {
       var MAX = 1200;
@@ -1071,25 +1106,43 @@ function addPhoto(id, input) {
       canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
       var dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-      addPhotoLog(id, '✅ Zmenšeno na ' + w + 'x' + h + ', ukládám...', true);
+
       var it = items.find(function(i){ return i.id === id; });
-      if (!it) { addPhotoLog(id, '❌ Položka nenalezena!', false); return; }
+      if (!it) return;
       if (!it.photoCount) it.photoCount = 0;
       var idx = it.photoCount;
-      dbSavePhoto(id, idx, dataUrl).then(function() {
-        it.photoCount = idx + 1;
-        save(SK.items, items);
-        input.value = '';
-        addPhotoLog(id, '✅ Uloženo do DB! (foto #' + (idx+1) + ')', true);
-        buildItemDetail(id);
-      }).catch(function(err) {
-        addPhotoLog(id, '❌ Chyba DB: ' + err, false);
+
+      // 1. Zobraz fotku IHNED v photo row (jako v testu)
+      var photoRow = document.getElementById('photos-' + id);
+      if (photoRow) {
+        var wrap = document.createElement('div');
+        wrap.className = 'photo-thumb-wrap';
+        wrap.id = 'photo-wrap-' + id + '-' + idx;
+        var thumbImg = document.createElement('img');
+        thumbImg.className = 'item-detail-photo';
+        thumbImg.src = dataUrl;
+        thumbImg.onclick = (function(src){ return function(){ openLightbox(src); }; })(dataUrl);
+        var del = document.createElement('button');
+        del.className = 'photo-del-btn';
+        del.textContent = '×';
+        del.onclick = (function(i){ return function(){ deletePhoto(id, i); }; })(idx);
+        wrap.appendChild(thumbImg);
+        wrap.appendChild(del);
+        // insert before the label button
+        var label = photoRow.querySelector('label');
+        photoRow.insertBefore(wrap, label);
+      }
+
+      // 2. Ulož do DB na pozadí
+      it.photoCount = idx + 1;
+      save(SK.items, items);
+      input.value = '';
+      dbSavePhoto(id, idx, dataUrl).catch(function(err) {
+        alert('Chyba ukládání: ' + err);
       });
     };
-    img.onerror = function() { addPhotoLog(id, '❌ Chyba načtení obrázku', false); };
     img.src = e.target.result;
   };
-  reader.onerror = function(e) { addPhotoLog(id, '❌ FileReader chyba: ' + e, false); };
   reader.readAsDataURL(file);
 }
 
@@ -1103,20 +1156,307 @@ function deletePhoto(id, idx) {
 }
 
 function saveDetailNote(id) {
+  var logEl = document.getElementById('note-log-' + id);
+  function nlog(msg, ok) {
+    if (!logEl) return;
+    var cls = ok === true ? 'color:green;font-weight:bold' : ok === false ? 'color:red;font-weight:bold' : 'color:#888';
+    logEl.innerHTML += '<div style="' + cls + ';font-size:0.74rem">' + msg + '</div>';
+  }
+  nlog('🖱️ Klik na uložit zachycen...', null);
   var ta = document.getElementById('detail-note-' + id);
-  if (!ta) return;
+  if (!ta) { nlog('❌ Textarea nenalezena!', false); return; }
+  nlog('✅ Textarea nalezena, text: "' + ta.value.substring(0,30) + '"', true);
   var it = items.find(function(i){ return i.id === id; });
-  if (!it) return;
+  if (!it) { nlog('❌ Položka nenalezena!', false); return; }
   it.detailNote = ta.value;
-  save(SK.items, items);
-  ta.style.borderColor = 'var(--green)';
-  ta.style.background = 'rgba(122,154,106,0.08)';
-  setTimeout(function(){ ta.style.borderColor = ''; ta.style.background = ''; }, 1200);
+  try {
+    save(SK.items, items);
+    nlog('✅ Uloženo do localStorage!', true);
+    ta.style.borderColor = 'var(--green)';
+    ta.style.background = 'rgba(122,154,106,0.08)';
+    setTimeout(function(){ ta.style.borderColor = ''; ta.style.background = ''; }, 1200);
+  } catch(e) {
+    nlog('❌ Chyba localStorage: ' + e, false);
+  }
 }
 
 function openLightbox(src) {
   document.getElementById('lightbox-img').src = src;
   document.getElementById('lightbox').classList.add('open');
+}
+
+// ===== GALERIE =====
+var galPendingPhoto = null;
+
+function galPhotoSelected(input) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = new Image();
+    img.onload = function() {
+      var MAX = 1200;
+      var canvas = document.createElement('canvas');
+      var w = img.width, h = img.height;
+      if (w > MAX || h > MAX) {
+        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+        else { w = Math.round(w * MAX / h); h = MAX; }
+      }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      galPendingPhoto = canvas.toDataURL('image/jpeg', 0.8);
+      // show preview
+      var prev = document.getElementById('gal-preview-img');
+      var prevWrap = document.getElementById('gal-photo-preview');
+      if (prev) prev.src = galPendingPhoto;
+      if (prevWrap) prevWrap.style.display = 'block';
+      input.value = '';
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function galNextNum() {
+  if (!galerie.length) return 1;
+  var nums = galerie.map(function(g){ return g.num || 0; });
+  return Math.max.apply(null, nums) + 1;
+}
+
+function galAdd() {
+  var name = document.getElementById('gal-name').value.trim();
+  if (!name) { document.getElementById('gal-name').focus(); return; }
+  var note = document.getElementById('gal-note').value.trim();
+  var numInput = document.getElementById('gal-num').value;
+  var num = numInput ? parseInt(numInput) : galNextNum();
+  var id = Date.now();
+  var now = new Date();
+  var datetime = now.toLocaleDateString('cs-CZ') + ' ' + now.toLocaleTimeString('cs-CZ', {hour:'2-digit', minute:'2-digit'});
+  var item = { id: id, name: name, note: note, status: 'nove', loc: null, num: num, date: datetime };
+  galerie.push(item);
+  save(SK.galerie, galerie);
+
+  // save photo to IndexedDB if exists
+  if (galPendingPhoto) {
+    dbSavePhoto('gal_' + id, 0, galPendingPhoto);
+    item.hasPhoto = true;
+    save(SK.galerie, galerie);
+    galPendingPhoto = null;
+    var prevWrap = document.getElementById('gal-photo-preview');
+    if (prevWrap) prevWrap.style.display = 'none';
+    var prev = document.getElementById('gal-preview-img');
+    if (prev) prev.src = '';
+  }
+
+  document.getElementById('gal-name').value = '';
+  document.getElementById('gal-note').value = '';
+  document.getElementById('gal-num').value = '';
+  renderGalerie();
+}
+
+function galEdit(id) {
+  var g = galerie.find(function(i){ return i.id === id; });
+  if (!g) return;
+  var card = document.getElementById('gal-card-' + id);
+  if (!card) return;
+  var body = card.querySelector('.gal-card-body');
+  if (!body) return;
+
+  // replace body with edit form
+  body.innerHTML = '';
+
+  var nameInp = document.createElement('input');
+  nameInp.type = 'text';
+  nameInp.value = g.name;
+  nameInp.maxLength = 80;
+  nameInp.style.cssText = 'width:100%;margin-bottom:6px;padding:5px 8px;border-radius:7px;border:1px solid var(--accent);font-size:0.84rem;background:var(--bg);color:var(--text)';
+  body.appendChild(nameInp);
+
+  var numInp = document.createElement('input');
+  numInp.type = 'number';
+  numInp.value = g.num || '';
+  numInp.placeholder = 'Číslo...';
+  numInp.style.cssText = 'width:100%;margin-bottom:6px;padding:5px 8px;border-radius:7px;border:1px solid var(--border);font-size:0.84rem;background:var(--bg);color:var(--text)';
+  body.appendChild(numInp);
+
+  var noteInp = document.createElement('input');
+  noteInp.type = 'text';
+  noteInp.value = g.note || '';
+  noteInp.maxLength = 120;
+  noteInp.placeholder = 'Poznámka...';
+  noteInp.style.cssText = 'width:100%;margin-bottom:8px;padding:5px 8px;border-radius:7px;border:1px solid var(--border);font-size:0.84rem;background:var(--bg);color:var(--text)';
+  body.appendChild(noteInp);
+
+  var btnRow = document.createElement('div');
+  btnRow.style.cssText = 'display:flex;gap:6px';
+
+  var saveBtn = document.createElement('button');
+  saveBtn.className = 'btn';
+  saveBtn.style.cssText = 'padding:5px 12px;font-size:0.78rem;flex:1';
+  saveBtn.textContent = '💾 Uložit';
+  saveBtn.onclick = function() {
+    var newName = nameInp.value.trim();
+    if (!newName) return;
+    g.name = newName;
+    g.note = noteInp.value.trim();
+    g.num = numInp.value ? parseInt(numInp.value) : g.num;
+    save(SK.galerie, galerie);
+    renderGalerie();
+  };
+  btnRow.appendChild(saveBtn);
+
+  var cancelBtn = document.createElement('button');
+  cancelBtn.className = 'btn secondary';
+  cancelBtn.style.cssText = 'padding:5px 10px;font-size:0.78rem';
+  cancelBtn.textContent = '✕';
+  cancelBtn.onclick = function() { renderGalerie(); };
+  btnRow.appendChild(cancelBtn);
+
+  body.appendChild(btnRow);
+}
+
+function galDelete(id) {
+  galerie = galerie.filter(function(g){ return g.id !== id; });
+  save(SK.galerie, galerie);
+  dbDeletePhoto('gal_' + id, 0);
+  renderGalerie();
+}
+
+function galMoveTo(id) {
+  // open move modal with callback for galerie
+  var item = galerie.find(function(g){ return g.id === id; });
+  if (!item) return;
+  moveTarget = 'gal_' + id;
+  document.getElementById('moveItemLabel').textContent = '"' + item.name + '" → kam zařadit?';
+  document.getElementById('moveModal').classList.add('open');
+}
+
+function galMoveToSoupis(id) {
+  var gItem = galerie.find(function(g){ return g.id === id; });
+  if (!gItem) return;
+  // add to soupis items
+  var newItem = { id: Date.now(), name: gItem.name, loc: gItem.targetLoc || 'maserna', checked: false, status: 'ok', note: gItem.note || '', photoCount: gItem.hasPhoto ? 1 : 0 };
+  items.push(newItem);
+  save(SK.items, items);
+  // copy photo if exists
+  if (gItem.hasPhoto) {
+    openDB().then(function(db) {
+      var tx = db.transaction(STORE, 'readonly');
+      var req = tx.objectStore(STORE).get('gal_' + id + '_0');
+      req.onsuccess = function() {
+        if (req.result) {
+          dbSavePhoto(newItem.id, 0, req.result.data);
+        }
+      };
+    });
+  }
+  // remove from galerie
+  galerie = galerie.filter(function(g){ return g.id !== id; });
+  save(SK.galerie, galerie);
+  renderGalerie();
+  renderSoupis();
+  alert('✅ "' + gItem.name + '" přesunuta do Soupisu!');
+}
+
+function renderGalerie() {
+  var grid = document.getElementById('gal-grid');
+  if (!grid) return;
+  var q = (document.getElementById('gal-search') || {}).value || '';
+  q = q.trim().toLowerCase();
+  var filtered = galerie.filter(function(g){ return !q || g.name.toLowerCase().includes(q); });
+  filtered.sort(function(a,b){ return (a.num||0) - (b.num||0); });
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty-msg" style="grid-column:1/-1">Zatím žádné věci. Přidej první! 📸</div>';
+    return;
+  }
+
+  // render cards, load photos async
+  grid.innerHTML = '';
+  filtered.forEach(function(g) {
+    var card = document.createElement('div');
+    card.className = 'gal-card';
+    card.id = 'gal-card-' + g.id;
+
+    // image area
+    var imgWrap = document.createElement('div');
+    imgWrap.className = 'gal-card-img';
+    if (g.hasPhoto) {
+      openDB().then(function(db) {
+        var tx = db.transaction(STORE, 'readonly');
+        var req = tx.objectStore(STORE).get('gal_' + g.id + '_0');
+        req.onsuccess = function() {
+          if (req.result) {
+            var img = document.createElement('img');
+            img.src = req.result.data;
+            img.onclick = function(){ openLightbox(req.result.data); };
+            img.style.cursor = 'pointer';
+            imgWrap.innerHTML = '';
+            imgWrap.appendChild(img);
+          }
+        };
+      });
+      imgWrap.textContent = '⏳';
+    } else {
+      imgWrap.textContent = '📦';
+    }
+    card.appendChild(imgWrap);
+
+    // body
+    var body = document.createElement('div');
+    body.className = 'gal-card-body';
+
+    var name = document.createElement('div');
+    name.className = 'gal-card-name';
+    name.textContent = g.name;
+    body.appendChild(name);
+
+    if (g.note) {
+      var note = document.createElement('div');
+      note.className = 'gal-card-note';
+      note.textContent = g.note;
+      body.appendChild(note);
+    }
+
+    var status = document.createElement('div');
+    status.className = 'gal-card-status';
+    status.textContent = '🆕 #' + (g.num || '?') + ' · ' + (g.date || '');
+    body.appendChild(status);
+
+    // actions
+    var actions = document.createElement('div');
+    actions.className = 'gal-card-actions';
+
+    // move to soupis select
+    var sel = document.createElement('select');
+    sel.style.cssText = 'font-size:0.72rem;padding:3px 6px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);flex:1';
+    sel.innerHTML = '<option value="">Zařadit do...</option>' +
+      ALL_LOCS.map(function(l){ return '<option value="' + l.id + '">' + l.icon + ' ' + l.name + '</option>'; }).join('');
+    sel.onchange = function() {
+      if (!sel.value) return;
+      g.targetLoc = sel.value;
+      galMoveToSoupis(g.id);
+    };
+    actions.appendChild(sel);
+
+    var editBtn = document.createElement('button');
+    editBtn.className = 'btn secondary';
+    editBtn.style.cssText = 'padding:3px 8px;font-size:0.75rem';
+    editBtn.textContent = '✏️';
+    editBtn.onclick = (function(gid){ return function(){ galEdit(gid); }; })(g.id);
+    actions.appendChild(editBtn);
+
+    var delBtn = document.createElement('button');
+    delBtn.className = 'btn danger';
+    delBtn.style.cssText = 'padding:3px 8px;font-size:0.75rem;border:1px solid var(--red);color:var(--red)';
+    delBtn.textContent = '🗑️';
+    delBtn.onclick = (function(gid, gname){ return function(){ galDelete(gid); }; })(g.id, g.name);
+    actions.appendChild(delBtn);
+
+    body.appendChild(actions);
+    card.appendChild(body);
+    grid.appendChild(card);
+  });
 }
 
 // ===== KEYBOARD SHORTCUTS =====
@@ -1130,7 +1470,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 // ===== INIT =====
-loadAll(); buildUI(); renderSoupis(); renderCl(); renderHistory(); renderBuy(); renderPrices(); renderClients(); renderDest();
+loadAll(); buildUI(); renderSoupis(); renderCl(); renderHistory(); renderBuy(); renderPrices(); renderClients(); renderDest(); renderGalerie();
 </script>
 </body>
 </html>
