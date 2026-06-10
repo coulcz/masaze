@@ -1031,15 +1031,31 @@ function buildItemDetail(id) {
     saveBtn.onclick = function(){ saveDetailNote(id); };
     det.appendChild(saveBtn);
 
+    // debug log
+    var logDiv = document.createElement('div');
+    logDiv.id = 'photo-log-' + id;
+    logDiv.style.cssText = 'margin-top:8px;padding:6px 10px;background:var(--bg);border-radius:8px;border:1px solid var(--border);min-height:20px';
+    logDiv.innerHTML = '<div style="font-size:0.7rem;color:var(--muted)">📋 Log fotky:</div>';
+    det.appendChild(logDiv);
+
     el.appendChild(det);
   });
 }
 
+function addPhotoLog(id, msg, ok) {
+  var el = document.getElementById('photo-log-' + id);
+  if (!el) return;
+  var cls = ok === true ? 'color:green;font-weight:bold' : ok === false ? 'color:red;font-weight:bold' : 'color:#888';
+  el.innerHTML += '<div style="' + cls + ';font-size:0.74rem">' + msg + '</div>';
+}
+
 function addPhoto(id, input) {
   var file = input.files[0];
-  if (!file) return;
+  if (!file) { addPhotoLog(id, '❌ Žádný soubor vybrán', false); return; }
+  addPhotoLog(id, '✅ Soubor: ' + file.name + ' (' + Math.round(file.size/1024) + ' KB)', true);
   var reader = new FileReader();
   reader.onload = function(e) {
+    addPhotoLog(id, '✅ FileReader OK', true);
     var img = new Image();
     img.onload = function() {
       var MAX = 1200;
@@ -1052,21 +1068,25 @@ function addPhoto(id, input) {
       canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
       var dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+      addPhotoLog(id, '✅ Zmenšeno na ' + w + 'x' + h + ', ukládám...', true);
       var it = items.find(function(i){ return i.id === id; });
-      if (!it) return;
+      if (!it) { addPhotoLog(id, '❌ Položka nenalezena!', false); return; }
       if (!it.photoCount) it.photoCount = 0;
       var idx = it.photoCount;
       dbSavePhoto(id, idx, dataUrl).then(function() {
         it.photoCount = idx + 1;
         save(SK.items, items);
         input.value = '';
+        addPhotoLog(id, '✅ Uloženo do DB! (foto #' + (idx+1) + ')', true);
         buildItemDetail(id);
       }).catch(function(err) {
-        alert('Chyba při ukládání fotky: ' + err);
+        addPhotoLog(id, '❌ Chyba DB: ' + err, false);
       });
     };
+    img.onerror = function() { addPhotoLog(id, '❌ Chyba načtení obrázku', false); };
     img.src = e.target.result;
   };
+  reader.onerror = function(e) { addPhotoLog(id, '❌ FileReader chyba: ' + e, false); };
   reader.readAsDataURL(file);
 }
 
