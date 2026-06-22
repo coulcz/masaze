@@ -414,6 +414,7 @@ textarea{resize:vertical;min-height:38px}
   <div class="tab" onclick="sw('zdravi')">🩺 Zdraví</div>
   <div class="tab" onclick="sw('syslog')">📊 Log</div>
   <div class="tab" onclick="sw('media')">🎬 Média</div>
+  <div class="tab" onclick="sw('denik')">📝 Deník</div>
   <div class="tab" onclick="sw('admin')">⚙️ Admin <span class="bn" id="pcount"></span></div>
 </div>
 
@@ -2814,6 +2815,81 @@ textarea{resize:vertical;min-height:38px}
 </div>
 
 
+
+<!-- DENÍK -->
+<div class="view" id="view-denik">
+<div class="layout">
+  <div class="mcol">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <h3 style="margin:0">📝 Martinův deník</h3>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-sm" id="denik-btn-new" onclick="denikNovy()"><i class="ti ti-plus"></i> Nový záznam</button>
+          <button class="btn btn-sm btn-b" id="denik-btn-save" style="display:none" onclick="denikUlozit()"><i class="ti ti-check"></i> Uložit</button>
+          <button class="btn btn-sm" id="denik-btn-cancel" style="display:none" onclick="denikZrusit()"><i class="ti ti-x"></i></button>
+        </div>
+      </div>
+
+      <!-- EDITOR -->
+      <div id="denik-editor" style="display:none;margin-bottom:12px">
+        <div class="field"><label>Nadpis (nepovinný)</label>
+          <input type="text" id="denik-nadpis" placeholder="např. Myšlenky z vlaku, Co řekl doktor..."/>
+        </div>
+        <div class="field"><label>Obsah</label>
+          <textarea id="denik-obsah" placeholder="Piš cokoliv – nápady, poznámky, postřehy, plány..." style="min-height:140px"></textarea>
+        </div>
+        <div class="field">
+          <label>Kategorie</label>
+          <select id="denik-kat">
+            <option value="obecne">📝 Obecné</option>
+            <option value="napad">💡 Nápad</option>
+            <option value="masaze">💆 Masáže / byznys</option>
+            <option value="osobni">🧘 Osobní</option>
+            <option value="todo">✅ To-Do / připomínka</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- FILTRY -->
+      <div style="display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap">
+        <select id="denik-filter-kat" onchange="renderDenik()" style="font-size:11px;padding:4px 8px;width:auto">
+          <option value="">Vše</option>
+          <option value="obecne">📝 Obecné</option>
+          <option value="napad">💡 Nápady</option>
+          <option value="masaze">💆 Masáže</option>
+          <option value="osobni">🧘 Osobní</option>
+          <option value="todo">✅ To-Do</option>
+        </select>
+        <input id="denik-search" placeholder="Hledat..." style="font-size:11px;padding:4px 8px;width:120px" oninput="renderDenik()"/>
+      </div>
+
+      <div id="denik-seznam"><div class="empty">Zatím žádné záznamy. Klikni na Nový záznam!</div></div>
+    </div>
+  </div>
+
+  <div class="scol">
+    <div class="card">
+      <h3>Statistiky</h3>
+      <div class="sg">
+        <div class="st"><div class="sv" id="dn-tot">0</div><div class="sl">Zápisů</div></div>
+        <div class="st"><div class="sv" id="dn-napady">0</div><div class="sl">Nápadů</div></div>
+        <div class="st"><div class="sv" id="dn-todo">0</div><div class="sl">To-Do</div></div>
+        <div class="st"><div class="sv" id="dn-dnes">0</div><div class="sl">Dnes</div></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:7px">
+      <h3>Export / Import</h3>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <button class="btn btn-sm btn-b" onclick="denikExport()">📥 Export JSON</button>
+        <button class="btn btn-sm" onclick="denikImport()">📤 Import JSON</button>
+      </div>
+      <div class="hint" style="margin-top:8px">Data jsou uložena jen v tomto prohlížeči.</div>
+    </div>
+  </div>
+</div>
+</div>
+
+
 <!-- ADMIN -->
 <div class="view" id="view-admin">
 
@@ -2956,7 +3032,7 @@ const today=new Date().toISOString().split("T")[0];
 const G=id=>document.getElementById(id);
 
 function notify(msg,err){const t=G("toast"),s=G("tmsg");s.textContent=msg;t.className="toast"+(err?" err":"")+" show";clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),2400);}
-function sw(tab){["mapa","nabidka","poptavka","rezervace","mista","akce","bezpecnost","info","maserna","newsletter","pruzkum","clenove","pobocky","recenze","obchod","kartoteka","zdravi","syslog","media","admin"].forEach((t,i)=>{document.querySelectorAll(".tab")[i].classList.toggle("on",t===tab);G("view-"+t).classList.toggle("on",t===tab);});try{history.replaceState(null,"","#"+tab);}catch(e){}if(tab==="nabidka"){syncNF();renderNab();}if(tab==="poptavka")renderPop();if(tab==="rezervace")renderRM();if(tab==="admin"){syncAF();renderAdm();renderAdmPop();}if(tab==="mista")renderMista();if(tab==="akce")renderAkce();if(tab==="bezpecnost")renderBezp();if(tab==="newsletter")renderNewsletter();if(tab==="pruzkum")renderPruzkum();if(tab==="recenze")renderRecenze();if(tab==="clenove")renderClenove();if(tab==="pobocky")renderPobocky();if(tab==="obchod")renderObchod();if(tab==="kartoteka")renderKartoteka();if(tab==="zdravi")initZdravi();if(tab==="syslog")renderSyslog();if(tab==="media")renderMedia();}
+function sw(tab){["mapa","nabidka","poptavka","rezervace","mista","akce","bezpecnost","info","maserna","newsletter","pruzkum","clenove","pobocky","recenze","obchod","kartoteka","zdravi","syslog","media","denik","admin"].forEach((t,i)=>{document.querySelectorAll(".tab")[i].classList.toggle("on",t===tab);G("view-"+t).classList.toggle("on",t===tab);});try{history.replaceState(null,"","#"+tab);}catch(e){}if(tab==="nabidka"){syncNF();renderNab();}if(tab==="poptavka")renderPop();if(tab==="rezervace")renderRM();if(tab==="admin"){syncAF();renderAdm();renderAdmPop();}if(tab==="mista")renderMista();if(tab==="akce")renderAkce();if(tab==="bezpecnost")renderBezp();if(tab==="newsletter")renderNewsletter();if(tab==="pruzkum")renderPruzkum();if(tab==="recenze")renderRecenze();if(tab==="clenove")renderClenove();if(tab==="pobocky")renderPobocky();if(tab==="obchod")renderObchod();if(tab==="kartoteka")renderKartoteka();if(tab==="zdravi")initZdravi();if(tab==="syslog")renderSyslog();if(tab==="media")renderMedia();if(tab==="denik")renderDenik();}
 const INFO_SUBS=["kodex","kontra","provoz","vune","dotaznik","hygiena"];
 function swInfo(s){
   INFO_SUBS.forEach((id,i)=>{
@@ -4351,6 +4427,163 @@ function tiskZdravi(){
   window.print();
 }
 
+
+// -- DENIK -------------------------------------------------------------------
+var denikZaznamy = [];
+var denikEditId = null;
+const DENIK_KAT = {obecne:"📝 Obecné", napad:"💡 Nápad", masaze:"💆 Masáže", osobni:"🧘 Osobní", todo:"✅ To-Do"};
+
+function loadDenik(){
+  try{
+    var saved = localStorage.getItem('martin_denik');
+    if(saved) denikZaznamy = JSON.parse(saved);
+    slog('Deník načten: ' + denikZaznamy.length + ' záznamů', 'ok');
+  }catch(e){ slog('Chyba načtení deníku: ' + e.message, 'err'); }
+}
+
+function saveDenik(){
+  try{ localStorage.setItem('martin_denik', JSON.stringify(denikZaznamy)); }
+  catch(e){ notify('Chyba uložení deníku!', true); }
+}
+
+function denikNovy(){
+  denikEditId = null;
+  G('denik-nadpis').value = '';
+  G('denik-obsah').value = '';
+  G('denik-kat').value = 'obecne';
+  G('denik-editor').style.display = 'block';
+  G('denik-btn-new').style.display = 'none';
+  G('denik-btn-save').style.display = 'inline-flex';
+  G('denik-btn-cancel').style.display = 'inline-flex';
+  G('denik-nadpis').focus();
+}
+
+function denikZrusit(){
+  denikEditId = null;
+  G('denik-editor').style.display = 'none';
+  G('denik-btn-new').style.display = 'inline-flex';
+  G('denik-btn-save').style.display = 'none';
+  G('denik-btn-cancel').style.display = 'none';
+}
+
+function denikUlozit(){
+  var nadpis = G('denik-nadpis').value.trim();
+  var obsah = G('denik-obsah').value.trim();
+  if(!nadpis && !obsah){ notify('Napiš alespoň něco!', true); return; }
+  var now = new Date();
+  var datum = now.toLocaleDateString('cs-CZ') + ' ' + now.toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit'});
+  var kat = G('denik-kat').value;
+  if(denikEditId !== null){
+    var z = denikZaznamy.find(function(x){ return x.id === denikEditId; });
+    if(z){ z.nadpis = nadpis; z.obsah = obsah; z.kat = kat; z.upraveno = datum; }
+  } else {
+    denikZaznamy.push({id:Date.now(), nadpis:nadpis, obsah:obsah, kat:kat, datum:datum});
+  }
+  saveDenik();
+  denikZrusit();
+  renderDenik();
+  notify('Uloženo ✓');
+  slog('Deník: nový záznam – ' + (nadpis||'bez nadpisu'), 'ok');
+}
+
+function denikUpravit(id){
+  var z = denikZaznamy.find(function(x){ return x.id === id; });
+  if(!z) return;
+  denikEditId = id;
+  G('denik-nadpis').value = z.nadpis || '';
+  G('denik-obsah').value = z.obsah || '';
+  G('denik-kat').value = z.kat || 'obecne';
+  G('denik-editor').style.display = 'block';
+  G('denik-btn-new').style.display = 'none';
+  G('denik-btn-save').style.display = 'inline-flex';
+  G('denik-btn-cancel').style.display = 'inline-flex';
+  G('denik-obsah').focus();
+}
+
+function denikSmazat(id){
+  if(!confirm('Smazat tento záznam?')) return;
+  denikZaznamy = denikZaznamy.filter(function(x){ return x.id !== id; });
+  saveDenik();
+  renderDenik();
+  notify('Záznam smazán');
+}
+
+function renderDenik(){
+  var el = G('denik-seznam');
+  if(!el) return;
+  var fk = G('denik-filter-kat') ? G('denik-filter-kat').value : '';
+  var fq = G('denik-search') ? G('denik-search').value.toLowerCase() : '';
+  var dnes = new Date().toLocaleDateString('cs-CZ');
+
+  var list = denikZaznamy.filter(function(z){
+    if(fk && z.kat !== fk) return false;
+    if(fq && !(z.nadpis||'').toLowerCase().includes(fq) && !(z.obsah||'').toLowerCase().includes(fq)) return false;
+    return true;
+  });
+
+  // Statistiky
+  G('dn-tot').textContent = denikZaznamy.length;
+  G('dn-napady').textContent = denikZaznamy.filter(function(z){ return z.kat === 'napad'; }).length;
+  G('dn-todo').textContent = denikZaznamy.filter(function(z){ return z.kat === 'todo'; }).length;
+  G('dn-dnes').textContent = denikZaznamy.filter(function(z){ return z.datum && z.datum.startsWith(dnes); }).length;
+
+  if(!list.length){
+    el.innerHTML = '<div class="empty">' + (fk||fq ? 'Žádné záznamy neodpovídají filtru.' : 'Zatím žádné záznamy. Klikni na Nový záznam!') + '</div>';
+    return;
+  }
+
+  el.innerHTML = list.slice().reverse().map(function(z){
+    var katLab = DENIK_KAT[z.kat] || z.kat;
+    var preview = (z.obsah||'').length > 120 ? z.obsah.substring(0,120) + '…' : z.obsah;
+    return '<div style="border:.5px solid var(--brd);border-radius:var(--r);padding:10px 12px;margin-bottom:8px;background:var(--bg)">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap">' +
+        '<div>' +
+          '<span class="pill p-sk" style="font-size:10px">' + katLab + '</span>' +
+          (z.nadpis ? '<strong style="font-size:13px;margin-left:4px;color:var(--txt)">' + z.nadpis + '</strong>' : '') +
+          '<div style="font-size:10px;color:var(--txt2);margin-top:2px">' + (z.upraveno ? '✏️ ' + z.upraveno : z.datum) + '</div>' +
+        '</div>' +
+        '<div style="display:flex;gap:4px">' +
+          '<button class="btn btn-sm" onclick="denikUpravit(' + z.id + ')" style="padding:3px 8px" title="Upravit"><i class="ti ti-edit"></i></button>' +
+          '<button class="btn btn-sm" onclick="denikSmazat(' + z.id + ')" style="padding:3px 8px;color:var(--red)" title="Smazat"><i class="ti ti-trash"></i></button>' +
+        '</div>' +
+      '</div>' +
+      (preview ? '<div style="font-size:12px;color:var(--txt2);margin-top:6px;line-height:1.6;white-space:pre-wrap">' + preview + '</div>' : '') +
+    '</div>';
+  }).join('');
+}
+
+function denikExport(){
+  var blob = new Blob([JSON.stringify({denik:denikZaznamy, exportovano:new Date().toISOString()},null,2)],{type:'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'martin_denik_' + new Date().toISOString().split('T')[0] + '.json';
+  a.click();
+  notify('Deník exportován ✓');
+}
+
+function denikImport(){
+  var inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = '.json';
+  inp.onchange = function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      try{
+        var data = JSON.parse(ev.target.result);
+        var arr = data.denik || data;
+        if(!Array.isArray(arr)) throw new Error('Neplatný formát');
+        denikZaznamy = arr;
+        saveDenik();
+        renderDenik();
+        notify('Import deníku: ' + arr.length + ' záznamů ✓');
+      }catch(err){ notify('Chyba importu: ' + err.message, true); }
+    };
+    reader.readAsText(file);
+  };
+  inp.click();
+}
+
 // ── BEZPEČNOST – CHECK-IN ─────────────────────────────────────────────────
 async function checkin(status){
   const jmeno=G("bz-jmeno").value.trim();
@@ -5520,6 +5753,7 @@ const ALL_TABS = [
   {id:"zdravi",    label:"🩺 Zdraví",      default:true},
   {id:"syslog",    label:"📊 Log",         default:false},
   {id:"media",     label:"🎬 Média",       default:true},
+  {id:"denik",     label:"📝 Deník",       default:true},
   {id:"admin",     label:"⚙️ Admin",       default:true}
 ];
 
@@ -5976,7 +6210,7 @@ function copyZenyLink(){
 // ── INIT ─────────────────────────────────────────────────────────────────────
 G("rd").value=today;G("rd").min=today;G("pd-d").value=today;
 renderST("mst",selSk);renderST("pd-st",pdSk);updStats();updPdSt();setPdTyp("jednotlivec");setPdPref("nezalezi");setTimeout(function(){setInzTyp("prodej");setClPrvni("ne");},100);
-loadDotOverrides();loadKartoteka();loadMedia();loadSysLog();loadTabOrder();loadVisibilitySettings();applyVisibility();slog("Systém spuštěn", "ok");setTimeout(loadMediaFromGithub, 2000);
+loadDotOverrides();loadKartoteka();loadMedia();loadDenik();loadSysLog();loadTabOrder();loadVisibilitySettings();applyVisibility();slog("Systém spuštěn", "ok");setTimeout(loadMediaFromGithub, 2000);
 initMap();
 
 // Počkat na načtení obrázku SVG mapy
@@ -6003,7 +6237,7 @@ loadData().then(()=>{
     showDetail(params.get("typ")||"maser",params.get("id"));
   } else {
     const h=(location.hash||"").replace("#","");
-    if(["mapa","nabidka","poptavka","rezervace","mista","akce","bezpecnost","info","maserna","newsletter","pruzkum","clenove","pobocky","recenze","obchod","kartoteka","zdravi","syslog","media","admin"].includes(h))sw(h);
+    if(["mapa","nabidka","poptavka","rezervace","mista","akce","bezpecnost","info","maserna","newsletter","pruzkum","clenove","pobocky","recenze","obchod","kartoteka","zdravi","syslog","media","denik","admin"].includes(h))sw(h);
   }
 });
 </script>
