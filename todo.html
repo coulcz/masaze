@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Masážní HUB CZ/SK – TODO</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#fff;--bg2:#f5f5f3;--txt:#1a1a18;--txt2:#6b6b67;--brd:rgba(0,0,0,.12);--blue:#185FA5;--green:#1D9E75;--red:#A32D2D;--amber:#BA7517;--r:10px;--rl:14px}
+body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;color:var(--txt);background:var(--bg2);min-height:100vh}
+.header{background:linear-gradient(135deg,#185FA5,#0C447C);color:#fff;padding:20px 16px;text-align:center}
+.header h1{font-size:20px;font-weight:500;margin-bottom:4px}
+.header p{font-size:12px;opacity:.8}
+.wrap{max-width:600px;margin:0 auto;padding:14px}
+.progress-wrap{background:var(--bg);border-radius:var(--rl);padding:16px;margin-bottom:12px;border:.5px solid var(--brd)}
+.progress-bar{height:8px;background:var(--bg2);border-radius:4px;margin:8px 0}
+.progress-fill{height:100%;border-radius:4px;background:var(--green);transition:width .3s}
+.progress-txt{display:flex;justify-content:space-between;font-size:12px;color:var(--txt2)}
+.sekce{background:var(--bg);border-radius:var(--rl);padding:14px;margin-bottom:10px;border:.5px solid var(--brd)}
+.sekce h2{font-size:14px;font-weight:500;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.item{display:flex;align-items:flex-start;gap:10px;padding:8px 6px;border-radius:var(--r);cursor:pointer;transition:background .1s;border-bottom:.5px solid var(--brd)}
+.item:last-child{border-bottom:none}
+.item:hover{background:var(--bg2)}
+.item.done{opacity:.6}
+.item.done .item-txt{text-decoration:line-through;color:var(--txt2)}
+.item-cb{width:20px;height:20px;border-radius:5px;border:2px solid var(--brd);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .15s}
+.item.done .item-cb{background:var(--green);border-color:var(--green);color:#fff}
+.item-txt{flex:1;font-size:13px;line-height:1.5}
+.item-sub{font-size:11px;color:var(--txt2);margin-top:2px}
+.prio{display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.p-high{background:var(--red)}
+.p-mid{background:var(--amber)}
+.p-low{background:var(--green)}
+.legenda{display:flex;gap:12px;font-size:11px;color:var(--txt2);margin-top:8px;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.stat{background:var(--bg);border-radius:var(--r);padding:10px;text-align:center;border:.5px solid var(--brd)}
+.stat-val{font-size:22px;font-weight:600;color:var(--blue)}
+.stat-lab{font-size:10px;color:var(--txt2);margin-top:2px}
+.btn-reset{font-size:11px;padding:6px 12px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg2);cursor:pointer;color:var(--txt2);margin-top:8px}
+.poz-filter.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.poz-item{padding:10px 12px;border-radius:var(--r);background:var(--bg);border:.5px solid var(--brd);margin-bottom:6px;display:flex;align-items:flex-start;gap:8px}
+.poz-item.hotovo .poz-txt{text-decoration:line-through;color:var(--txt2)}
+.kat-badge{font-size:10px;padding:2px 7px;border-radius:8px;flex-shrink:0;margin-top:1px}
+.k-napad{background:#FFF8E1;color:#7D5A00}
+.k-ukol{background:#E1F5EE;color:#085041}
+.k-denik{background:#E6F1FB;color:#0C447C}
+.k-masaz{background:#FCE4EC;color:#880E4F}
+.k-vse{background:var(--bg2);color:var(--txt2)}
+@media(max-width:500px){
+  .gtd-grid{grid-template-columns:1fr!important}
+  .mat-grid{grid-template-columns:1fr!important}
+  .sesity-grid{grid-template-columns:1fr 1fr}
+}
+@media(prefers-color-scheme:dark){
+  :root{--bg:#1c1c1a;--bg2:#252523;--txt:#f0ede8;--txt2:#a8a89e;--brd:rgba(255,255,255,.12)}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="font-size:36px;margin-bottom:6px">🧘</div>
+  <h1>Masážní HUB CZ/SK</h1>
+  <p>Akční plán · Duo IO + Martin 💪</p>
+</div>
+
+<div class="wrap">
+
+  <!-- STATISTIKY -->
+  <div class="stats">
+    <div class="stat"><div class="stat-val" id="st-done">0</div><div class="stat-lab">✅ Hotovo</div></div>
+    <div class="stat"><div class="stat-val" id="st-total">0</div><div class="stat-lab">📋 Celkem</div></div>
+    <div class="stat"><div class="stat-val" id="st-pct">0%</div><div class="stat-lab">🎯 Splněno</div></div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <div class="progress-txt">
+      <span>Celkový pokrok</span>
+      <span id="prog-txt">0 / 0</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="legenda">
+      <span><span class="prio p-high" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red)"></span> Vysoká priorita</span>
+      <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--amber)"></span> Střední</span>
+      <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green)"></span> Nízká</span>
+    </div>
+  </div>
+
+  <!-- SEKCE 1: GITHUB -->
+  <div class="sekce">
+    <h2>🚀 Krok 1 – Nahrát na GitHub</h2>
+    <div class="item" onclick="toggle(this)" data-id="gh1">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">Nahrát <strong>index.html</strong> (masaze_mapa_v4.html)
+        <div class="item-sub">Přejmenovat na index.html a nahrát na GitHub</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="gh2">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">Nahrát <strong>klient.html</strong>
+        <div class="item-sub">Veřejná stránka pro zákazníky</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="gh3">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">Nahrát <strong>akce_fronta.html</strong>
+        <div class="item-sub">Frontový systém pro venkovní akce</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="gh4">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">Otestovat živý web v Chrome
+        <div class="item-sub">coulcz.github.io/masaze – zkontrolovat všechny funkce</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="gh5">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">Nastavit GitHub token pro formuláře
+        <div class="item-sub">Fine-grained token pro odesílání poptávek</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEKCE 2: MAPA -->
+  <div class="sekce">
+    <h2>🗺 Krok 2 – Dodělat mapu ČR</h2>
+    <div class="item" onclick="toggle(this)" data-id="m1">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">Kliknutí na okres = maséři v okresu
+        <div class="item-sub">Filtrovat seznam masérů dle kliknutého okresu</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="m2">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">Barevné rozlišení krajů
+        <div class="item-sub">Každý kraj jinou barvou na SVG mapě</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="m3">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">Legenda mapy
+        <div class="item-sub">Co znamenají barvy, tečky, ikony</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="m4">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">Heatmapa poptávek
+        <div class="item-sub">Kde je nejvíc poptávek = červenější okres</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="m5">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">Mapa i v klient.html
+        <div class="item-sub">Zákazníci vidí kde maséři působí</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEKCE 3: PDF NÁVOD -->
+  <div class="sekce">
+    <h2>📄 Krok 3 – PDF návod</h2>
+    <div class="item" onclick="toggle(this)" data-id="p1">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">Návod pro maséry
+        <div class="item-sub">Jak se registrovat, přidat profil, spravovat kartotéku</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="p2">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">Návod pro klienty
+        <div class="item-sub">Jak zadat poptávku, rezervaci, najít maséra</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="p3">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">Návod pro adminy
+        <div class="item-sub">GitHub token, schvalování, správa systému</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="p4">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">Návod pro venkovní akce
+        <div class="item-sub">Jak spustit frontu, QR kód, Pomodoro timer</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEKCE 4: GO LIVE -->
+  <div class="sekce">
+    <h2>🚀 Krok 4 – GO LIVE!</h2>
+    <div class="item" onclick="toggle(this)" data-id="l1">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">Oznámit Honzovi a Lucii
+        <div class="item-sub">Přístupové hesla, návod, GitHub notifikace</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="l2">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">První reální maséři v systému
+        <div class="item-sub">Martin, Lucie, Honza – profily na mapě</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="l3">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">První rezervace přes klient.html
+        <div class="item-sub">Otestovat celý flow rezervace</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="l4">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">Marketing – sdílet na soc. sítích
+        <div class="item-sub">Facebook, Instagram – Masážní HUB CZ/SK je live!</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="l5">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">První koruna! 💰
+        <div class="item-sub">První platba přes systém – historický moment! 😄</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEKCE TESTOVÁNÍ -->
+  <div class="sekce">
+    <h2>🧪 Testování systému</h2>
+    <p style="font-size:11px;color:var(--txt2);margin-bottom:8px">Otestuj každou záložku a zaškrtni co funguje!</p>
+
+    <!-- MAPA -->
+    <div style="background:var(--bg);border:.5px solid var(--brd);border-radius:var(--r);padding:10px;margin-bottom:6px">
+      <div style="font-size:12px;font-weight:500;margin-bottom:6px">🗺 Mapa</div>
+      <div class="item" onclick="toggle(this)" data-id="t1"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Zobrazí se mapa ČR se všemi okresy</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t2"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Přidat maséra → zobrazí se tečka na mapě</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t3"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Klik na tečku → detail maséra s odznaky</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t4"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Oblast působení → průhledné tečky</div></div>
+    </div>
+
+    <!-- POPTÁVKA -->
+    <div style="background:var(--bg);border:.5px solid var(--brd);border-radius:var(--r);padding:10px;margin-bottom:6px">
+      <div style="font-size:12px;font-weight:500;margin-bottom:6px">🔍 Poptávka</div>
+      <div class="item" onclick="toggle(this)" data-id="t5"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Zadat poptávku (Jednotlivec/Kolektiv/Firma)</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t6"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">🔍 Najít maséry → zobrazí skóre shody</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t7"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Navrhnout spárování → čeká na schválení admina</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t8"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Admin schválí/zamítne spárování</div></div>
+    </div>
+
+    <!-- REZERVACE -->
+    <div style="background:var(--bg);border:.5px solid var(--brd);border-radius:var(--r);padding:10px;margin-bottom:6px">
+      <div style="font-size:12px;font-weight:500;margin-bottom:6px">📅 Rezervace</div>
+      <div class="item" onclick="toggle(this)" data-id="t9"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Zadat rezervaci → uloží se jako čekající</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t10"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Admin vidí novou rezervaci v sekci Admin</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t11"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Blokace dovolené funguje správně</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t12"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Min. předstih rezervace funguje</div></div>
+    </div>
+
+    <!-- KARTOTÉKA -->
+    <div style="background:var(--bg);border:.5px solid var(--brd);border-radius:var(--r);padding:10px;margin-bottom:6px">
+      <div style="font-size:12px;font-weight:500;margin-bottom:6px">🗂 Kartotéka</div>
+      <div class="item" onclick="toggle(this)" data-id="t13"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Přidat klienta → uloží se</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t14"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Přidat masáž ke klientovi → výkaz práce</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t15"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Export/Import JSON funguje</div></div>
+    </div>
+
+    <!-- CRM -->
+    <div style="background:var(--bg);border:.5px solid var(--brd);border-radius:var(--r);padding:10px;margin-bottom:6px">
+      <div style="font-size:12px;font-weight:500;margin-bottom:6px">🎯 CRM</div>
+      <div class="item" onclick="toggle(this)" data-id="t16"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Přidat lead → mění stavy (Nový→Osloven→Schůzka→Klient)</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t17"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Stal se klientem → přidá do kartotéky</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t18"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Jmenný seznam → přesun do leadů / kartotéky</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t19"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Úkoly → zaškrtávání, priority, termíny</div></div>
+    </div>
+
+    <!-- VÝKAZ + CENÍK -->
+    <div style="background:var(--bg);border:.5px solid var(--brd);border-radius:var(--r);padding:10px;margin-bottom:6px">
+      <div style="font-size:12px;font-weight:500;margin-bottom:6px">📊 Výkaz + 💰 Ceník</div>
+      <div class="item" onclick="toggle(this)" data-id="t20"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Přidat záznam výkazu → počítá tržby</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t21"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Export CSV funguje</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t22"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Ceník → přidat položku, generovat QR</div></div>
+    </div>
+
+    <!-- ATMOSFÉRA + POMODORO -->
+    <div style="background:var(--bg);border:.5px solid var(--brd);border-radius:var(--r);padding:10px;margin-bottom:6px">
+      <div style="font-size:12px;font-weight:500;margin-bottom:6px">🎵 Atmosféra + 🍅 Pomodoro</div>
+      <div class="item" onclick="toggle(this)" data-id="t23"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Zvuky atmosféry hrají v Chrome</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t24"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Pomodoro timer odpočítává + přechod fází</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t25"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Hlasový asistent 🔊 mluví česky</div></div>
+    </div>
+
+    <!-- AKCE FRONTA -->
+    <div style="background:var(--bg);border:.5px solid var(--brd);border-radius:var(--r);padding:10px;margin-bottom:6px">
+      <div style="font-size:12px;font-weight:500;margin-bottom:6px">🎪 akce_fronta.html</div>
+      <div class="item" onclick="toggle(this)" data-id="t26"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Klient se přihlásí do fronty (věkový souhlas)</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t27"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Admin vidí frontu, spustí timer</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t28"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Klient vidí odpočet na základním displeji</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t29"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Multi-masér → každý má svou frontu</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t30"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Kalkulačka akce → km × 2 × 10 Kč</div></div>
+    </div>
+
+    <!-- KLIENT.HTML -->
+    <div style="background:var(--bg);border:.5px solid var(--brd);border-radius:var(--r);padding:10px;margin-bottom:6px">
+      <div style="font-size:12px;font-weight:500;margin-bottom:6px">🌐 klient.html</div>
+      <div class="item" onclick="toggle(this)" data-id="t31"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Zobrazí seznam masérů z data.json</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t32"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Rezervace → uloží se, admin vidí v index.html</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t33"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Poptávka firmy → formulář odešle</div></div>
+    </div>
+
+    <!-- ADMIN -->
+    <div style="background:var(--bg);border:.5px solid var(--brd);border-radius:var(--r);padding:10px;margin-bottom:6px">
+      <div style="font-size:12px;font-weight:500;margin-bottom:6px">⚙️ Admin</div>
+      <div class="item" onclick="toggle(this)" data-id="t34"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Přihlášení Martin/Lucie/Honza funguje</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t35"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Nové rezervace z klient.html viditelné</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t36"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">Dovolená + min. předstih nastavitelné</div></div>
+      <div class="item" onclick="toggle(this)" data-id="t37"><div class="item-cb">✓</div><div style="width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:6px"></div><div class="item-txt" style="font-size:11px">13. komnata → heslo duo2024 funguje 🚪</div></div>
+    </div>
+
+    <!-- LEGENDA -->
+    <div style="display:flex;gap:12px;font-size:11px;color:var(--txt2);margin-top:8px;flex-wrap:wrap">
+      <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red)"></span> Kritické</span>
+      <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--amber)"></span> Důležité</span>
+      <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green)"></span> Bonus</span>
+    </div>
+  </div>
+
+  <!-- SEKCE 5: BUDOUCNOST -->
+  <div class="sekce">
+    <h2>🔮 Budoucnost</h2>
+    <div class="item" onclick="toggle(this)" data-id="b1">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">🇸🇰 Slovenská mapa
+        <div class="item-sub">Rozšíření na SR – okresy, maséři</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="b2">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">💰 Monetizace
+        <div class="item-sub">Předplatné pro maséry, provize z rezervací</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="b3">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">🚂 Firemní masáže (vlaky, firmy)
+        <div class="item-sub">ČD, RegioJet, korporáty</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="b4">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">📱 Mobilní appka
+        <div class="item-sub">PWA nebo nativní app</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="b5">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">🌍 Expanze do zahraničí
+        <div class="item-sub">Polsko, Maďarsko, Německo...</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="b6">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">🚂 Kupé systém pro venkovní akce
+        <div class="item-sub">Číslovaná stanoviště jako kupé ve vlaku → klient ví přesně kam jít!</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="b7">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">🚇 Masážní HUB Metro CZ
+        <div class="item-sub">Masáže na stanicích metra Praha – 61 stanic · 5 min/100 Kč · Honzův tým · QR fronta</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="b8">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">🤖 Telegram bot pro tým
+        <div class="item-sub">/masaze /rezervace /fronta /martin /lucie – automatické odpovědi přes BotFather + Python/Node.js</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="b9">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">💬 Skupinový chat týmu
+        <div class="item-sub">WhatsApp nebo Telegram skupina – Martin, Lucie, Honza, Luboš · sdílení odkazů na HUB</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="b10">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">🧘 Cviky pro klienty – sekce v apce
+        <div class="item-sub">Cviky PŘED masáží · ПІСЛЯ masáže · Se židlí · Bez židle · Pro řidiče 🚗</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="b11">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">🗺 Mapa – nabídky masérů v okresech
+        <div class="item-sub">Klik na okres = zobrazí nabídky masérů · barevné rozlišení · heatmapa poptávek</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="b15">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">🗺 Doladit mapu – velikost + fullscreen
+        <div class="item-sub">Mapa miniaturní · Fullscreen ještě horší 🙈 · Opravit zoom · Správná velikost na mobilu</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="b16">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">🎨 Skiny / Témata – vizuální styly appky
+        <div class="item-sub">🌙 Dark · ☀️ Light · 🌸 Pink · 🔵 Blue · 🌿 Green · 🖤 Black · 💛 Gold VIP 😄</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="b12">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">✅ Úkoly pro KLIENTY před/po masáži
+        <div class="item-sub">Co připravit · Co vzít s sebou · Co dělat po masáži · Pít vodu · Odpočívat</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="b13">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">✅ Úkoly pro MASÉRY – denní rutina
+        <div class="item-sub">Ranní rutina · Příprava vybavení · Péče o sebe · Administrativa · Večerní uzávěrka</div>
+      </div>
+    </div>
+    <div class="item" onclick="toggle(this)" data-id="b14">
+      <div class="item-cb">✓</div>
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:5px"></div>
+      <div class="item-txt">⏱ Checklist PŘED masáží + časovač
+        <div class="item-sub">Příprava stolu · Oleje · Dezinfekce · Dotazník · Rozehřátí rukou · Timer přípravy</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POZNÁMKY / DENÍK -->
+  <div class="sekce">
+    <h2>📝 Poznámky & Deník</h2>
+
+    <!-- RYCHLÝ ZÁPIS -->
+    <div style="display:flex;gap:6px;margin-bottom:10px">
+      <input type="text" id="poz-text" placeholder="Rychlá poznámka..." style="flex:1;padding:9px 12px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg2);color:var(--txt);font-size:13px;font-family:inherit" onkeydown="if(event.key==='Enter')addPoz()"/>
+      <button onclick="addPoz()" style="padding:9px 14px;border-radius:var(--r);border:none;background:var(--blue);color:#fff;cursor:pointer;font-size:13px">+</button>
+    </div>
+
+    <!-- FILTER -->
+    <div style="display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap">
+      <button class="btn-reset poz-filter on" onclick="filterPoz('vse')" data-f="vse">Vše</button>
+      <button class="btn-reset poz-filter" onclick="filterPoz('napad')" data-f="napad">💡 Nápad</button>
+      <button class="btn-reset poz-filter" onclick="filterPoz('ukol')" data-f="ukol">✅ Úkol</button>
+      <button class="btn-reset poz-filter" onclick="filterPoz('denik')" data-f="denik">📝 Deník</button>
+      <button class="btn-reset poz-filter" onclick="filterPoz('masaz')" data-f="masaz">💆 Masáž</button>
+    </div>
+
+    <!-- IMPORT / EXPORT -->
+    <div style="display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap">
+      <button onclick="importZDeniku()" class="btn-reset" style="font-size:11px">📥 Import z Deníku</button>
+      <button onclick="importZCRM()" class="btn-reset" style="font-size:11px">📥 Import z CRM úkolů</button>
+      <button onclick="exportPoz()" class="btn-reset" style="font-size:11px">📤 Export JSON</button>
+      <label class="btn-reset" style="font-size:11px;cursor:pointer">📂 Načíst soubor<input type="file" accept=".json" onchange="importSoubor(this)" style="display:none"/></label>
+    </div>
+
+    <!-- SEZNAM POZNÁMEK -->
+    <div id="poz-list"><div style="text-align:center;padding:16px;color:var(--txt2);font-size:12px">Žádné poznámky. Napiš první! 😊</div></div>
+    <div id="poz-stats" style="font-size:11px;color:var(--txt2);text-align:right;margin-top:4px"></div>
+  </div>
+
+  <!-- GTD SEKCE -->
+  <div class="sekce">
+    <h2>🎯 GTD – Getting Things Done</h2>
+    <p style="font-size:11px;color:var(--txt2);margin-bottom:12px">Systém pro maséry – zachyť vše, zpracuj, jednej!</p>
+
+    <!-- 5 KOŠŮ GTD -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px" class="gtd-grid">
+
+      <div style="background:#FFF8E1;border:.5px solid #F5A623;border-radius:var(--r);padding:10px">
+        <div style="font-size:13px;font-weight:500;margin-bottom:6px">📥 Inbox</div>
+        <div style="font-size:10px;color:var(--txt2);margin-bottom:6px">Rychlé nápady – zpracovat dnes!</div>
+        <div id="gtd-inbox"></div>
+        <div style="display:flex;gap:4px;margin-top:6px">
+          <input type="text" id="gtd-in-text" placeholder="Rychlý nápad..." style="flex:1;font-size:11px;padding:5px 8px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg);color:var(--txt)" onkeydown="if(event.key==='Enter')addGTD('inbox')"/>
+          <button onclick="addGTD('inbox')" style="padding:5px 10px;border-radius:var(--r);border:none;background:#F5A623;color:#fff;cursor:pointer;font-size:12px">+</button>
+        </div>
+      </div>
+
+      <div style="background:#E1F5EE;border:.5px solid var(--green);border-radius:var(--r);padding:10px">
+        <div style="font-size:13px;font-weight:500;margin-bottom:6px">⚡ Další akce</div>
+        <div style="font-size:10px;color:var(--txt2);margin-bottom:6px">Co udělat TEĎ hned!</div>
+        <div id="gtd-akce"></div>
+        <div style="display:flex;gap:4px;margin-top:6px">
+          <input type="text" id="gtd-ak-text" placeholder="Zavolat, napsat..." style="flex:1;font-size:11px;padding:5px 8px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg);color:var(--txt)" onkeydown="if(event.key==='Enter')addGTD('akce')"/>
+          <button onclick="addGTD('akce')" style="padding:5px 10px;border-radius:var(--r);border:none;background:var(--green);color:#fff;cursor:pointer;font-size:12px">+</button>
+        </div>
+      </div>
+
+      <div style="background:#E6F1FB;border:.5px solid var(--blue);border-radius:var(--r);padding:10px">
+        <div style="font-size:13px;font-weight:500;margin-bottom:6px">📅 Plánované</div>
+        <div style="font-size:10px;color:var(--txt2);margin-bottom:6px">S termínem – jednou</div>
+        <div id="gtd-plan"></div>
+        <div style="display:flex;gap:4px;margin-top:6px">
+          <input type="text" id="gtd-pl-text" placeholder="Akce v RpR, kurz..." style="flex:1;font-size:11px;padding:5px 8px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg);color:var(--txt)" onkeydown="if(event.key==='Enter')addGTD('plan')"/>
+          <button onclick="addGTD('plan')" style="padding:5px 10px;border-radius:var(--r);border:none;background:var(--blue);color:#fff;cursor:pointer;font-size:12px">+</button>
+        </div>
+      </div>
+
+      <div style="background:var(--bg2);border:.5px solid var(--brd);border-radius:var(--r);padding:10px">
+        <div style="font-size:13px;font-weight:500;margin-bottom:6px">💤 Jednou možná</div>
+        <div style="font-size:10px;color:var(--txt2);margin-bottom:6px">Nápady do budoucna</div>
+        <div id="gtd-mozna"></div>
+        <div style="display:flex;gap:4px;margin-top:6px">
+          <input type="text" id="gtd-mo-text" placeholder="Jednou zkusit..." style="flex:1;font-size:11px;padding:5px 8px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg);color:var(--txt)" onkeydown="if(event.key==='Enter')addGTD('mozna')"/>
+          <button onclick="addGTD('mozna')" style="padding:5px 10px;border-radius:var(--r);border:none;background:var(--txt2);color:#fff;cursor:pointer;font-size:12px">+</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- EISENHOWEROVA MATICE -->
+    <div style="margin-top:14px;padding-top:12px;border-top:.5px solid var(--brd)">
+      <div style="font-size:13px;font-weight:500;margin-bottom:4px">📊 Eisenhowerova matice</div>
+      <div style="font-size:11px;color:var(--txt2);margin-bottom:10px">Roztřiď úkoly dle důležitosti a urgentnosti</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px" class="mat-grid">
+
+        <!-- A -->
+        <div style="background:#FCEBEB;border:.5px solid var(--red);border-radius:var(--r);padding:10px">
+          <div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:4px">🔴 A – Udělej TEĎ</div>
+          <div style="font-size:10px;color:var(--txt2);margin-bottom:6px">Důležité + Urgentní</div>
+          <div id="mat-a"></div>
+          <div style="display:flex;gap:4px;margin-top:6px">
+            <input type="text" id="mat-a-text" placeholder="Musím dnes!" style="flex:1;font-size:11px;padding:4px 7px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg);color:var(--txt)" onkeydown="if(event.key==='Enter')addMat('a')"/>
+            <button onclick="addMat('a')" style="padding:4px 9px;border-radius:var(--r);border:none;background:var(--red);color:#fff;cursor:pointer;font-size:12px">+</button>
+          </div>
+        </div>
+
+        <!-- B -->
+        <div style="background:#E6F1FB;border:.5px solid var(--blue);border-radius:var(--r);padding:10px">
+          <div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:4px">🔵 B – Naplánuj</div>
+          <div style="font-size:10px;color:var(--txt2);margin-bottom:6px">Důležité + Není urgentní</div>
+          <div id="mat-b"></div>
+          <div style="display:flex;gap:4px;margin-top:6px">
+            <input type="text" id="mat-b-text" placeholder="Tento týden..." style="flex:1;font-size:11px;padding:4px 7px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg);color:var(--txt)" onkeydown="if(event.key==='Enter')addMat('b')"/>
+            <button onclick="addMat('b')" style="padding:4px 9px;border-radius:var(--r);border:none;background:var(--blue);color:#fff;cursor:pointer;font-size:12px">+</button>
+          </div>
+        </div>
+
+        <!-- C -->
+        <div style="background:#FFF8E1;border:.5px solid var(--amber);border-radius:var(--r);padding:10px">
+          <div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:4px">🟡 C – Deleguj</div>
+          <div style="font-size:10px;color:var(--txt2);margin-bottom:6px">Není důležité + Urgentní</div>
+          <div id="mat-c"></div>
+          <div style="display:flex;gap:4px;margin-top:6px">
+            <input type="text" id="mat-c-text" placeholder="Může to udělat někdo jiný..." style="flex:1;font-size:11px;padding:4px 7px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg);color:var(--txt)" onkeydown="if(event.key==='Enter')addMat('c')"/>
+            <button onclick="addMat('c')" style="padding:4px 9px;border-radius:var(--r);border:none;background:var(--amber);color:#fff;cursor:pointer;font-size:12px">+</button>
+          </div>
+        </div>
+
+        <!-- D -->
+        <div style="background:var(--bg2);border:.5px solid var(--brd);border-radius:var(--r);padding:10px">
+          <div style="font-size:12px;font-weight:600;color:var(--txt2);margin-bottom:4px">⚪ D – Smaž / Ignoruj</div>
+          <div style="font-size:10px;color:var(--txt2);margin-bottom:6px">Není důležité + Není urgentní</div>
+          <div id="mat-d"></div>
+          <div style="display:flex;gap:4px;margin-top:6px">
+            <input type="text" id="mat-d-text" placeholder="Vzducholoď... 😄" style="flex:1;font-size:11px;padding:4px 7px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg);color:var(--txt)" onkeydown="if(event.key==='Enter')addMat('d')"/>
+            <button onclick="addMat('d')" style="padding:4px 9px;border-radius:var(--r);border:none;background:var(--txt2);color:#fff;cursor:pointer;font-size:12px">+</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ODKAZ NA SEŠITY -->
+    <a href="sesity.html" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:linear-gradient(135deg,#E6F1FB,#d4e8f7);border-radius:var(--r);border:.5px solid var(--blue);text-decoration:none;color:var(--blue);font-size:12px;font-weight:500">
+      <span style="font-size:20px">📓</span>
+      <div>
+        <div>Pracovní sešity pro maséry</div>
+        <div style="font-size:10px;color:var(--txt2);font-weight:400">Příjem klienta · Záznam masáže · Zpětná vazba · Faktura</div>
+      </div>
+      <span style="margin-left:auto">→</span>
+    </a>
+  </div>
+
+  <div style="text-align:center;margin-top:8px">
+    <button class="btn-reset" onclick="resetAll()">↺ Resetovat úkoly</button>
+    <div style="font-size:11px;color:var(--txt2);margin-top:8px">
+      © 2026 Masážní HUB CZ/SK · Duo IO + Martin 💪
+    </div>
+  </div>
+
+</div>
+
+<script>
+var STORAGE_KEY = 'masazhub_todo';
+
+function loadState(){
+  try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}'); }
+  catch(e){ return {}; }
+}
+
+function saveState(state){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  catch(e){}
+}
+
+function toggle(el){
+  var id = el.dataset.id;
+  var state = loadState();
+  state[id] = !state[id];
+  saveState(state);
+  applyState();
+}
+
+function applyState(){
+  var state = loadState();
+  var items = document.querySelectorAll('.item[data-id]');
+  var done = 0;
+  items.forEach(function(item){
+    var id = item.dataset.id;
+    if(state[id]){
+      item.classList.add('done');
+      item.querySelector('.item-cb').textContent = '✓';
+      done++;
+    } else {
+      item.classList.remove('done');
+      item.querySelector('.item-cb').textContent = '';
+    }
+  });
+  var total = items.length;
+  var pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById('st-done').textContent = done;
+  document.getElementById('st-total').textContent = total;
+  document.getElementById('st-pct').textContent = pct + '%';
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-txt').textContent = done + ' / ' + total;
+
+  // Barva progress baru
+  var fill = document.getElementById('prog-fill');
+  fill.style.background = pct >= 80 ? '#1D9E75' : pct >= 50 ? '#BA7517' : '#185FA5';
+}
+
+function resetAll(){
+  if(confirm('Resetovat všechny fajfky?')){
+    localStorage.removeItem(STORAGE_KEY);
+    applyState();
+  }
+}
+
+// Init
+applyState();
+
+// ── POZNÁMKY / DENÍK ─────────────────────────────────────────────────────────
+var POZ_KEY = 'masazhub_poznamky';
+var aktivniFilter = 'vse';
+
+function loadPoz(){
+  try{ return JSON.parse(localStorage.getItem(POZ_KEY)||'[]'); }
+  catch(e){ return []; }
+}
+
+function savePoz(data){
+  try{ localStorage.setItem(POZ_KEY, JSON.stringify(data)); }
+  catch(e){}
+}
+
+function addPoz(){
+  var input = document.getElementById('poz-text');
+  var text = input.value.trim();
+  if(!text) return;
+
+  // Detekovat kategorii z textu
+  var kat = 'vse';
+  if(text.startsWith('!') || text.toLowerCase().includes('udělat') || text.toLowerCase().includes('zavolat') || text.toLowerCase().includes('koupit')) kat = 'ukol';
+  else if(text.startsWith('?') || text.startsWith('💡') || text.toLowerCase().includes('nápad') || text.toLowerCase().includes('co kdyby')) kat = 'napad';
+  else if(text.toLowerCase().includes('masáž') || text.toLowerCase().includes('klient') || text.toLowerCase().includes('masér')) kat = 'masaz';
+  else if(text.startsWith('#') || text.length > 50) kat = 'denik';
+
+  var poz = loadPoz();
+  poz.unshift({
+    id: Date.now(),
+    text: text.replace(/^[!?#]\s*/,''),
+    kat: kat,
+    hotovo: false,
+    datum: new Date().toLocaleString('cs-CZ',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})
+  });
+  savePoz(poz);
+  input.value = '';
+  renderPoz();
+}
+
+function togglePozHotovo(id){
+  var poz = loadPoz();
+  var p = poz.find(function(x){ return x.id===id; });
+  if(p) p.hotovo = !p.hotovo;
+  savePoz(poz);
+  renderPoz();
+}
+
+function delPoz(id){
+  var poz = loadPoz().filter(function(x){ return x.id!==id; });
+  savePoz(poz);
+  renderPoz();
+}
+
+function filterPoz(f){
+  aktivniFilter = f;
+  document.querySelectorAll('.poz-filter').forEach(function(b){
+    b.classList.toggle('on', b.dataset.f === f);
+  });
+  renderPoz();
+}
+
+function changePozKat(id, kat){
+  var poz = loadPoz();
+  var p = poz.find(function(x){ return x.id===id; });
+  if(p) p.kat = kat;
+  savePoz(poz);
+  renderPoz();
+}
+
+function renderPoz(){
+  var el = document.getElementById('poz-list'); if(!el) return;
+  var poz = loadPoz();
+  var filtered = aktivniFilter === 'vse' ? poz : poz.filter(function(p){ return p.kat === aktivniFilter; });
+
+  if(!filtered.length){
+    el.innerHTML = '<div style="text-align:center;padding:16px;color:var(--txt2);font-size:12px">' +
+      (aktivniFilter === 'vse' ? 'Žádné poznámky. Napiš první! 😊' : 'Žádné poznámky v této kategorii.') + '</div>';
+    return;
+  }
+
+  var katInfo = {
+    napad: {ico:'💡', lab:'Nápad', cls:'k-napad'},
+    ukol:  {ico:'✅', lab:'Úkol',  cls:'k-ukol'},
+    denik: {ico:'📝', lab:'Deník', cls:'k-denik'},
+    masaz: {ico:'💆', lab:'Masáž', cls:'k-masaz'},
+    vse:   {ico:'📌', lab:'Obecné',cls:'k-vse'}
+  };
+
+  el.innerHTML = filtered.map(function(p){
+    var k = katInfo[p.kat] || katInfo.vse;
+    return '<div class="poz-item' + (p.hotovo?' hotovo':'') + '">' +
+      '<input type="checkbox"' + (p.hotovo?' checked':'') + ' onclick="togglePozHotovo('+p.id+')" style="width:16px;height:16px;flex-shrink:0;margin-top:2px;cursor:pointer"/>' +
+      '<div style="flex:1">' +
+        '<div class="poz-txt" style="font-size:13px">' + p.text + '</div>' +
+        '<div style="display:flex;align-items:center;gap:5px;margin-top:4px;flex-wrap:wrap">' +
+          '<span class="kat-badge ' + k.cls + '">' + k.ico + ' ' + k.lab + '</span>' +
+          '<span style="font-size:10px;color:var(--txt2)">' + p.datum + '</span>' +
+          '<select onchange="changePozKat('+p.id+',this.value)" style="font-size:10px;padding:1px 4px;border-radius:4px;border:.5px solid var(--brd);background:var(--bg2);color:var(--txt2)">' +
+            '<option value="vse"' + (p.kat==='vse'?' selected':'') + '>📌</option>' +
+            '<option value="napad"' + (p.kat==='napad'?' selected':'') + '>💡</option>' +
+            '<option value="ukol"' + (p.kat==='ukol'?' selected':'') + '>✅</option>' +
+            '<option value="denik"' + (p.kat==='denik'?' selected':'') + '>📝</option>' +
+            '<option value="masaz"' + (p.kat==='masaz'?' selected':'') + '>💆</option>' +
+          '</select>' +
+        '</div>' +
+      '</div>' +
+      '<span onclick="delPoz('+p.id+')" style="cursor:pointer;font-size:14px;color:var(--txt2);padding:2px 4px">🗑</span>' +
+    '</div>';
+  }).join('');
+}
+
+// Načíst poznámky při startu
+renderPoz();
+
+// ── GTD SYSTÉM ────────────────────────────────────────────────────────────────
+var GTD_KEY = 'masazhub_gtd';
+
+function loadGTD(){
+  try{ return JSON.parse(localStorage.getItem(GTD_KEY)||'{"inbox":[],"akce":[],"plan":[],"mozna":[]}'); }
+  catch(e){ return {inbox:[],akce:[],plan:[],mozna:[]}; }
+}
+function saveGTD(d){ try{ localStorage.setItem(GTD_KEY,JSON.stringify(d)); }catch(e){} }
+
+var GTD_IDS = {'inbox':'gtd-in-text','akce':'gtd-ak-text','plan':'gtd-pl-text','mozna':'gtd-mo-text'};
+
+function addGTD(kos){
+  var inputId = GTD_IDS[kos];
+  var el = document.getElementById(inputId);
+  var text = el ? el.value.trim() : '';
+  if(!text) return;
+  var d = loadGTD();
+  d[kos] = d[kos]||[];
+  d[kos].unshift({id:Date.now(),text:text,hotovo:false});
+  saveGTD(d);
+  if(el) el.value='';
+  renderGTD();
+
+// ── EISENHOWEROVA MATICE ──────────────────────────────────────────────────────
+var MAT_KEY = 'masazhub_matice';
+
+function loadMat(){ try{ return JSON.parse(localStorage.getItem(MAT_KEY)||'{"a":[],"b":[],"c":[],"d":[]}'); }catch(e){ return {a:[],b:[],c:[],d:[]}; } }
+function saveMat(d){ try{ localStorage.setItem(MAT_KEY,JSON.stringify(d)); }catch(e){} }
+
+var MAT_COLORS = {a:'var(--red)',b:'var(--blue)',c:'var(--amber)',d:'var(--txt2)'};
+
+function addMat(kos){
+  var el = document.getElementById('mat-'+kos+'-text');
+  var text = el ? el.value.trim() : '';
+  if(!text) return;
+  var d = loadMat();
+  d[kos] = d[kos]||[];
+  d[kos].unshift({id:Date.now(),text:text,hotovo:false});
+  saveMat(d);
+  if(el) el.value='';
+  renderMat();
+}
+
+function toggleMat(kos,id){
+  var d = loadMat();
+  var item = (d[kos]||[]).find(function(x){ return x.id===id; });
+  if(item) item.hotovo = !item.hotovo;
+  saveMat(d); renderMat();
+}
+
+function delMat(kos,id){
+  var d = loadMat();
+  d[kos] = (d[kos]||[]).filter(function(x){ return x.id!==id; });
+  saveMat(d); renderMat();
+}
+
+function renderMat(){
+  var d = loadMat();
+  ['a','b','c','d'].forEach(function(kos){
+    var el = document.getElementById('mat-'+kos); if(!el) return;
+    var items = d[kos]||[];
+    if(!items.length){ el.innerHTML='<div style="font-size:10px;color:var(--txt2);padding:3px">Prázdno</div>'; return; }
+    el.innerHTML = items.slice(0,5).map(function(item){
+      return '<div style="display:flex;align-items:center;gap:4px;padding:3px 0;border-bottom:.5px solid rgba(0,0,0,.06)">' +
+        '<input type="checkbox"'+(item.hotovo?' checked':'')+' onclick="toggleMat(&quot;'+kos+'&quot;,'+item.id+')" style="width:13px;height:13px;cursor:pointer;flex-shrink:0"/>' +
+        '<span style="flex:1;font-size:11px;'+(item.hotovo?'text-decoration:line-through;opacity:.5':'')+'">' + item.text + '</span>' +
+        '<span onclick="delMat(&quot;'+kos+'&quot;,'+item.id+')" style="cursor:pointer;font-size:10px;opacity:.4">✕</span>' +
+      '</div>';
+    }).join('');
+  });
+}
+
+renderMat();
+}
+
+function toggleGTD(kos,id){
+  var d = loadGTD();
+  var item = (d[kos]||[]).find(function(x){ return x.id===id; });
+  if(item) item.hotovo = !item.hotovo;
+  saveGTD(d); renderGTD();
+
+// ── EISENHOWEROVA MATICE ──────────────────────────────────────────────────────
+var MAT_KEY = 'masazhub_matice';
+
+function loadMat(){ try{ return JSON.parse(localStorage.getItem(MAT_KEY)||'{"a":[],"b":[],"c":[],"d":[]}'); }catch(e){ return {a:[],b:[],c:[],d:[]}; } }
+function saveMat(d){ try{ localStorage.setItem(MAT_KEY,JSON.stringify(d)); }catch(e){} }
+
+var MAT_COLORS = {a:'var(--red)',b:'var(--blue)',c:'var(--amber)',d:'var(--txt2)'};
+
+function addMat(kos){
+  var el = document.getElementById('mat-'+kos+'-text');
+  var text = el ? el.value.trim() : '';
+  if(!text) return;
+  var d = loadMat();
+  d[kos] = d[kos]||[];
+  d[kos].unshift({id:Date.now(),text:text,hotovo:false});
+  saveMat(d);
+  if(el) el.value='';
+  renderMat();
+}
+
+function toggleMat(kos,id){
+  var d = loadMat();
+  var item = (d[kos]||[]).find(function(x){ return x.id===id; });
+  if(item) item.hotovo = !item.hotovo;
+  saveMat(d); renderMat();
+}
+
+function delMat(kos,id){
+  var d = loadMat();
+  d[kos] = (d[kos]||[]).filter(function(x){ return x.id!==id; });
+  saveMat(d); renderMat();
+}
+
+function renderMat(){
+  var d = loadMat();
+  ['a','b','c','d'].forEach(function(kos){
+    var el = document.getElementById('mat-'+kos); if(!el) return;
+    var items = d[kos]||[];
+    if(!items.length){ el.innerHTML='<div style="font-size:10px;color:var(--txt2);padding:3px">Prázdno</div>'; return; }
+    el.innerHTML = items.slice(0,5).map(function(item){
+      return '<div style="display:flex;align-items:center;gap:4px;padding:3px 0;border-bottom:.5px solid rgba(0,0,0,.06)">' +
+        '<input type="checkbox"'+(item.hotovo?' checked':'')+' onclick="toggleMat(&quot;'+kos+'&quot;,'+item.id+')" style="width:13px;height:13px;cursor:pointer;flex-shrink:0"/>' +
+        '<span style="flex:1;font-size:11px;'+(item.hotovo?'text-decoration:line-through;opacity:.5':'')+'">' + item.text + '</span>' +
+        '<span onclick="delMat(&quot;'+kos+'&quot;,'+item.id+')" style="cursor:pointer;font-size:10px;opacity:.4">✕</span>' +
+      '</div>';
+    }).join('');
+  });
+}
+
+renderMat();
+}
+
+function delGTD(kos,id){
+  var d = loadGTD();
+  d[kos] = (d[kos]||[]).filter(function(x){ return x.id!==id; });
+  saveGTD(d); renderGTD();
+
+// ── EISENHOWEROVA MATICE ──────────────────────────────────────────────────────
+var MAT_KEY = 'masazhub_matice';
+
+function loadMat(){ try{ return JSON.parse(localStorage.getItem(MAT_KEY)||'{"a":[],"b":[],"c":[],"d":[]}'); }catch(e){ return {a:[],b:[],c:[],d:[]}; } }
+function saveMat(d){ try{ localStorage.setItem(MAT_KEY,JSON.stringify(d)); }catch(e){} }
+
+var MAT_COLORS = {a:'var(--red)',b:'var(--blue)',c:'var(--amber)',d:'var(--txt2)'};
+
+function addMat(kos){
+  var el = document.getElementById('mat-'+kos+'-text');
+  var text = el ? el.value.trim() : '';
+  if(!text) return;
+  var d = loadMat();
+  d[kos] = d[kos]||[];
+  d[kos].unshift({id:Date.now(),text:text,hotovo:false});
+  saveMat(d);
+  if(el) el.value='';
+  renderMat();
+}
+
+function toggleMat(kos,id){
+  var d = loadMat();
+  var item = (d[kos]||[]).find(function(x){ return x.id===id; });
+  if(item) item.hotovo = !item.hotovo;
+  saveMat(d); renderMat();
+}
+
+function delMat(kos,id){
+  var d = loadMat();
+  d[kos] = (d[kos]||[]).filter(function(x){ return x.id!==id; });
+  saveMat(d); renderMat();
+}
+
+function renderMat(){
+  var d = loadMat();
+  ['a','b','c','d'].forEach(function(kos){
+    var el = document.getElementById('mat-'+kos); if(!el) return;
+    var items = d[kos]||[];
+    if(!items.length){ el.innerHTML='<div style="font-size:10px;color:var(--txt2);padding:3px">Prázdno</div>'; return; }
+    el.innerHTML = items.slice(0,5).map(function(item){
+      return '<div style="display:flex;align-items:center;gap:4px;padding:3px 0;border-bottom:.5px solid rgba(0,0,0,.06)">' +
+        '<input type="checkbox"'+(item.hotovo?' checked':'')+' onclick="toggleMat(&quot;'+kos+'&quot;,'+item.id+')" style="width:13px;height:13px;cursor:pointer;flex-shrink:0"/>' +
+        '<span style="flex:1;font-size:11px;'+(item.hotovo?'text-decoration:line-through;opacity:.5':'')+'">' + item.text + '</span>' +
+        '<span onclick="delMat(&quot;'+kos+'&quot;,'+item.id+')" style="cursor:pointer;font-size:10px;opacity:.4">✕</span>' +
+      '</div>';
+    }).join('');
+  });
+}
+
+renderMat();
+}
+
+function moveGTD(kos,id,novyKos){
+  var d = loadGTD();
+  var item = (d[kos]||[]).find(function(x){ return x.id===id; });
+  if(!item) return;
+  d[kos] = d[kos].filter(function(x){ return x.id!==id; });
+  d[novyKos] = d[novyKos]||[];
+  d[novyKos].unshift(item);
+  saveGTD(d); renderGTD();
+
+// ── EISENHOWEROVA MATICE ──────────────────────────────────────────────────────
+var MAT_KEY = 'masazhub_matice';
+
+function loadMat(){ try{ return JSON.parse(localStorage.getItem(MAT_KEY)||'{"a":[],"b":[],"c":[],"d":[]}'); }catch(e){ return {a:[],b:[],c:[],d:[]}; } }
+function saveMat(d){ try{ localStorage.setItem(MAT_KEY,JSON.stringify(d)); }catch(e){} }
+
+var MAT_COLORS = {a:'var(--red)',b:'var(--blue)',c:'var(--amber)',d:'var(--txt2)'};
+
+function addMat(kos){
+  var el = document.getElementById('mat-'+kos+'-text');
+  var text = el ? el.value.trim() : '';
+  if(!text) return;
+  var d = loadMat();
+  d[kos] = d[kos]||[];
+  d[kos].unshift({id:Date.now(),text:text,hotovo:false});
+  saveMat(d);
+  if(el) el.value='';
+  renderMat();
+}
+
+function toggleMat(kos,id){
+  var d = loadMat();
+  var item = (d[kos]||[]).find(function(x){ return x.id===id; });
+  if(item) item.hotovo = !item.hotovo;
+  saveMat(d); renderMat();
+}
+
+function delMat(kos,id){
+  var d = loadMat();
+  d[kos] = (d[kos]||[]).filter(function(x){ return x.id!==id; });
+  saveMat(d); renderMat();
+}
+
+function renderMat(){
+  var d = loadMat();
+  ['a','b','c','d'].forEach(function(kos){
+    var el = document.getElementById('mat-'+kos); if(!el) return;
+    var items = d[kos]||[];
+    if(!items.length){ el.innerHTML='<div style="font-size:10px;color:var(--txt2);padding:3px">Prázdno</div>'; return; }
+    el.innerHTML = items.slice(0,5).map(function(item){
+      return '<div style="display:flex;align-items:center;gap:4px;padding:3px 0;border-bottom:.5px solid rgba(0,0,0,.06)">' +
+        '<input type="checkbox"'+(item.hotovo?' checked':'')+' onclick="toggleMat(&quot;'+kos+'&quot;,'+item.id+')" style="width:13px;height:13px;cursor:pointer;flex-shrink:0"/>' +
+        '<span style="flex:1;font-size:11px;'+(item.hotovo?'text-decoration:line-through;opacity:.5':'')+'">' + item.text + '</span>' +
+        '<span onclick="delMat(&quot;'+kos+'&quot;,'+item.id+')" style="cursor:pointer;font-size:10px;opacity:.4">✕</span>' +
+      '</div>';
+    }).join('');
+  });
+}
+
+renderMat();
+}
+
+function renderGTD(){
+  var d = loadGTD();
+  var kosy = {inbox:'gtd-inbox',akce:'gtd-akce',plan:'gtd-plan',mozna:'gtd-mozna'};
+  var presunDo = {inbox:'akce',akce:'plan',plan:'mozna',mozna:'akce'};
+  var presunIco = {inbox:'⚡',akce:'📅',plan:'💤',mozna:'⚡'};
+
+  Object.entries(kosy).forEach(function(e){
+    var kos=e[0], elId=e[1];
+    var el = document.getElementById(elId); if(!el) return;
+    var items = d[kos]||[];
+    if(!items.length){ el.innerHTML='<div style="font-size:10px;color:var(--txt2);padding:4px">Prázdno</div>'; return; }
+    el.innerHTML = items.slice(0,5).map(function(item){
+      return '<div style="display:flex;align-items:center;gap:4px;padding:3px 0;border-bottom:.5px solid rgba(0,0,0,.06)">' +
+        '<input type="checkbox"'+(item.hotovo?' checked':'')+' onclick="toggleGTD(&quot;'+kos+'&quot;,'+item.id+')" style="width:13px;height:13px;cursor:pointer;flex-shrink:0"/>' +
+        '<span style="flex:1;font-size:11px;'+(item.hotovo?'text-decoration:line-through;opacity:.5':'')+'">' + item.text + '</span>' +
+        '<span onclick="moveGTD(&quot;'+kos+'&quot;,'+item.id+',&quot;'+presunDo[kos]+'&quot;)" title="Přesunout" style="cursor:pointer;font-size:11px;opacity:.5">'+presunIco[kos]+'</span>' +
+        '<span onclick="delGTD(&quot;'+kos+'&quot;,'+item.id+')" style="cursor:pointer;font-size:10px;opacity:.4">✕</span>' +
+      '</div>';
+    }).join('');
+  });
+}
+
+renderGTD();
+
+// ── EISENHOWEROVA MATICE ──────────────────────────────────────────────────────
+var MAT_KEY = 'masazhub_matice';
+
+function loadMat(){ try{ return JSON.parse(localStorage.getItem(MAT_KEY)||'{"a":[],"b":[],"c":[],"d":[]}'); }catch(e){ return {a:[],b:[],c:[],d:[]}; } }
+function saveMat(d){ try{ localStorage.setItem(MAT_KEY,JSON.stringify(d)); }catch(e){} }
+
+var MAT_COLORS = {a:'var(--red)',b:'var(--blue)',c:'var(--amber)',d:'var(--txt2)'};
+
+function addMat(kos){
+  var el = document.getElementById('mat-'+kos+'-text');
+  var text = el ? el.value.trim() : '';
+  if(!text) return;
+  var d = loadMat();
+  d[kos] = d[kos]||[];
+  d[kos].unshift({id:Date.now(),text:text,hotovo:false});
+  saveMat(d);
+  if(el) el.value='';
+  renderMat();
+}
+
+function toggleMat(kos,id){
+  var d = loadMat();
+  var item = (d[kos]||[]).find(function(x){ return x.id===id; });
+  if(item) item.hotovo = !item.hotovo;
+  saveMat(d); renderMat();
+}
+
+function delMat(kos,id){
+  var d = loadMat();
+  d[kos] = (d[kos]||[]).filter(function(x){ return x.id!==id; });
+  saveMat(d); renderMat();
+}
+
+function renderMat(){
+  var d = loadMat();
+  ['a','b','c','d'].forEach(function(kos){
+    var el = document.getElementById('mat-'+kos); if(!el) return;
+    var items = d[kos]||[];
+    if(!items.length){ el.innerHTML='<div style="font-size:10px;color:var(--txt2);padding:3px">Prázdno</div>'; return; }
+    el.innerHTML = items.slice(0,5).map(function(item){
+      return '<div style="display:flex;align-items:center;gap:4px;padding:3px 0;border-bottom:.5px solid rgba(0,0,0,.06)">' +
+        '<input type="checkbox"'+(item.hotovo?' checked':'')+' onclick="toggleMat(&quot;'+kos+'&quot;,'+item.id+')" style="width:13px;height:13px;cursor:pointer;flex-shrink:0"/>' +
+        '<span style="flex:1;font-size:11px;'+(item.hotovo?'text-decoration:line-through;opacity:.5':'')+'">' + item.text + '</span>' +
+        '<span onclick="delMat(&quot;'+kos+'&quot;,'+item.id+')" style="cursor:pointer;font-size:10px;opacity:.4">✕</span>' +
+      '</div>';
+    }).join('');
+  });
+}
+
+renderMat();
+
+// ── IMPORT / EXPORT ───────────────────────────────────────────────────────────
+function importZDeniku(){
+  try{
+    var raw = localStorage.getItem('martin_denik');
+    if(!raw){ alert('Deník je prázdný nebo nebyl nalezen.\nOtevři nejdřív index.html a vlož záznamy do deníku.'); return; }
+    var zaznamy = JSON.parse(raw);
+    if(!zaznamy.length){ alert('Deník neobsahuje žádné záznamy.'); return; }
+    var poz = loadPoz();
+    var existujici = poz.map(function(p){ return p.text; });
+    var pridano = 0;
+    zaznamy.forEach(function(z){
+      var text = (z.nadpis ? z.nadpis + ': ' : '') + (z.obsah||'');
+      if(!text.trim()) return;
+      if(existujici.includes(text.trim())) return; // nezduplikovat
+      poz.push({
+        id: Date.now() + Math.random(),
+        text: text.trim(),
+        kat: 'denik',
+        hotovo: false,
+        datum: z.datum || z.upraveno || new Date().toLocaleString('cs-CZ'),
+        zdroj: 'deník'
+      });
+      pridano++;
+    });
+    savePoz(poz);
+    renderPoz();
+    alert('✅ Importováno ' + pridano + ' záznamů z Deníku!');
+  }catch(e){
+    alert('Chyba importu: ' + e.message);
+  }
+}
+
+function importZCRM(){
+  try{
+    var raw = localStorage.getItem('crm_ukoly');
+    if(!raw){ alert('CRM úkoly nenalezeny.\nOtevři nejdřív index.html.'); return; }
+    var ukoly = JSON.parse(raw);
+    if(!ukoly.length){ alert('Žádné CRM úkoly.'); return; }
+    var poz = loadPoz();
+    var existujici = poz.map(function(p){ return p.text; });
+    var pridano = 0;
+    ukoly.forEach(function(u){
+      if(!u.text||existujici.includes(u.text)) return;
+      poz.push({
+        id: Date.now() + Math.random(),
+        text: u.text,
+        kat: 'ukol',
+        hotovo: u.hotovo||false,
+        datum: u.pridano || new Date().toLocaleString('cs-CZ'),
+        zdroj: 'CRM'
+      });
+      pridano++;
+    });
+    savePoz(poz);
+    renderPoz();
+    alert('✅ Importováno ' + pridano + ' úkolů z CRM!');
+  }catch(e){
+    alert('Chyba importu: ' + e.message);
+  }
+}
+
+function exportPoz(){
+  var poz = loadPoz();
+  if(!poz.length){ alert('Žádné poznámky k exportu.'); return; }
+  var blob = new Blob([JSON.stringify(poz, null, 2)], {type:'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'poznamky_' + new Date().toISOString().split('T')[0] + '.json';
+  a.click();
+}
+
+function importSoubor(input){
+  var file = input.files[0]; if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      var data = JSON.parse(e.target.result);
+      // Zjistit formát - deník nebo poznámky?
+      var poz = loadPoz();
+      var pridano = 0;
+      var existujici = poz.map(function(p){ return p.text; });
+
+      if(Array.isArray(data)){
+        data.forEach(function(z){
+          // Formát poznámek
+          if(z.text && !existujici.includes(z.text)){
+            poz.push(z); pridano++;
+          }
+          // Formát deníku (nadpis + obsah)
+          else if(z.nadpis || z.obsah){
+            var text = (z.nadpis?z.nadpis+': ':'') + (z.obsah||'');
+            if(text.trim() && !existujici.includes(text.trim())){
+              poz.push({id:Date.now()+Math.random(),text:text.trim(),kat:'denik',hotovo:false,datum:z.datum||'',zdroj:'soubor'});
+              pridano++;
+            }
+          }
+        });
+      }
+      savePoz(poz);
+      renderPoz();
+      alert('✅ Importováno ' + pridano + ' záznamů ze souboru!');
+    }catch(e){
+      alert('Chyba čtení souboru: ' + e.message);
+    }
+  };
+  reader.readAsText(file);
+  input.value = '';
+}
+
+// Statistiky poznámek
+function renderPozStats(){
+  var el = document.getElementById('poz-stats'); if(!el) return;
+  var poz = loadPoz();
+  var hotovo = poz.filter(function(p){ return p.hotovo; }).length;
+  el.textContent = poz.length + ' poznámek · ' + hotovo + ' hotovo';
+}
+
+// Přepsat renderPoz aby volal stats
+var _origRenderPoz = renderPoz;
+renderPoz = function(){
+  _origRenderPoz();
+  renderPozStats();
+};
+renderPozStats();
+</script>
+</body>
+</html>
