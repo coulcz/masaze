@@ -4965,6 +4965,9 @@ body.skin-babicka .btn{font-size:16px!important;padding:14px 20px!important}
     <!-- VIDITELNOST SEKCÍ -->
     <div class="admin-panel">
       <h3>👁 Viditelnost záložek</h3>
+      <div style="display:flex;gap:6px;margin-bottom:8px">
+        <button class="btn btn-sm" onclick="resetTabVisibility()" style="color:var(--amber);border-color:var(--amber)">↺ Reset na výchozí</button>
+      </div>
       <p style="font-size:11px;color:var(--txt2);margin-bottom:10px">Vypni záložky které nechceš zobrazovat. Lze nastavit i plánované zobrazení.</p>
       <div id="visibility-list"></div>
       <button class="btn btn-b" onclick="saveVisibility()" style="margin-top:8px">💾 Uložit nastavení</button>
@@ -5147,9 +5150,10 @@ function sw(tab){
 }
 const MASERNA_SUBS=["vybaveni","dokumenty","online","finance","vzdelavani","kontakty","setkani","karticky","pdf","todo"];
 function swMaserna(s){
-  MASERNA_SUBS.forEach((id,i)=>{
-    document.querySelectorAll("#view-maserna .subtab")[i].classList.toggle("on",id===s);
-    G("mas-"+id).classList.toggle("on",id===s);
+  var tabs = document.querySelectorAll('#view-maserna .subtab');
+  MASERNA_SUBS.forEach(function(id,i){
+    if(tabs[i]) tabs[i].classList.toggle('on', id===s);
+    var v = G('mas-'+id); if(v) v.classList.toggle('on', id===s);
   });
   if(s==="karticky"){loadCardSettings();buildCards();}
   if(s==="pdf"){resetPdf();}
@@ -10785,6 +10789,18 @@ setTimeout(function(){
   showTargeting();
 }, 4000);
 
+
+// ── SWINFO – PŘEPÍNÁNÍ SUBTABŮ V INFO ────────────────────────────────────────
+function swInfo(s){
+  var subs = ['kodex','kontra','provoz','vune','dotaznik','hygiena','klient'];
+  subs.forEach(function(id){
+    var tab = document.querySelector('#view-info .subtab[onclick*="swInfo(\''+id+'\')"]');
+    var view = document.getElementById('info-'+id);
+    if(tab) tab.classList.toggle('on', id===s);
+    if(view) view.classList.toggle('on', id===s);
+  });
+}
+
 // ── BEZPEČNOST – CHECK-IN ─────────────────────────────────────────────────
 async function checkin(status){
   const jmeno=G("bz-jmeno").value.trim();
@@ -11971,8 +11987,9 @@ function loadVisibilitySettings(){
     const savedSch = localStorage.getItem("tabSchedule");
     if(savedSch) tabSchedule = JSON.parse(savedSch);
   }catch(e){}
-  // Výchozí hodnoty
+  // Výchozí hodnoty - nové taby VŽDY nastavit dle default
   ALL_TABS.forEach(function(t){
+    // Pokud tab není v uloženém nastavení, použij default
     if(tabVisibility[t.id] === undefined) tabVisibility[t.id] = t.default;
   });
 }
@@ -12034,6 +12051,18 @@ function applyVisibility(){
       tabEl.style.display = tabVisibility[tabId] === false ? "none" : "";
     }
   });
+}
+
+function resetTabVisibility(){
+  // Resetovat všechny taby na výchozí hodnoty
+  ALL_TABS.forEach(function(t){
+    tabVisibility[t.id] = t.default;
+  });
+  try{ localStorage.setItem("tabVisibility", JSON.stringify(tabVisibility)); }catch(e){}
+  applyVisibility();
+  renderVisibilityList();
+  notify("✅ Viditelnost tabů resetována na výchozí!");
+  slog("Reset tabVisibility", "ok");
 }
 
 function renderVisibilityList(){
