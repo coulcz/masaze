@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+body{font-family:sans-serif;margin:0}
+#tabs-bar{display:flex;overflow-x:auto;background:#185FA5;padding:4px}
+.tab{color:#fff;padding:8px 12px;cursor:pointer;white-space:nowrap;border-radius:4px;margin:2px}
+.tab.on{background:rgba(255,255,255,.25)}
+.view{display:none;padding:20px;font-size:18px}
+.view.on{display:block}
+</style>
+</head>
+<body>
+<div id="tabs-bar">
+  <div class="tab" onclick="sw('mapa')">🗺 Mapa</div>
+  <div class="tab" onclick="sw('info')">📚 Info</div>
+  <div class="tab" onclick="sw('admin')">⚙️ Admin</div>
+</div>
+<div class="view" id="view-mapa">🗺 Tady je MAPA!</div>
+<div class="view" id="view-info">📚 Tady je INFO!</div>
+<div class="view" id="view-admin">⚙️ Tady je ADMIN!</div>
+<script>
+var G = function(id){ return document.getElementById(id); };
+
+function sw(tab){
+  var views = document.querySelectorAll('.view');
+  for(var i=0; i<views.length; i++){
+    views[i].style.display = 'none';
+    views[i].classList.remove('on');
+  }
+  var el = G('view-'+tab);
+  if(el){ el.style.display = 'block'; el.classList.add('on'); }
+  var tabs = document.querySelectorAll('.tab');
+  for(var j=0; j<tabs.length; j++){
+    var oc = tabs[j].getAttribute('onclick') || '';
+    tabs[j].classList.toggle('on', oc.indexOf("'"+tab+"'") > -1);
+  }
+  console.log('sw: '+tab+' → '+( el?'OK':'NOT FOUND'));
+}
+
+window.onload = function(){ sw('mapa'); };
+</script>
+</body></html>

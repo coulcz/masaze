@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Registrace – Mobilní masérna</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#fff;--bg2:#f5f5f3;--bg3:#eeecea;--txt:#1a1a18;--txt2:#6b6b67;--brd:rgba(0,0,0,.12);--brd2:rgba(0,0,0,.22);--blue:#185FA5;--green:#1D9E75;--red:#A32D2D;--r:8px;--rl:12px}
+@media(prefers-color-scheme:dark){:root{--bg:#1c1c1a;--bg2:#252523;--bg3:#2e2e2b;--txt:#f0ede8;--txt2:#a8a89e;--brd:rgba(255,255,255,.12);--brd2:rgba(255,255,255,.22)}}
+body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;color:var(--txt);background:var(--bg3);min-height:100vh;padding:20px 10px}
+.wrap{max-width:660px;margin:0 auto}
+.header{text-align:center;margin-bottom:20px}
+.logo{font-size:32px;margin-bottom:8px}
+.header h1{font-size:22px;font-weight:500;margin-bottom:6px}
+.header p{font-size:13px;color:var(--txt2)}
+.type-switch{display:flex;gap:8px;margin-bottom:18px;background:var(--bg2);padding:5px;border-radius:var(--rl)}
+.type-opt{flex:1;text-align:center;padding:12px;border-radius:var(--r);cursor:pointer;font-size:14px;font-weight:500;color:var(--txt2);transition:all .15s;user-select:none}
+.type-opt.on{background:var(--bg);color:var(--blue);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.progress{width:100%;height:5px;background:var(--bg2);border-radius:3px;margin-bottom:20px;overflow:hidden}
+.pbar{height:100%;background:var(--blue);border-radius:3px;transition:width .3s;width:0%}
+.card{background:var(--bg);border:.5px solid var(--brd);border-radius:var(--rl);padding:20px;margin-bottom:14px}
+.card h2{font-size:14px;font-weight:500;margin-bottom:14px;padding-bottom:10px;border-bottom:.5px solid var(--brd)}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;color:var(--txt2);margin-bottom:4px;font-weight:500}
+.field input,.field select,.field textarea{width:100%;font-size:13px;padding:8px 10px;border-radius:var(--r);border:.5px solid var(--brd2);background:var(--bg2);color:var(--txt);outline:none;transition:border-color .15s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);background:var(--bg)}
+.field textarea{resize:vertical;min-height:70px;line-height:1.5}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:480px){.r2,.r3{grid-template-columns:1fr}}
+.stags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.stag{font-size:12px;padding:4px 10px;border-radius:20px;background:var(--bg2);border:.5px solid var(--brd);color:var(--txt2);cursor:pointer;user-select:none;transition:all .15s}
+.stag:hover{border-color:var(--blue);color:var(--blue)}
+.stag.on{background:#E6F1FB;color:#0C447C;border-color:var(--blue)}
+.crow-in{display:flex;gap:6px;margin-top:4px}
+.crow-in input{flex:1;font-size:13px;padding:7px 10px;border-radius:var(--r);border:.5px solid var(--brd2);background:var(--bg2);color:var(--txt);outline:none}
+.crow-in button{font-size:13px;padding:7px 12px;border-radius:var(--r);cursor:pointer;border:.5px solid var(--brd2);background:var(--bg2);color:var(--txt);white-space:nowrap}
+.submit-btn{width:100%;font-size:14px;padding:13px;border-radius:var(--r);cursor:pointer;border:none;background:var(--blue);color:#fff;font-weight:500;margin-top:8px;transition:background .1s}
+.submit-btn:hover{background:#0C447C}
+.submit-btn:disabled{background:#888;cursor:not-allowed}
+.log-box{background:#1a1a18;border-radius:var(--rl);padding:16px;margin-top:12px;display:none;font-family:'Courier New',monospace;font-size:12px;max-height:200px;overflow-y:auto}
+.log-line{padding:2px 0;line-height:1.5}
+.log-line.info{color:#a8a89e}.log-line.ok{color:#1D9E75}.log-line.err{color:#ff5757}.log-line.wait{color:#BA7517}
+.success{background:#E1F5EE;border:.5px solid var(--green);border-radius:var(--rl);padding:30px;text-align:center;display:none}
+.success .ico{font-size:40px;margin-bottom:12px}
+.success h2{color:#085041;font-size:20px;margin-bottom:8px}
+.success p{color:#0F6E56;font-size:13px;line-height:1.7}
+.req{color:var(--red)}
+.hint{font-size:11px;color:var(--txt2);margin-top:3px}
+.social-row{display:flex;align-items:center}
+.social-row .pre{font-size:12px;color:var(--txt2);background:var(--bg3);border:.5px solid var(--brd2);border-right:none;padding:8px;border-radius:var(--r) 0 0 var(--r);white-space:nowrap}
+.social-row input{border-radius:0 var(--r) var(--r) 0!important}
+.toggle2{display:flex;gap:8px;margin-top:4px}
+.t2-opt{flex:1;text-align:center;padding:9px;border-radius:var(--r);border:.5px solid var(--brd2);cursor:pointer;font-size:13px;color:var(--txt2);transition:all .15s;user-select:none}
+.t2-opt.ano{background:#E1F5EE;color:#085041;border-color:var(--green);font-weight:500}
+.t2-opt.ne{background:#FCEBEB;color:#791F1F;border-color:var(--red);font-weight:500}
+.daygrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:4px}
+.day{text-align:center;padding:8px 2px;border-radius:var(--r);border:.5px solid var(--brd2);cursor:pointer;font-size:12px;color:var(--txt2);background:var(--bg2);transition:all .15s;user-select:none}
+.day.on{background:#E6F1FB;color:#0C447C;border-color:var(--blue);font-weight:500}
+.section{display:none}
+.section.on{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="logo">🧘</div>
+    <h1>Registrace</h1>
+    <p>Mobilní masérna · síť masérů a prostor po ČR</p>
+  </div>
+
+  <div class="type-switch">
+    <div class="type-opt on" id="ts-maser" onclick="setType('maser')">🧘 Masér</div>
+    <div class="type-opt" id="ts-misto" onclick="setType('misto')">🏠 Prostor</div>
+    <div class="type-opt" id="ts-akce" onclick="setType('akce')">📅 Akce/kurz</div>
+  </div>
+
+  <div class="progress"><div class="pbar" id="pbar"></div></div>
+
+  <form id="frm" onsubmit="odeslat(event)">
+
+    <!-- LOKALITA – společné -->
+    <div class="card">
+      <h2>📍 Lokalita</h2>
+      <div class="r2">
+        <div class="field">
+          <label>Kraj <span class="req">*</span></label>
+          <select id="kraj" required onchange="fillOk();upd()">
+            <option value="">– vyberte kraj –</option>
+            <option>Hlavní město Praha</option><option>Středočeský</option><option>Jihočeský</option>
+            <option>Plzeňský</option><option>Karlovarský</option><option>Ústecký</option>
+            <option>Liberecký</option><option>Královéhradecký</option><option>Pardubický</option>
+            <option>Vysočina</option><option>Jihomoravský</option><option>Olomoucký</option>
+            <option>Zlínský</option><option>Moravskoslezský</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Okres <span class="req">*</span></label>
+          <select id="okres" required onchange="upd()"><option value="">– nejdřív kraj –</option></select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Město / obec <span class="req">*</span></label>
+        <input type="text" id="mesto" placeholder="např. Ostrava – Poruba" required oninput="upd()">
+      </div>
+      <div class="field section misto" id="sec-adresa">
+        <label>Adresa prostoru</label>
+        <input type="text" id="adresa" placeholder="Ulice a číslo, PSČ">
+      </div>
+
+      <!-- MASÉR: mobilní -->
+      <div class="field section maser on" id="sec-mobilni">
+        <label>Mobilní masér?</label>
+        <div class="toggle2">
+          <div class="t2-opt" id="m-ano" onclick="setVal('mobilni','ano',['m-ano','m-ne'])">✓ Ano – jedu za klientem</div>
+          <div class="t2-opt" id="m-ne" onclick="setVal('mobilni','ne',['m-ano','m-ne'])">✗ Ne – klient jede za mnou</div>
+        </div>
+        <input type="hidden" id="mobilni" value="">
+      </div>
+    </div>
+
+    <!-- PROSTOR – specifické -->
+    <div class="card section misto" id="card-prostor">
+      <h2>🏠 O prostoru</h2>
+      <div class="field">
+        <label>Název prostoru <span class="req">*</span></label>
+        <input type="text" id="nazev-prostoru" placeholder="např. Masérna Klid Ostrava">
+      </div>
+      <div class="r2">
+        <div class="field">
+          <label>Sdílená masérna?</label>
+          <div class="toggle2">
+            <div class="t2-opt" id="s-ano" onclick="setVal('sdilena','ano',['s-ano','s-ne'])">✓ Ano</div>
+            <div class="t2-opt" id="s-ne" onclick="setVal('sdilena','ne',['s-ano','s-ne'])">✗ Ne</div>
+          </div>
+          <input type="hidden" id="sdilena" value="">
+          <div class="hint">Více masérů využívá stejný prostor</div>
+        </div>
+        <div class="field">
+          <label>Možnost pronájmu?</label>
+          <div class="toggle2">
+            <div class="t2-opt" id="p-ano" onclick="setVal('pronajem','ano',['p-ano','p-ne'])">✓ Ano</div>
+            <div class="t2-opt" id="p-ne" onclick="setVal('pronajem','ne',['p-ano','p-ne'])">✗ Ne</div>
+          </div>
+          <input type="hidden" id="pronajem" value="">
+        </div>
+      </div>
+      <div class="r2">
+        <div class="field">
+          <label>Počet místností</label>
+          <input type="number" id="pocet-mistnosti" min="1" placeholder="1">
+        </div>
+        <div class="field">
+          <label>Počet lehátek</label>
+          <input type="number" id="pocet-lehatek" min="1" placeholder="1">
+        </div>
+      </div>
+      <div class="field">
+        <label>Vybavení</label>
+        <div class="stags" id="vybav-tags"></div>
+      </div>
+      <div class="r2" style="margin-top:10px">
+        <div class="field">
+          <label>Cena pronájmu – za hodinu (Kč)</label>
+          <input type="number" id="cena-hod" min="0" placeholder="200">
+        </div>
+        <div class="field">
+          <label>Cena pronájmu – za den (Kč)</label>
+          <input type="number" id="cena-den" min="0" placeholder="1000">
+        </div>
+      </div>
+      <div class="field">
+        <label>Dostupné dny k pronájmu</label>
+        <div class="daygrid" id="daygrid">
+          <div class="day" data-d="Po">Po</div><div class="day" data-d="Út">Út</div><div class="day" data-d="St">St</div>
+          <div class="day" data-d="Čt">Čt</div><div class="day" data-d="Pá">Pá</div><div class="day" data-d="So">So</div>
+          <div class="day" data-d="Ne">Ne</div>
+        </div>
+      </div>
+      <div class="r2" style="margin-top:10px">
+        <div class="field">
+          <label>Dostupné časy – od</label>
+          <input type="time" id="cas-od">
+        </div>
+        <div class="field">
+          <label>Dostupné časy – do</label>
+          <input type="time" id="cas-do">
+        </div>
+      </div>
+      <div class="field">
+        <label>Fotky prostoru – odkaz</label>
+        <input type="text" id="fotky" placeholder="odkaz na Google Disk / Fotky / Instagram album">
+        <div class="hint">Vlož odkaz na sdílenou složku nebo album s fotkami prostoru</div>
+      </div>
+    </div>
+
+
+    <!-- AKCE – specifické -->
+    <div class="card section akce" id="card-akce">
+      <h2>📅 O akci</h2>
+      <div class="field">
+        <label>Název akce <span class="req">*</span></label>
+        <input type="text" id="nazev-akce" placeholder="např. Kurz baňkování pro začátečníky">
+      </div>
+      <div class="r2">
+        <div class="field">
+          <label>Typ akce</label>
+          <select id="typ-akce">
+            <option>Kurz</option>
+            <option>Workshop</option>
+            <option>Setkání</option>
+            <option>Konference</option>
+            <option>Jiné</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Forma</label>
+          <div class="toggle2">
+            <div class="t2-opt" id="ako-ano" onclick="setVal('akce_online','ano',['ako-ano','ako-ne'])">💻 Online</div>
+            <div class="t2-opt" id="ako-ne" onclick="setVal('akce_online','ne',['ako-ano','ako-ne'])">📍 Prezenčně</div>
+          </div>
+          <input type="hidden" id="akce_online" value="">
+        </div>
+      </div>
+      <div class="r2">
+        <div class="field">
+          <label>Datum od <span class="req">*</span></label>
+          <input type="date" id="akce-od" oninput="upd()">
+        </div>
+        <div class="field">
+          <label>Datum do</label>
+          <input type="date" id="akce-do">
+        </div>
+      </div>
+      <div class="r2">
+        <div class="field"><label>Čas od</label><input type="time" id="akce-cas-od"></div>
+        <div class="field"><label>Čas do</label><input type="time" id="akce-cas-do"></div>
+      </div>
+      <div class="field">
+        <label>Místo konání</label>
+        <input type="text" id="akce-misto" placeholder="adresa, nebo 'Online – Zoom/Meet'…">
+      </div>
+      <div class="r2">
+        <div class="field"><label>Cena (Kč)</label><input type="number" id="akce-cena" min="0" placeholder="0 = zdarma"></div>
+        <div class="field"><label>Kapacita (počet míst)</label><input type="number" id="akce-kapacita" min="1" placeholder="např. 12"></div>
+      </div>
+      <div class="field">
+        <label>Odkaz na přihlášení / info</label>
+        <input type="text" id="akce-odkaz" placeholder="www...">
+      </div>
+    </div>
+
+    <!-- KONTAKT – společné -->
+    <div class="card">
+      <h2>👤 Kontaktní údaje</h2>
+      <div class="r2">
+        <div class="field">
+          <label><span id="jmeno-label-text">Jméno a příjmení</span> <span class="req">*</span></label>
+          <input type="text" id="jmeno" placeholder="Jana Nováková" required oninput="upd()">
+        </div>
+        <div class="field">
+          <label>Telefon <span class="req">*</span></label>
+          <input type="tel" id="telefon" placeholder="+420 777 123 456" required oninput="upd()">
+        </div>
+      </div>
+      <div class="field"><label>E-mail</label><input type="email" id="email" placeholder="jana@masaze.cz"></div>
+      <div class="field"><label>Web</label><input type="text" id="web" placeholder="www.moje-masaze.cz"></div>
+    </div>
+
+    <!-- SOCIÁLNÍ SÍTĚ -->
+    <div class="card">
+      <h2>📱 Sociální sítě</h2>
+      <div class="field">
+        <label>Facebook</label>
+        <div class="social-row"><span class="pre">facebook.com/</span><input type="text" id="facebook" placeholder="jmeno.prijmeni"></div>
+      </div>
+      <div class="field">
+        <label>Instagram</label>
+        <div class="social-row"><span class="pre">instagram.com/</span><input type="text" id="instagram" placeholder="masaze_jana"></div>
+      </div>
+      <div class="field">
+        <label>TikTok</label>
+        <div class="social-row"><span class="pre">tiktok.com/@</span><input type="text" id="tiktok" placeholder="masaze_jana"></div>
+      </div>
+      <div class="field">
+        <label>Odkaz na recenze</label>
+        <input type="text" id="recenze" placeholder="Google recenze, Facebook recenze…">
+        <div class="hint">Vlož odkaz na svůj profil s recenzemi</div>
+      </div>
+      <div class="field">
+        <label>Zello (přezdívka)</label>
+        <input type="text" id="zello" placeholder="jana_masaze">
+        <div class="hint">📻 Pro bezpečnostní kanál maséři – nepovinné</div>
+      </div>
+    </div>
+
+    <!-- MASÉR – dovednosti -->
+    <div class="card section maser on" id="card-dovednosti">
+      <h2>💆 Dovednosti a služby</h2>
+      <div class="field">
+        <label>Vyberte dovednosti <span class="req">*</span></label>
+        <div class="stags" id="stags"></div>
+        <div class="hint">Klikni pro výběr · více možností</div>
+      </div>
+      <div class="field">
+        <label>Vlastní dovednost</label>
+        <div class="crow-in">
+          <input type="text" id="vlastni" placeholder="např. Hawajská masáž…">
+          <button type="button" onclick="addV()">+ Přidat</button>
+        </div>
+      </div>
+      <div class="r3">
+        <div class="field"><label>Cena od (Kč)</label><input type="number" id="cena-od" placeholder="600" min="0"></div>
+        <div class="field"><label>Cena do (Kč)</label><input type="number" id="cena-do" placeholder="1200" min="0"></div>
+        <div class="field"><label>Délka (min)</label><input type="number" id="delka" placeholder="60" min="15" step="15"></div>
+      </div>
+      <div class="field" style="margin-top:6px">
+        <label>Kdy mohu přijmout nového klienta?</label>
+        <div class="stags" id="dost-tags"></div>
+        <input type="hidden" id="dostupnost" value="">
+      </div>
+    </div>
+
+    <!-- POZNÁMKA -->
+    <div class="card">
+      <h2>📝 Poznámka</h2>
+      <div class="field section maser on">
+        <label>Dostupnost, certifikáty, specializace…</label>
+        <textarea id="poznamka-maser" placeholder="např. Pracuji Po–Pá, mám certifikát XY…"></textarea>
+      </div>
+      <div class="field section misto">
+        <label>Cokoliv dalšího o prostoru…</label>
+        <textarea id="poznamka-misto" placeholder="např. Vstup zezadu budovy, klíče u recepce…"></textarea>
+      </div>
+      <div class="field section akce">
+        <label>Popis akce, program, co s sebou…</label>
+        <textarea id="poznamka-akce" placeholder="např. Program: 9:00 teorie, 11:00 praxe… Co s sebou: pohodlné oblečení…"></textarea>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn" id="sbtn">Odeslat registraci →</button>
+  </form>
+
+  <div class="log-box" id="logbox"><div id="loglines"></div></div>
+
+  <div class="success" id="ok">
+    <div class="ico">🎉</div>
+    <h2>Díky za registraci!</h2>
+    <p>Tvoje údaje byly úspěšně odeslány.<br>Brzy se ti ozveme!</p>
+  </div>
+</div>
+
+<script>
+// ── KONFIGURACE ──────────────────────────────────────────────
+const OWNER = "coulcz";
+const REPO  = "masaze";
+const DISPATCH_URL = `https://api.github.com/repos/${OWNER}/${REPO}/dispatches`;
+// Token je bezpečně v GitHub Secrets (GH_TOKEN) – zpracovává GitHub Actions
+// ─────────────────────────────────────────────────────────────
+
+const OKR={
+  "Hlavní město Praha":["Praha"],
+  "Středočeský":["Benešov","Beroun","Kladno","Kolín","Kutná Hora","Mělník","Mladá Boleslav","Nymburk","Praha-východ","Praha-západ","Příbram","Rakovník"],
+  "Jihočeský":["České Budějovice","Český Krumlov","Jindřichův Hradec","Písek","Prachatice","Strakonice","Tábor"],
+  "Plzeňský":["Domažlice","Klatovy","Plzeň-jih","Plzeň-město","Plzeň-sever","Rokycany","Tachov"],
+  "Karlovarský":["Cheb","Karlovy Vary","Sokolov"],
+  "Ústecký":["Děčín","Chomutov","Litoměřice","Louny","Most","Teplice","Ústí nad Labem"],
+  "Liberecký":["Česká Lípa","Jablonec nad Nisou","Liberec","Semily"],
+  "Královéhradecký":["Hradec Králové","Jičín","Náchod","Rychnov nad Kněžnou","Trutnov"],
+  "Pardubický":["Chrudim","Pardubice","Svitavy","Ústí nad Orlicí"],
+  "Vysočina":["Havlíčkův Brod","Jihlava","Pelhřimov","Třebíč","Žďár nad Sázavou"],
+  "Jihomoravský":["Blansko","Brno-město","Brno-venkov","Břeclav","Hodonín","Vyškov","Znojmo"],
+  "Olomoucký":["Jeseník","Olomouc","Prostějov","Přerov","Šumperk"],
+  "Zlínský":["Kroměříž","Uherské Hradiště","Vsetín","Zlín"],
+  "Moravskoslezský":["Bruntál","Frýdek-Místek","Karviná","Nový Jičín","Opava","Ostrava-město"]
+};
+const DSK=["Klasická masáž","Sportovní masáž","Relaxační masáž","Lymfatická masáž","Reflexní terapie","Thajská masáž","Hot stone","Trigger point","Baňkování","Myofasciální terapie","Aromaterapie","Prenatální masáž","Čínská masáž","Kraniosakrální terapie"];
+const VYB=["Lehátko","Sprcha","Šatna","Parkování","WiFi","Klimatizace","Hudba","Ručníky/prostěradla","Vonné oleje","Recepce","Bezbariérový přístup","Čekárna"];
+const DOST=["Ihned","Do 2 dnů","Do týdne","Do měsíce","Po dohodě"];
+const DOST_ICO={"Ihned":"🟢","Do 2 dnů":"🟡","Do týdne":"🟠","Do měsíce":"🔵","Po dohodě":"⚪"};
+
+let selSk=new Set(),vlastniSk=[],selVyb=new Set(),selDny=new Set();
+let typ="maser";
+
+function setType(t){
+  typ=t;
+  document.getElementById("ts-maser").classList.toggle("on",t==="maser");
+  document.getElementById("ts-misto").classList.toggle("on",t==="misto");
+  document.getElementById("ts-akce").classList.toggle("on",t==="akce");
+  document.querySelectorAll(".section.maser").forEach(el=>el.classList.toggle("on",t==="maser"));
+  document.querySelectorAll(".section.misto").forEach(el=>el.classList.toggle("on",t==="misto"));
+  document.querySelectorAll(".section.akce").forEach(el=>el.classList.toggle("on",t==="akce"));
+  // required pole
+  document.getElementById("nazev-prostoru").required = (t==="misto");
+  document.getElementById("nazev-akce").required = (t==="akce");
+  document.getElementById("akce-od").required = (t==="akce");
+  const labels={maser:"Jméno a příjmení",misto:"Kontaktní osoba",akce:"Organizátor / lektor"};
+  document.getElementById("jmeno-label-text").textContent=labels[t];
+  const ph={maser:"Jana Nováková",misto:"Jana Nováková (kontakt)",akce:"Jana Nováková (lektor)"};
+  document.getElementById("jmeno").placeholder=ph[t];
+  upd();
+}
+
+function log(msg,type='info'){
+  const box=document.getElementById('logbox');
+  const lines=document.getElementById('loglines');
+  box.style.display='block';
+  const ico={info:'→',ok:'✅',err:'❌',wait:'⏳'}[type]||'→';
+  const div=document.createElement('div');
+  div.className='log-line '+type;
+  div.textContent=`${ico} ${msg}`;
+  lines.appendChild(div);
+  box.scrollTop=box.scrollHeight;
+}
+
+function fillOk(){
+  const k=document.getElementById("kraj").value;
+  const s=document.getElementById("okres");
+  s.innerHTML='<option value="">– vyberte okres –</option>';
+  if(k&&OKR[k])OKR[k].forEach(o=>{const op=document.createElement("option");op.value=o;op.textContent=o;s.appendChild(op);});
+}
+
+function setVal(field,val,toggleIds){
+  document.getElementById(field).value=val;
+  toggleIds.forEach(id=>{
+    const el=document.getElementById(id);
+    const isAno=id.endsWith("ano");
+    const active=(val==="ano"&&isAno)||(val==="ne"&&!isAno);
+    el.className="t2-opt"+(active?(isAno?" ano":" ne"):"");
+  });
+  upd();
+}
+
+function buildTags(){
+  const w=document.getElementById("stags");
+  [...DSK,...vlastniSk].forEach(s=>{
+    if(w.querySelector(`[data-v="${s}"]`))return;
+    const sp=document.createElement("span");
+    sp.className="stag"+(selSk.has(s)?" on":"");
+    sp.textContent=s;sp.dataset.v=s;
+    sp.onclick=()=>{selSk.has(s)?selSk.delete(s):selSk.add(s);sp.classList.toggle("on");upd();};
+    w.appendChild(sp);
+  });
+}
+function buildVyb(){
+  const w=document.getElementById("vybav-tags");
+  VYB.forEach(s=>{
+    const sp=document.createElement("span");
+    sp.className="stag"+(selVyb.has(s)?" on":"");
+    sp.textContent=s;
+    sp.onclick=()=>{selVyb.has(s)?selVyb.delete(s):selVyb.add(s);sp.classList.toggle("on");};
+    w.appendChild(sp);
+  });
+}
+function buildDost(){
+  const w=document.getElementById("dost-tags");
+  DOST.forEach(s=>{
+    const sp=document.createElement("span");
+    sp.className="stag";
+    sp.textContent=`${DOST_ICO[s]} ${s}`;
+    sp.onclick=()=>{
+      w.querySelectorAll(".stag").forEach(x=>x.classList.remove("on"));
+      sp.classList.add("on");
+      document.getElementById("dostupnost").value=s;
+      upd();
+    };
+    w.appendChild(sp);
+  });
+}
+function buildDays(){
+  document.querySelectorAll("#daygrid .day").forEach(el=>{
+    el.onclick=()=>{
+      const d=el.dataset.d;
+      if(selDny.has(d)){selDny.delete(d);el.classList.remove("on");}
+      else{selDny.add(d);el.classList.add("on");}
+    };
+  });
+}
+function addV(){
+  const v=document.getElementById("vlastni").value.trim();
+  if(!v||DSK.includes(v)||vlastniSk.includes(v))return;
+  vlastniSk.push(v);selSk.add(v);
+  document.getElementById("vlastni").value="";
+  buildTags();upd();
+}
+document.getElementById("vlastni").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();addV();}});
+
+function upd(){
+  let req=["kraj","okres","mesto","jmeno","telefon"];
+  if(typ==="misto")req.push("nazev-prostoru");
+  if(typ==="akce")req.push("nazev-akce","akce-od");
+  const f=req.filter(id=>document.getElementById(id).value.trim()!=="").length;
+  const extra=typ==="maser"?(selSk.size>0?1:0):1;
+  document.getElementById("pbar").style.width=Math.round((f+extra)/(req.length+1)*100)+"%";
+}
+
+async function odeslat(e){
+  e.preventDefault();
+  const btn=document.getElementById("sbtn");
+
+  if(typ==="maser"&&selSk.size===0){alert("Vyber alespoň jednu dovednost.");return;}
+  if(typ==="misto"&&!document.getElementById("nazev-prostoru").value.trim()){alert("Zadej název prostoru.");return;}
+  if(typ==="akce"&&(!document.getElementById("nazev-akce").value.trim()||!document.getElementById("akce-od").value)){alert("Zadej název akce a datum konání.");return;}
+
+  btn.disabled=true;btn.textContent="Odesílám…";
+  document.getElementById('loglines').innerHTML='';
+  log('Spouštím odesílání...','wait');
+
+  const base={
+    id:Date.now(),
+    typ:typ,
+    kraj:document.getElementById("kraj").value,
+    okres:document.getElementById("okres").value,
+    mesto:document.getElementById("mesto").value,
+    jmeno:document.getElementById("jmeno").value,
+    telefon:document.getElementById("telefon").value,
+    email:document.getElementById("email").value,
+    web:document.getElementById("web").value,
+    facebook:document.getElementById("facebook").value,
+    instagram:document.getElementById("instagram").value,
+    tiktok:document.getElementById("tiktok").value,
+    recenze:document.getElementById("recenze").value,
+    zello:document.getElementById("zello").value,
+    stav:"nový"
+  };
+
+  let d;
+  if(typ==="maser"){
+    d={...base,
+      mobilni:document.getElementById("mobilni").value||"neuvedeno",
+      dovednosti:[...selSk].join(", "),
+      cena_od:document.getElementById("cena-od").value,
+      cena_do:document.getElementById("cena-do").value,
+      delka:document.getElementById("delka").value,
+      dostupnost:document.getElementById("dostupnost").value||"neuvedeno",
+      poznamka:document.getElementById("poznamka-maser").value,
+    };
+    log(`Masér: ${d.jmeno} – ${d.okres} (${d.kraj})`,'info');
+  } else if(typ==="misto"){
+    d={...base,
+      nazev:document.getElementById("nazev-prostoru").value,
+      adresa:document.getElementById("adresa").value,
+      sdilena:document.getElementById("sdilena").value||"neuvedeno",
+      pronajem:document.getElementById("pronajem").value||"neuvedeno",
+      pocet_mistnosti:document.getElementById("pocet-mistnosti").value,
+      pocet_lehatek:document.getElementById("pocet-lehatek").value,
+      vybaveni:[...selVyb].join(", "),
+      cena_hod:document.getElementById("cena-hod").value,
+      cena_den:document.getElementById("cena-den").value,
+      dny:[...selDny].join(", "),
+      cas_od:document.getElementById("cas-od").value,
+      cas_do:document.getElementById("cas-do").value,
+      fotky:document.getElementById("fotky").value,
+      poznamka:document.getElementById("poznamka-misto").value,
+    };
+    log(`Prostor: ${d.nazev} – ${d.okres} (${d.kraj})`,'info');
+  } else {
+    d={...base,
+      nazev:document.getElementById("nazev-akce").value,
+      typ_akce:document.getElementById("typ-akce").value,
+      online:document.getElementById("akce_online").value||"ne",
+      datum_od:document.getElementById("akce-od").value,
+      datum_do:document.getElementById("akce-do").value,
+      cas_od:document.getElementById("akce-cas-od").value,
+      cas_do:document.getElementById("akce-cas-do").value,
+      misto_konani:document.getElementById("akce-misto").value,
+      cena:document.getElementById("akce-cena").value,
+      kapacita:document.getElementById("akce-kapacita").value,
+      odkaz:document.getElementById("akce-odkaz").value,
+      poznamka:document.getElementById("poznamka-akce").value,
+    };
+    log(`Akce: ${d.nazev} – ${d.datum_od}`,'info');
+  }
+
+  log('Odesílám do GitHub Actions...','wait');
+
+  try{
+    const resp=await fetch(DISPATCH_URL,{
+      method:"POST",
+      headers:{
+        "Authorization":`Bearer ${window.GH_TOKEN||''}`,
+        "Accept":"application/vnd.github.v3+json",
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        event_type: typ==="maser" ? "novy-maser" : (typ==="misto" ? "nove-misto" : "nova-akce"),
+        client_payload:d
+      })
+    });
+
+    if(resp.status===204){
+      log('✓ Odesláno do GitHub Actions!','ok');
+      log('Data se zpracovávají...','wait');
+      setTimeout(()=>{
+        document.getElementById("frm").style.display="none";
+        document.getElementById("ok").style.display="block";
+      },1500);
+    } else {
+      const err=await resp.json().catch(()=>({}));
+      log(`Chyba ${resp.status}: ${err.message||'Neznámá chyba'}`,'err');
+      btn.disabled=false;btn.textContent="Odeslat registraci →";
+    }
+  }catch(err){
+    log('Chyba připojení: '+err.message,'err');
+    btn.disabled=false;btn.textContent="Odeslat registraci →";
+  }
+}
+
+buildTags();buildVyb();buildDays();buildDost();upd();
+</script>
+</body>
+</html>

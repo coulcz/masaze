@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Objednat masáž – Mobilní masérna</title>
+<meta name="description" content="Objednejte se online na masáž. Vyberte termín, masáž a odešlete žádost.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#fff;--bg2:#f5f5f3;--bg3:#eeecea;--txt:#1a1a18;--txt2:#6b6b67;--brd:rgba(0,0,0,.12);--brd2:rgba(0,0,0,.22);--blue:#185FA5;--green:#1D9E75;--red:#A32D2D;--r:8px;--rl:12px}
+@media(prefers-color-scheme:dark){:root{--bg:#1c1c1a;--bg2:#252523;--bg3:#2e2e2b;--txt:#f0ede8;--txt2:#a8a89e;--brd:rgba(255,255,255,.12);--brd2:rgba(255,255,255,.22)}}
+body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;color:var(--txt);background:var(--bg3);min-height:100vh;padding:20px 10px}
+.wrap{max-width:600px;margin:0 auto}
+.header{text-align:center;margin-bottom:20px}
+.logo{font-size:36px;margin-bottom:8px}
+.header h1{font-size:22px;font-weight:500;margin-bottom:6px}
+.header p{font-size:13px;color:var(--txt2)}
+.progress{width:100%;height:5px;background:var(--bg2);border-radius:3px;margin-bottom:20px;overflow:hidden}
+.pbar{height:100%;background:var(--blue);border-radius:3px;transition:width .3s;width:0%}
+.card{background:var(--bg);border:.5px solid var(--brd);border-radius:var(--rl);padding:20px;margin-bottom:14px}
+.card h2{font-size:14px;font-weight:500;margin-bottom:14px;padding-bottom:10px;border-bottom:.5px solid var(--brd);display:flex;align-items:center;gap:6px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;color:var(--txt2);margin-bottom:4px;font-weight:500}
+.field input,.field select,.field textarea{width:100%;font-size:13px;padding:9px 11px;border-radius:var(--r);border:.5px solid var(--brd2);background:var(--bg2);color:var(--txt);outline:none;transition:border-color .15s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);background:var(--bg)}
+.field textarea{resize:vertical;min-height:70px;line-height:1.5}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:480px){.r2{grid-template-columns:1fr}}
+.req{color:var(--red)}
+.hint{font-size:11px;color:var(--txt2);margin-top:3px}
+
+/* MASÉR VÝBĚR */
+.maser-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+@media(max-width:480px){.maser-grid{grid-template-columns:1fr}}
+.maser-card{border:.5px solid var(--brd2);border-radius:var(--r);padding:10px;cursor:pointer;transition:all .15s;background:var(--bg2)}
+.maser-card:hover{border-color:var(--blue)}
+.maser-card.sel{border-color:var(--blue);background:#E6F1FB;border-width:2px}
+.maser-card .mc-name{font-size:13px;font-weight:500}
+.maser-card .mc-meta{font-size:11px;color:var(--txt2);margin-top:2px}
+
+/* SLOTY */
+.slots-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px}
+@media(max-width:480px){.slots-grid{grid-template-columns:repeat(3,1fr)}}
+.slot{text-align:center;padding:8px 4px;border-radius:var(--r);border:.5px solid var(--brd2);cursor:pointer;font-size:12px;color:var(--txt2);background:var(--bg2);transition:all .15s;user-select:none}
+.slot:hover{border-color:var(--blue);color:var(--blue)}
+.slot.sel{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:500}
+.slot.taken{opacity:.3;cursor:not-allowed;text-decoration:line-through}
+
+/* SOUHRN */
+.summary-box{background:var(--bg2);border-radius:var(--r);padding:12px;font-size:12px;line-height:1.8;margin-bottom:12px}
+.summary-box .sb-row{display:flex;justify-content:space-between;padding:3px 0}
+.summary-box .sb-label{color:var(--txt2)}
+.summary-box .sb-val{font-weight:500}
+
+.submit-btn{width:100%;font-size:14px;padding:13px;border-radius:var(--r);cursor:pointer;border:none;background:var(--blue);color:#fff;font-weight:500;margin-top:8px;transition:background .1s}
+.submit-btn:hover{background:#0C447C}
+.submit-btn:disabled{background:#888;cursor:not-allowed}
+
+.log-box{background:#1a1a18;border-radius:var(--rl);padding:16px;margin-top:12px;display:none;font-family:'Courier New',monospace;font-size:12px;max-height:160px;overflow-y:auto}
+.log-line{padding:2px 0;line-height:1.5}
+.log-line.info{color:#a8a89e}.log-line.ok{color:#1D9E75}.log-line.err{color:#ff5757}.log-line.wait{color:#BA7517}
+
+.success{background:#E1F5EE;border:.5px solid var(--green);border-radius:var(--rl);padding:30px;text-align:center;display:none}
+.success .ico{font-size:40px;margin-bottom:12px}
+.success h2{color:#085041;font-size:20px;margin-bottom:8px}
+.success p{color:#0F6E56;font-size:13px;line-height:1.7}
+
+.step{display:none}
+.step.on{display:block}
+.step-nav{display:flex;gap:8px;margin-top:10px}
+.btn-sec{flex:1;padding:11px;border-radius:var(--r);border:.5px solid var(--brd2);background:var(--bg2);color:var(--txt);font-size:13px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="logo">📅</div>
+    <h1>Objednat masáž</h1>
+    <p>Mobilní masérna · vyberte si termín</p>
+  </div>
+  <div class="progress"><div class="pbar" id="pbar"></div></div>
+
+  <form id="frm" onsubmit="odeslat(event)">
+
+    <!-- KROK 1: VÝBĚR MASÉRA -->
+    <div class="card step on" id="step-1">
+      <h2>1️⃣ Vyberte maséra</h2>
+      <div class="maser-grid" id="maser-grid"></div>
+      <div class="step-nav">
+        <button type="button" class="submit-btn" onclick="goStep(2)" id="btn-step1" disabled>Další →</button>
+      </div>
+    </div>
+
+    <!-- KROK 2: TERMÍN -->
+    <div class="card step" id="step-2">
+      <h2>2️⃣ Vyberte termín</h2>
+      <div class="field"><label>Datum <span class="req">*</span></label>
+        <input type="date" id="r-datum" onchange="loadSlots()"/>
+      </div>
+      <div class="field">
+        <label>Dostupné časy</label>
+        <div class="slots-grid" id="slots-grid">
+          <div style="grid-column:1/-1;font-size:11px;color:var(--txt2)">Nejprve vyberte datum.</div>
+        </div>
+      </div>
+      <div class="step-nav">
+        <button type="button" class="btn-sec" onclick="goStep(1)">← Zpět</button>
+        <button type="button" class="submit-btn" onclick="goStep(3)" id="btn-step2" disabled>Další →</button>
+      </div>
+    </div>
+
+    <!-- KROK 3: TYP MASÁŽE A KONTAKT -->
+    <div class="card step" id="step-3">
+      <h2>3️⃣ Typ masáže a kontakt</h2>
+      <div class="field"><label>Typ masáže <span class="req">*</span></label>
+        <select id="r-typ">
+          <option value="">– vyberte –</option>
+          <option>Klasická masáž</option>
+          <option>Sportovní masáž</option>
+          <option>Relaxační masáž</option>
+          <option>Lymfatická masáž</option>
+          <option>Hot stone</option>
+          <option>Prenatální masáž</option>
+          <option>Baňkování</option>
+          <option>Jiná / nevím</option>
+        </select>
+      </div>
+      <div class="r2">
+        <div class="field"><label>Délka</label>
+          <select id="r-delka">
+            <option value="30">30 min</option>
+            <option value="60" selected>60 min</option>
+            <option value="90">90 min</option>
+            <option value="120">120 min</option>
+          </select>
+        </div>
+        <div class="field"><label>Místo</label>
+          <select id="r-misto">
+            <option value="u-masera">U maséra / studio</option>
+            <option value="u-klienta">U mě doma (mobilní)</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Jméno a příjmení <span class="req">*</span></label>
+        <input type="text" id="r-jmeno" placeholder="Jana Nováková"/>
+      </div>
+      <div class="field"><label>Telefon <span class="req">*</span></label>
+        <input type="tel" id="r-telefon" placeholder="+420 777 123 456"/>
+      </div>
+      <div class="field"><label>E-mail</label>
+        <input type="email" id="r-email" placeholder="jana@email.cz"/>
+      </div>
+      <div class="field"><label>Adresa (pokud mobilní masáž)</label>
+        <input type="text" id="r-adresa" placeholder="Ulice, město"/>
+      </div>
+      <div class="field"><label>Poznámka</label>
+        <textarea id="r-poznamka" placeholder="Zdravotní omezení, přání, alergie na vůně..."></textarea>
+      </div>
+
+      <!-- SOUHRN -->
+      <div class="summary-box" id="summary-box"></div>
+
+      <div class="step-nav">
+        <button type="button" class="btn-sec" onclick="goStep(2)">← Zpět</button>
+        <button type="submit" class="submit-btn" id="sbtn" style="flex:2">✉️ Odeslat žádost o termín</button>
+      </div>
+    </div>
+
+  </form>
+
+  <div class="log-box" id="logbox"><div id="loglines"></div></div>
+
+  <div class="success" id="ok">
+    <div class="ico">🎉</div>
+    <h2>Žádost odeslána!</h2>
+    <p>Brzy se ti ozveme s potvrzením termínu.<br>Děkujeme za důvěru! 💆</p>
+  </div>
+</div>
+
+<script>
+// ── KONFIGURACE ──────────────────────────────────────────────
+const OWNER = "coulcz";
+const REPO  = "masaze";
+const DISPATCH_URL = `https://api.github.com/repos/${OWNER}/${REPO}/dispatches`;
+// Token je v GitHub Secrets (GH_TOKEN) – zpracovává GitHub Actions
+// ─────────────────────────────────────────────────────────────
+
+// Maséři – v reálném nasazení by se načítali z data.json
+const MASERI = [
+  {id:1, jmeno:"Martin", mesto:"Ostrava", specializace:"Klasická, sportovní, hot stone"},
+  {id:2, jmeno:"Lucie", mesto:"Ostrava", specializace:"Relaxační, lymfatická"},
+  {id:3, jmeno:"Honza", mesto:"Praha", specializace:"Sportovní, trigger point"}
+];
+
+const TIMES = ["8:00","9:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00"];
+
+let selMaser = null;
+let selDatum = null;
+let selCas = null;
+
+function buildMaserGrid(){
+  const grid = document.getElementById("maser-grid");
+  grid.innerHTML = MASERI.map(m =>
+    `<div class="maser-card" id="mc-${m.id}" onclick="pickMaser(${m.id})">
+      <div class="mc-name">🧘 ${m.jmeno}</div>
+      <div class="mc-meta">📍 ${m.mesto}</div>
+      <div class="mc-meta">${m.specializace}</div>
+    </div>`
+  ).join("");
+}
+
+function pickMaser(id){
+  selMaser = MASERI.find(m => m.id === id);
+  document.querySelectorAll(".maser-card").forEach(c => c.classList.remove("sel"));
+  document.getElementById("mc-" + id).classList.add("sel");
+  document.getElementById("btn-step1").disabled = false;
+  updProgress();
+}
+
+function loadSlots(){
+  const datum = document.getElementById("r-datum").value;
+  selDatum = datum;
+  selCas = null;
+  document.getElementById("btn-step2").disabled = true;
+  const grid = document.getElementById("slots-grid");
+  if(!datum){
+    grid.innerHTML = '<div style="grid-column:1/-1;font-size:11px;color:var(--txt2)">Nejprve vyberte datum.</div>';
+    return;
+  }
+  // Simulace obsazenosti (v reálu by se načítalo z data.json)
+  const taken = new Set();
+  const seed = datum.split("-").reduce((a,b)=>a+parseInt(b),0);
+  TIMES.forEach((t,i) => { if((seed+i) % 4 === 0) taken.add(t); });
+
+  grid.innerHTML = TIMES.map(t =>
+    `<div class="slot${taken.has(t)?" taken":""}" onclick="${taken.has(t)?"":"pickCas('"+t+"')"}">${t}</div>`
+  ).join("");
+}
+
+function pickCas(t){
+  selCas = t;
+  document.querySelectorAll(".slot").forEach(s => s.classList.remove("sel"));
+  [...document.querySelectorAll(".slot")].find(s => s.textContent === t).classList.add("sel");
+  document.getElementById("btn-step2").disabled = false;
+  updProgress();
+}
+
+function goStep(n){
+  document.querySelectorAll(".step").forEach(s => s.classList.remove("on"));
+  document.getElementById("step-" + n).classList.add("on");
+  if(n === 3) updSummary();
+  updProgress();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function updSummary(){
+  const box = document.getElementById("summary-box");
+  box.innerHTML = `
+    <div class="sb-row"><span class="sb-label">Masér</span><span class="sb-val">🧘 ${selMaser?selMaser.jmeno:"–"}</span></div>
+    <div class="sb-row"><span class="sb-label">Termín</span><span class="sb-val">📅 ${selDatum||"–"} · ${selCas||"–"}</span></div>
+  `;
+}
+
+function updProgress(){
+  let step = document.querySelector(".step.on").id === "step-1" ? 1 : document.querySelector(".step.on").id === "step-2" ? 2 : 3;
+  document.getElementById("pbar").style.width = (step/3*100) + "%";
+}
+
+function log(msg, type='info'){
+  const box = document.getElementById('logbox');
+  const lines = document.getElementById('loglines');
+  box.style.display = 'block';
+  const ico = {info:'→', ok:'✅', err:'❌', wait:'⏳'}[type] || '→';
+  const div = document.createElement('div');
+  div.className = 'log-line ' + type;
+  div.textContent = `${ico} ${msg}`;
+  lines.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+async function odeslat(e){
+  e.preventDefault();
+  const btn = document.getElementById("sbtn");
+
+  const jmeno = document.getElementById("r-jmeno").value.trim();
+  const telefon = document.getElementById("r-telefon").value.trim();
+  const typ = document.getElementById("r-typ").value;
+
+  if(!jmeno || !telefon){ alert("Vyplň jméno a telefon."); return; }
+  if(!typ){ alert("Vyber typ masáže."); return; }
+  if(!selMaser || !selDatum || !selCas){ alert("Chybí výběr maséra nebo termínu."); return; }
+
+  btn.disabled = true;
+  btn.textContent = "Odesílám…";
+  document.getElementById('loglines').innerHTML = '';
+  log('Spouštím odesílání...', 'wait');
+
+  const d = {
+    id: Date.now(),
+    maser: selMaser.jmeno,
+    maserId: selMaser.id,
+    datum: selDatum,
+    cas: selCas,
+    typ: typ,
+    delka: document.getElementById("r-delka").value,
+    misto: document.getElementById("r-misto").value,
+    jmeno: jmeno,
+    telefon: telefon,
+    email: document.getElementById("r-email").value.trim(),
+    adresa: document.getElementById("r-adresa").value.trim(),
+    poznamka: document.getElementById("r-poznamka").value.trim(),
+    stav: "čeká na potvrzení"
+  };
+
+  log(`Rezervace: ${d.jmeno} → ${d.maser}, ${d.datum} ${d.cas}`, 'info');
+  log('Odesílám do GitHub Actions...', 'wait');
+
+  try{
+    const resp = await fetch(DISPATCH_URL, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${window.GH_TOKEN||''}`,
+        "Accept": "application/vnd.github.v3+json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        event_type: "nova-rezervace",
+        client_payload: d
+      })
+    });
+
+    if(resp.status === 204){
+      log('✓ Odesláno!', 'ok');
+      setTimeout(() => {
+        document.getElementById("frm").style.display = "none";
+        document.getElementById("ok").style.display = "block";
+      }, 1200);
+    } else {
+      const err = await resp.json().catch(() => ({}));
+      log(`Chyba ${resp.status}: ${err.message||'Neznámá chyba'}`, 'err');
+      btn.disabled = false;
+      btn.textContent = "✉️ Odeslat žádost o termín";
+    }
+  } catch(err){
+    log('Chyba připojení: ' + err.message, 'err');
+    btn.disabled = false;
+    btn.textContent = "✉️ Odeslat žádost o termín";
+  }
+}
+
+buildMaserGrid();
+updProgress();
+</script>
+</body>
+</html>

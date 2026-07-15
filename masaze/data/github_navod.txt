@@ -1,0 +1,101 @@
+NÁVOD – FORMULÁŘ NA GITHUB PAGES → GITHUB ISSUES
+==================================================
+
+JAK TO FUNGUJE:
+  Kolega otevře stránku → vyplní formulář → klikne Odeslat
+  → automaticky se vytvoří Issue ve tvém repozitáři coulcz/masaze
+  → ty to okamžitě vidíš na GitHubu
+
+==================================================
+KROK 1 – GitHub Personal Access Token
+==================================================
+
+1. Jdi na: github.com → Settings → Developer settings
+   → Personal access tokens → Tokens (classic)
+
+2. Klikni "Generate new token (classic)"
+
+3. Název: "Masaze formular"
+
+4. Zaškrtni POUZE:
+   ✓ repo (celý checkbox)
+
+5. Klikni "Generate token"
+
+6. ZKOPÍRUJ token – začíná "ghp_..."
+   ⚠️ Ukaže se jen jednou!
+
+==================================================
+KROK 2 – Vložit token do formuláře
+==================================================
+
+1. Otevři soubor: formular_maseri_v2.html
+
+2. Najdi řádek:
+   const GITHUB_TOKEN = "";
+
+3. Vlož token mezi uvozovky:
+   const GITHUB_TOKEN = "ghp_tvujTokenZde";
+
+==================================================
+KROK 3 – Nahrát na GitHub
+==================================================
+
+1. Jdi na: github.com/coulcz/masaze
+
+2. Nahraj soubor formular_maseri_v2.html
+   (přetáhni nebo přes Upload files)
+
+3. Přejmenuj ho na: formular.html
+   (nebo nech původní název)
+
+4. Commit změny
+
+==================================================
+KROK 4 – Aktivovat GitHub Pages (pokud není)
+==================================================
+
+1. V repozitáři jdi na Settings → Pages
+2. Source: Deploy from branch
+3. Branch: main, složka: / (root)
+4. Uložit
+
+==================================================
+KROK 5 – Poslat kolegovi odkaz
+==================================================
+
+  https://coulcz.github.io/masaze/formular.html
+
+  Kolega vyplní → ty vidíš Issues na:
+  https://github.com/coulcz/masaze/issues
+
+==================================================
+CO UVIDÍŠ V ISSUES:
+==================================================
+
+  Každé odeslání formuláře = 1 nové Issue
+  Název: "🧘 Nový masér: Jana Nováková – Ostrava (MSK)"
+  
+  Uvnitř Issue = přehledná tabulka se všemi údaji:
+  • Kraj, Okres, Město
+  • Jméno, Telefon, E-mail, Web
+  • Facebook, Instagram, TikTok
+  • Dovednosti, Cena, Délka masáže
+  • Poznámka
+
+  Issues → filtruj, hledej, uzavři po zpracování
+  Notifikace: GitHub ti pošle upozornění na e-mail
+  hned jak kolega odešle formulář!
+
+==================================================
+TIPY:
+==================================================
+
+  • Issues lze označit štítkem "zpracováno" a zavřít
+  • Lze přidat komentář k záznamu
+  • Funguje na mobilu i PC
+  • Export Issues do CSV přes GitHub API
+
+==================================================
+Celkem: 14 krajů, 77 okresů v formuláři
+==================================================

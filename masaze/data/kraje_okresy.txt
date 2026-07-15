@@ -1,0 +1,110 @@
+KRAJE A OKRESY ČESKÉ REPUBLIKY
+================================
+
+1. HLAVNÍ MĚSTO PRAHA
+   - Praha
+
+2. STŘEDOČESKÝ KRAJ
+   - Benešov
+   - Beroun
+   - Kladno
+   - Kolín
+   - Kutná Hora
+   - Mělník
+   - Mladá Boleslav
+   - Nymburk
+   - Praha-východ
+   - Praha-západ
+   - Příbram
+   - Rakovník
+
+3. JIHOČESKÝ KRAJ
+   - České Budějovice
+   - Český Krumlov
+   - Jindřichův Hradec
+   - Písek
+   - Prachatice
+   - Strakonice
+   - Tábor
+
+4. PLZEŇSKÝ KRAJ
+   - Domažlice
+   - Klatovy
+   - Plzeň-jih
+   - Plzeň-město
+   - Plzeň-sever
+   - Rokycany
+   - Tachov
+
+5. KARLOVARSKÝ KRAJ
+   - Cheb
+   - Karlovy Vary
+   - Sokolov
+
+6. ÚSTECKÝ KRAJ
+   - Děčín
+   - Chomutov
+   - Litoměřice
+   - Louny
+   - Most
+   - Teplice
+   - Ústí nad Labem
+
+7. LIBERECKÝ KRAJ
+   - Česká Lípa
+   - Jablonec nad Nisou
+   - Liberec
+   - Semily
+
+8. KRÁLOVÉHRADECKÝ KRAJ
+   - Hradec Králové
+   - Jičín
+   - Náchod
+   - Rychnov nad Kněžnou
+   - Trutnov
+
+9. PARDUBICKÝ KRAJ
+   - Chrudim
+   - Pardubice
+   - Svitavy
+   - Ústí nad Orlicí
+
+10. KRAJ VYSOČINA
+    - Havlíčkův Brod
+    - Jihlava
+    - Pelhřimov
+    - Třebíč
+    - Žďár nad Sázavou
+
+11. JIHOMORAVSKÝ KRAJ
+    - Blansko
+    - Brno-město
+    - Brno-venkov
+    - Břeclav
+    - Hodonín
+    - Vyškov
+    - Znojmo
+
+12. OLOMOUCKÝ KRAJ
+    - Jeseník
+    - Olomouc
+    - Prostějov
+    - Přerov
+    - Šumperk
+
+13. ZLÍNSKÝ KRAJ
+    - Kroměříž
+    - Uherské Hradiště
+    - Vsetín
+    - Zlín
+
+14. MORAVSKOSLEZSKÝ KRAJ
+    - Bruntál
+    - Frýdek-Místek
+    - Karviná
+    - Nový Jičín
+    - Opava
+    - Ostrava-město
+
+================================
+Celkem: 14 krajů, 77 okresů

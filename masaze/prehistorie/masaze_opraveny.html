@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Masérský systém ČR</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fff;--bg2:#f5f5f3;--bg3:#eeecea;
+  --txt:#1a1a18;--txt2:#6b6b67;--txt3:#9e9e9a;
+  --brd:rgba(0,0,0,.12);--brd2:rgba(0,0,0,.22);
+  --blue:#185FA5;--blue-l:#E6F1FB;--blue-d:#0C447C;
+  --green:#1D9E75;--green-l:#E1F5EE;--green-d:#085041;
+  --purple:#7F77DD;--purple-l:#EEEDFE;--purple-d:#3C3489;
+  --amber:#BA7517;--amber-l:#FAEEDA;--amber-d:#633806;
+  --red:#A32D2D;--red-l:#FCEBEB;--red-d:#791F1F;
+  --r-md:8px;--r-lg:12px;
+  --font:'Segoe UI',system-ui,sans-serif;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1c1c1a;--bg2:#252523;--bg3:#2e2e2b;
+  --txt:#f0ede8;--txt2:#a8a89e;--txt3:#6b6b67;
+  --brd:rgba(255,255,255,.12);--brd2:rgba(255,255,255,.22);
+  --blue-l:#0C447C;--blue-d:#B5D4F4;
+  --green-l:#085041;--green-d:#9FE1CB;
+  --purple-l:#3C3489;--purple-d:#CECBF6;
+  --amber-l:#633806;--amber-d:#FAC775;
+  --red-l:#791F1F;--red-d:#F7C1C1;
+}}
+body{font-family:var(--font);font-size:13px;color:var(--txt);background:var(--bg3);min-height:100vh}
+.app{max-width:1100px;margin:0 auto;padding:12px}
+.tabs{display:flex;gap:2px;background:var(--bg2);border-radius:var(--r-lg);padding:4px;margin-bottom:12px;flex-wrap:wrap}
+.tab{flex:1;min-width:80px;text-align:center;padding:7px 10px;border-radius:var(--r-md);cursor:pointer;font-size:12px;color:var(--txt2);user-select:none;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:5px;transition:background .12s}
+.tab:hover{background:var(--bg3)}
+.tab.on{background:var(--bg);color:var(--txt);font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.bn{background:var(--red);color:#fff;font-size:10px;border-radius:10px;padding:0 5px;line-height:16px;display:none}
+.view{display:none}.view.on{display:block}
+.layout{display:flex;gap:12px;align-items:flex-start}
+.mcol{flex:1 1 auto;min-width:0}
+.scol{width:260px;flex-shrink:0;display:flex;flex-direction:column;gap:8px}
+.card{background:var(--bg);border:.5px solid var(--brd);border-radius:var(--r-lg);padding:12px;margin-bottom:8px}
+.card:last-child{margin-bottom:0}
+.card h3{font-size:13px;font-weight:500;margin-bottom:8px;color:var(--txt)}
+.card h4{font-size:10px;font-weight:500;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;margin:10px 0 4px;padding-top:8px;border-top:.5px solid var(--brd)}
+.fl{font-size:11px;color:var(--txt2);display:block;margin-bottom:2px;margin-top:6px}
+.fl:first-child{margin-top:0}
+input,select,textarea{width:100%;font-size:12px;padding:5px 8px;border-radius:var(--r-md);border:.5px solid var(--brd2);background:var(--bg2);color:var(--txt);outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--blue)}
+textarea{resize:vertical;min-height:46px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.btn{display:flex;align-items:center;justify-content:center;gap:5px;width:100%;font-size:12px;padding:7px;border-radius:var(--r-md);cursor:pointer;border:.5px solid var(--brd2);background:var(--bg2);color:var(--txt);margin-top:8px;transition:background .1s}
+.btn:hover{background:var(--bg3)}
+.btn-b{background:var(--blue);color:#fff;border-color:var(--blue)}.btn-b:hover{background:var(--blue-d)}
+.btn-g{background:var(--green);color:#fff;border-color:var(--green)}.btn-g:hover{background:var(--green-d)}
+.btn-sm{width:auto;padding:3px 9px;font-size:11px;margin-top:0}
+.tr-row{display:flex;gap:5px;margin-top:4px}
+.tmode{flex:1;font-size:11px;padding:5px 3px;border-radius:var(--r-md);cursor:pointer;border:.5px solid var(--brd);background:var(--bg2);color:var(--txt2);text-align:center;user-select:none;display:flex;flex-direction:column;align-items:center;gap:2px;transition:all .1s}
+.tm-auto.on{background:var(--blue-l);color:var(--blue-d);border-color:var(--blue)}
+.tm-vlak.on{background:var(--green-l);color:var(--green-d);border-color:var(--green)}
+.tm-bus.on{background:var(--amber-l);color:var(--amber-d);border-color:var(--amber)}
+.stags{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px}
+.stag{font-size:10px;padding:2px 7px;border-radius:10px;background:var(--bg2);border:.5px solid var(--brd);color:var(--txt2);cursor:pointer;user-select:none;transition:all .1s}
+.stag:hover{border-color:var(--blue)}
+.stag.on{background:var(--blue-l);color:var(--blue-d);border-color:var(--blue)}
+.stag.cs{background:var(--green-l);color:var(--green-d);border-color:var(--green)}
+.crow-in{display:flex;gap:5px;margin-top:5px}
+.crow-in input{flex:1}
+.crow-in button{font-size:11px;padding:4px 9px;border-radius:var(--r-md);cursor:pointer;border:.5px solid var(--brd);background:var(--bg2);color:var(--txt);white-space:nowrap}
+.cbox{background:var(--bg2);border-radius:var(--r-md);padding:7px 10px;margin-top:5px}
+.crow{display:flex;justify-content:space-between;font-size:11px;padding:2px 0}
+.crow .cl{color:var(--txt2)}.crow .cv{font-weight:500;color:var(--txt)}
+.cv-g{color:var(--green)!important}.cv-r{color:var(--red)!important}
+.dv{border:none;border-top:.5px solid var(--brd);margin:4px 0}
+.elist{max-height:160px;overflow-y:auto;display:flex;flex-direction:column;gap:3px}
+.ent{font-size:11px;padding:4px 8px;border-radius:var(--r-md);background:var(--bg2);cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;gap:5px;transition:background .1s}
+.ent:hover{background:var(--bg3)}
+.edel{cursor:pointer;font-size:14px;color:var(--txt3);flex-shrink:0}.edel:hover{color:var(--red)}
+.pill{display:inline-block;font-size:10px;padding:1px 6px;border-radius:10px;margin:1px 2px}
+.p-me{background:var(--blue-l);color:var(--blue-d)}
+.p-col{background:var(--green-l);color:var(--green-d)}
+.p-sk{background:var(--green-l);color:var(--green-d)}
+.p-pe{background:var(--amber-l);color:var(--amber-d)}
+.p-co{background:var(--green-l);color:var(--green-d)}
+.p-ca{background:var(--red-l);color:var(--red-d)}
+.p-de{background:var(--purple-l);color:var(--purple-d)}
+.dinfo{font-size:11px;color:var(--txt2);line-height:1.8;margin-top:3px}
+.dinfo strong{color:var(--txt)}
+.lrow{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--txt2);margin-bottom:5px}
+.ldot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.st{background:var(--bg2);border-radius:var(--r-md);padding:7px 9px;text-align:center}
+.st .sv{font-size:20px;font-weight:500;color:var(--txt)}
+.st .sl{font-size:10px;color:var(--txt2);margin-top:1px}
+.mc{border:.5px solid var(--brd);border-radius:var(--r-md);padding:8px 10px;cursor:pointer;margin-bottom:5px;transition:border-color .1s}
+.mc:hover{border-color:var(--blue)}
+.mc.sel{border-color:var(--blue);background:var(--bg2)}
+.tgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:5px}
+.tslot{font-size:11px;padding:5px 2px;border-radius:var(--r-md);border:.5px solid var(--brd);cursor:pointer;text-align:center;color:var(--txt2);background:var(--bg2);transition:all .1s}
+.tslot:hover{border-color:var(--blue);color:var(--blue)}
+.tslot.tsel{background:var(--blue);color:#fff;border-color:var(--blue)}
+.tslot.taken{background:var(--bg3);color:var(--txt3);cursor:not-allowed;opacity:.5;text-decoration:line-through}
+.rtbl{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed}
+.rtbl th{font-size:10px;font-weight:500;color:var(--txt2);text-align:left;padding:5px 7px;border-bottom:.5px solid var(--brd);white-space:nowrap}
+.rtbl td{padding:6px 7px;border-bottom:.5px solid var(--brd);color:var(--txt);vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rtbl tr:hover td{background:var(--bg2)}
+.actb{display:flex;gap:4px}
+.actb button{font-size:11px;padding:3px 7px;border-radius:6px;cursor:pointer;border:.5px solid var(--brd);background:var(--bg2);color:var(--txt);white-space:nowrap}
+.actb .conf{background:var(--green-l);color:var(--green-d);border-color:var(--green)}.actb .conf:hover{background:#9FE1CB}
+.actb .canc{background:var(--red-l);color:var(--red-d);border-color:var(--red)}.actb .canc:hover{background:#F7C1C1}
+.fbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.fbar select,.fbar input{width:auto}
+.toast{background:var(--green);color:#fff;font-size:12px;padding:8px 14px;border-radius:var(--r-md);margin-bottom:8px;display:none;align-items:center;gap:7px;position:sticky;top:8px;z-index:100}
+.toast.err{background:var(--red)}
+.toast.show{display:flex}
+.empty{text-align:center;padding:24px;color:var(--txt2);font-size:12px}
+#mapwrap{border-radius:var(--r-lg);border:.5px solid var(--brd);overflow:hidden;background:var(--bg2);position:relative}
+#maptip{position:absolute;background:var(--bg);border:.5px solid var(--brd2);border-radius:var(--r-md);padding:5px 9px;font-size:11px;color:var(--txt);pointer-events:none;display:none;z-index:10;white-space:nowrap}
+.rp{cursor:pointer;stroke:#fff;stroke-width:.6;transition:opacity .12s}
+.rp:hover{opacity:.75;stroke-width:1.4}
+.rp.sel{stroke-width:2.5;opacity:1}
+.kl{pointer-events:none;text-anchor:middle;dominant-baseline:middle}
+.cvbadge{display:inline-flex;align-items:center;gap:3px;font-size:10px;padding:2px 6px;border-radius:10px;margin:2px}
+.nab-item{padding:9px 11px;border:.5px solid var(--brd);border-radius:var(--r-lg);margin-bottom:7px;background:var(--bg)}
+.pop-item{padding:9px 11px;border:.5px solid var(--brd);border-radius:var(--r-lg);margin-bottom:7px;background:var(--bg)}
+
+.map-toolbar{display:flex;align-items:center;gap:6px;padding:7px 10px;background:var(--bg);border-bottom:.5px solid var(--brd);flex-wrap:wrap}
+.map-toolbar span{font-size:11px;color:var(--txt2)}
+.zoom-btn{font-size:13px;padding:4px 10px;border-radius:var(--r-md);cursor:pointer;border:.5px solid var(--brd2);background:var(--bg2);color:var(--txt);line-height:1;transition:background .1s}
+.zoom-btn:hover{background:var(--bg3)}
+.zoom-info{font-size:11px;color:var(--txt2);min-width:38px;text-align:center}
+.fs-row{display:flex;align-items:center;gap:5px;margin-left:auto}
+.fs-btn{font-size:12px;padding:3px 9px;border-radius:var(--r-md);cursor:pointer;border:.5px solid var(--brd2);background:var(--bg2);color:var(--txt);transition:background .1s}
+.fs-btn:hover{background:var(--bg3)}
+.fs-btn.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+</style>
+</head>
+<body>
+<div class="app">
+<div id="toast" class="toast"><span id="tmsg"></span></div>
+
+<div class="tabs">
+  <div class="tab on" onclick="sw('mapa')">🗺 Mapa</div>
+  <div class="tab" onclick="sw('nabidka')">✨ Nabídka</div>
+  <div class="tab" onclick="sw('poptavka')">🔍 Poptávka</div>
+  <div class="tab" onclick="sw('rezervace')">📅 Rezervace</div>
+  <div class="tab" onclick="sw('admin')">⚙️ Admin <span class="bn" id="pcount"></span></div>
+</div>
+
+<!-- MAPA -->
+<div class="view on" id="view-mapa">
+<div class="layout">
+  <div class="mcol">
+    <div id="mapwrap">
+      <div class="map-toolbar">
+        <span>Zoom:</span>
+        <button class="zoom-btn" onclick="zoomMap(-0.25)" title="Oddálit">−</button>
+        <span class="zoom-info" id="zoom-pct">100%</span>
+        <button class="zoom-btn" onclick="zoomMap(+0.25)" title="Přiblížit">+</button>
+        <button class="zoom-btn" onclick="zoomReset()" title="Reset">↺</button>
+        <div class="fs-row">
+          <span>Písmo:</span>
+          <button class="fs-btn" onclick="setFS(12)" id="fs-s">S</button>
+          <button class="fs-btn on" onclick="setFS(14)" id="fs-m">M</button>
+          <button class="fs-btn" onclick="setFS(16)" id="fs-l">L</button>
+          <button class="fs-btn" onclick="setFS(18)" id="fs-xl">XL</button>
+        </div>
+      </div>
+      <div id="mapload" style="padding:40px;text-align:center;font-size:12px;color:var(--txt2)">⏳ Načítám mapu…</div>
+      <svg id="mapsvg" style="width:100%;display:block"></svg>
+      <div id="maptip"></div>
+    </div>
+    <div class="card" style="margin-top:8px">
+      <h3>Moje pokrytí</h3>
+      <div id="cov-detail" style="font-size:11px;color:var(--txt2)">Přidejte maséra pro zobrazení pokrytí.</div>
+    </div>
+  </div>
+  <div class="scol">
+    <div class="card">
+      <h3>Přidat maséra</h3>
+      <span class="fl">Jméno</span><input id="mn" placeholder="Jana Nováková" />
+      <span class="fl">Typ</span>
+      <select id="mt"><option value="me">Já (moje oblast)</option><option value="col">Kolega / kolegyně</option></select>
+      <div class="r2">
+        <div><span class="fl">Kraj</span><select id="mkr" onchange="onMKC()"><option value="">– kraj –</option></select></div>
+        <div><span class="fl">Okres</span><select id="mok"><option value="">– okres –</option></select></div>
+      </div>
+      <span class="fl">Město</span><input id="mme" placeholder="Ostrava…" />
+      <h4>Kapacita</h4>
+      <div class="r2">
+        <div><span class="fl">Klientů/den</span><input type="number" id="mcl" min="1" value="8" /></div>
+        <div><span class="fl">Délka (min)</span><input type="number" id="mdu" min="15" step="15" value="60" /></div>
+      </div>
+      <h4>Doprava</h4>
+      <div class="tr-row">
+        <div class="tmode tm-auto" id="ta" onclick="tT('auto')">🚗<span style="font-size:10px">Auto</span></div>
+        <div class="tmode tm-vlak" id="tv" onclick="tT('vlak')">🚆<span style="font-size:10px">Vlak</span></div>
+        <div class="tmode tm-bus" id="tb" onclick="tT('bus')">🚌<span style="font-size:10px">Bus</span></div>
+      </div>
+      <div class="r2" style="margin-top:5px">
+        <div><span class="fl">Vzdálenost (km)</span><input type="number" id="mkm" min="0" placeholder="0" oninput="calcR()" /></div>
+        <div><span class="fl">Čas jízdy (min)</span><input type="number" id="mmi" min="0" placeholder="0" oninput="calcR()" /></div>
+      </div>
+      <div id="rcalc" style="display:none" class="cbox">
+        <div class="crow"><span class="cl">Tam a zpět</span><span class="cv" id="rc-k">–</span></div>
+        <div class="crow"><span class="cl">Čas cesty</span><span class="cv" id="rc-t">–</span></div>
+        <hr class="dv">
+        <div class="crow"><span class="cl">Palivo (est.)</span><span class="cv" id="rc-f">–</span></div>
+        <div class="crow"><span class="cl">Efekt. čas masáží</span><span class="cv cv-g" id="rc-e">–</span></div>
+      </div>
+      <h4>Dovednosti</h4>
+      <div class="stags" id="mst"></div>
+      <div class="crow-in"><input id="mcs" placeholder="Vlastní dovednost…" /><button onclick="addCS()">+ Přidat</button></div>
+      <button class="btn btn-b" onclick="addM()">💾 Uložit maséra</button>
+    </div>
+    <div class="card">
+      <h3>Statistiky týmu</h3>
+      <div class="sg">
+        <div class="st"><div class="sv" id="s-m">0</div><div class="sl">Masérů</div></div>
+        <div class="st"><div class="sv" id="s-c">0</div><div class="sl">Klientů/den</div></div>
+        <div class="st"><div class="sv" id="s-r">–</div><div class="sl">Klientů/masér</div></div>
+        <div class="st"><div class="sv" id="s-k">–</div><div class="sl">Prům. km</div></div>
+      </div>
+      <span class="fl" style="margin-top:8px">Čekající klienti</span>
+      <input type="number" id="ical" min="0" value="0" oninput="calcCap()" />
+      <div class="cbox" style="margin-top:5px">
+        <div class="crow"><span class="cl">Kapacita/den</span><span class="cv" id="cc-c">0</span></div>
+        <div class="crow"><span class="cl">Obsazenost</span><span class="cv" id="cc-p">0 %</span></div>
+        <hr class="dv">
+        <div class="crow"><span class="cl">Volná místa</span><span class="cv cv-g" id="cc-f">0</span></div>
+        <div class="crow"><span class="cl">Stav</span><span class="cv" id="cc-o">–</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Legenda</h3>
+      <div class="lrow"><div class="ldot" style="background:#185FA5"></div>Moje oblasti</div>
+      <div class="lrow"><div class="ldot" style="background:#1D9E75"></div>Kolegové</div>
+      <div class="lrow"><div class="ldot" style="background:#7F77DD"></div>Já + kolega</div>
+      <div class="lrow"><div class="ldot" style="background:#D85A30"></div>Poptávka bez maséra</div>
+      <div class="lrow"><div class="ldot" style="background:#B4B2A9"></div>Volné</div>
+    </div>
+    <div class="card">
+      <h3 id="kd-t">Klikněte na kraj</h3>
+      <div class="dinfo" id="kd-i">Vyberte kraj na mapě.</div>
+    </div>
+    <div class="card">
+      <h3>Záznamy <span id="ecount" style="color:var(--txt2);font-weight:400"></span></h3>
+      <div class="elist" id="elist"><span style="font-size:11px;color:var(--txt2)">Zatím prázdné.</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- NABÍDKA -->
+<div class="view" id="view-nabidka">
+<div class="layout">
+  <div class="mcol">
+    <div class="card">
+      <div class="fbar">
+        <select id="nfk" onchange="renderNab()"><option value="">Všechny kraje</option></select>
+        <select id="nfo" onchange="renderNab()"><option value="">Všechny okresy</option></select>
+        <select id="nfs" onchange="renderNab()"><option value="">Všechny dovednosti</option></select>
+        <input id="nfq" placeholder="Hledat jméno…" style="width:120px" oninput="renderNab()" />
+      </div>
+      <div id="nab-list"><div class="empty">Přidejte maséry na záložce Mapa.</div></div>
+    </div>
+  </div>
+  <div class="scol">
+    <div class="card">
+      <h3>Přidat nabídku</h3>
+      <span class="fl">Název služby</span><input id="ns-n" placeholder="Relaxační masáž 60 min" />
+      <span class="fl">Masér</span><select id="ns-m"><option value="">– vyberte –</option></select>
+      <div class="r2">
+        <div><span class="fl">Cena (Kč)</span><input type="number" id="ns-c" min="0" placeholder="800" /></div>
+        <div><span class="fl">Délka (min)</span><input type="number" id="ns-d" min="15" step="15" value="60" /></div>
+      </div>
+      <span class="fl">Popis</span><textarea id="ns-p" placeholder="Krátký popis služby…"></textarea>
+      <button class="btn btn-b" onclick="addNab()">+ Přidat nabídku</button>
+    </div>
+    <div class="card">
+      <h3>Přidané nabídky <span id="nabcnt" style="color:var(--txt2);font-weight:400"></span></h3>
+      <div class="elist" id="nab-mine"><span style="color:var(--txt2);font-size:11px">Zatím žádné.</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- POPTÁVKA -->
+<div class="view" id="view-poptavka">
+<div class="layout">
+  <div class="mcol">
+    <div class="card">
+      <div class="fbar">
+        <select id="pfk" onchange="renderPop()"><option value="">Všechny kraje</option></select>
+        <select id="pfo" onchange="renderPop()"><option value="">Všechny okresy</option></select>
+        <select id="pfs" onchange="renderPop()"><option value="">Všechny stavy</option><option value="open">Otevřená</option><option value="matched">Spárovaná</option></select>
+        <input id="pfq" placeholder="Hledat…" style="width:110px" oninput="renderPop()" />
+      </div>
+      <div id="pop-list"><div class="empty">Žádné poptávky.</div></div>
+    </div>
+  </div>
+  <div class="scol">
+    <div class="card">
+      <h3>Přidat poptávku</h3>
+      <span class="fl">Jméno klienta</span><input id="pd-j" placeholder="Karel Novák" />
+      <span class="fl">Telefon / e-mail</span><input id="pd-k" placeholder="+420… / email@…" />
+      <div class="r2">
+        <div><span class="fl">Kraj</span><select id="pd-kr" onchange="onPDKC()"><option value="">– kraj –</option></select></div>
+        <div><span class="fl">Okres</span><select id="pd-ok"><option value="">– okres –</option></select></div>
+      </div>
+      <span class="fl">Město</span><input id="pd-m" placeholder="Brno…" />
+      <span class="fl">Typ masáže</span>
+      <div class="stags" id="pd-st"></div>
+      <span class="fl" style="margin-top:6px">Preferovaný termín</span><input type="date" id="pd-d" />
+      <span class="fl">Poznámka</span><textarea id="pd-n" placeholder="Přání, zdravotní omezení…"></textarea>
+      <button class="btn btn-g" onclick="addPop()">+ Přidat poptávku</button>
+    </div>
+    <div class="card">
+      <h3>Statistiky poptávky</h3>
+      <div class="sg">
+        <div class="st"><div class="sv" id="pd-tot">0</div><div class="sl">Celkem</div></div>
+        <div class="st"><div class="sv" id="pd-op">0</div><div class="sl">Otevřených</div></div>
+        <div class="st"><div class="sv" id="pd-ma">0</div><div class="sl">Spárovaných</div></div>
+        <div class="st"><div class="sv" id="pd-tp">–</div><div class="sl">Top kraj</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- REZERVACE -->
+<div class="view" id="view-rezervace">
+<div class="layout">
+  <div class="mcol">
+    <div class="card">
+      <h3>1. Vyberte maséra</h3>
+      <div id="rm-list"><div class="empty">Přidejte maséry na záložce Mapa.</div></div>
+    </div>
+    <div class="card" style="margin-top:8px">
+      <h3>2. Termín a detail rezervace</h3>
+      <div class="r2">
+        <div><span class="fl">Datum</span><input type="date" id="rd" /></div>
+        <div><span class="fl">Délka masáže</span>
+          <select id="rdur"><option value="30">30 min</option><option value="60" selected>60 min</option><option value="90">90 min</option><option value="120">120 min</option></select>
+        </div>
+      </div>
+      <span class="fl">Dostupné časy</span>
+      <div class="tgrid" id="rtg"><span style="font-size:11px;color:var(--txt2);grid-column:1/-1">Vyberte maséra a datum.</span></div>
+      <span class="fl">Typ masáže</span><select id="rsk"><option value="">– vyberte –</option></select>
+      <span class="fl">Vaše jméno</span><input id="rkl" placeholder="Jméno a příjmení" />
+      <span class="fl">Telefon / e-mail</span><input id="rko" placeholder="+420… nebo email@…" />
+      <span class="fl">Poznámka</span><textarea id="rno" placeholder="Zdravotní omezení, přání…"></textarea>
+      <button class="btn btn-b" onclick="submitR()">✉️ Odeslat rezervaci</button>
+    </div>
+  </div>
+  <div class="scol">
+    <div class="card">
+      <h3>Moje rezervace</h3>
+      <div id="my-r"><span style="font-size:11px;color:var(--txt2)">Zatím žádné.</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ADMIN -->
+<div class="view" id="view-admin">
+  <div class="sg" style="margin-bottom:10px" id="adm-st"></div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px">
+      <h3 style="margin:0">Správa rezervací</h3>
+      <div class="fbar" style="margin:0">
+        <select id="afs" onchange="renderAdm()"><option value="">Vše</option><option value="pending">Čekající</option><option value="confirmed">Potvrzené</option><option value="cancelled">Zrušené</option></select>
+        <select id="afm" onchange="renderAdm()"><option value="">Všichni maséři</option></select>
+        <input id="afq" placeholder="Hledat klienta…" style="width:120px" oninput="renderAdm()" />
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="rtbl">
+        <colgroup><col style="width:55px"><col style="width:110px"><col style="width:100px"><col style="width:85px"><col style="width:52px"><col style="width:60px"><col style="width:110px"><col style="width:110px"><col style="width:85px"><col style="width:120px"></colgroup>
+        <thead><tr><th>#</th><th>Klient</th><th>Masér</th><th>Datum</th><th>Čas</th><th>Délka</th><th>Masáž</th><th>Kontakt</th><th>Stav</th><th>Akce</th></tr></thead>
+        <tbody id="atb"></tbody>
+      </table>
+      <div id="aem" class="empty" style="display:none">📭 Žádné rezervace.</div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:8px">
+    <h3>Poptávky ke spárování</h3>
+    <div id="adm-pop"><div class="empty">Žádné otevřené poptávky.</div></div>
+  </div>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const KNMS={"Praha":"PHA","Hlavní město Praha":"PHA","Středočeský kraj":"STC","Jihočeský kraj":"JHC","Plzeňský kraj":"PLK","Karlovarský kraj":"KVK","Ústecký kraj":"ULK","Liberecký kraj":"LBK","Královéhradecký kraj":"HKK","Pardubický kraj":"PAK","Kraj Vysočina":"VYS","Jihomoravský kraj":"JHM","Olomoucký kraj":"OLK","Zlínský kraj":"ZLK","Moravskoslezský kraj":"MSK"};
+const SH={PHA:"Praha",STC:"Středočeský",JHC:"Jihočeský",PLK:"Plzeňský",KVK:"Karlovarský",ULK:"Ústecký",LBK:"Liberecký",HKK:"Královéhradecký",PAK:"Pardubický",VYS:"Vysočina",JHM:"Jihomoravský",OLK:"Olomoucký",ZLK:"Zlínský",MSK:"Moravskoslezský"};
+const KS=["PHA","STC","JHC","PLK","KVK","ULK","LBK","HKK","PAK","VYS","JHM","OLK","ZLK","MSK"];
+const OKR={PHA:["Praha"],STC:["Benešov","Beroun","Kladno","Kolín","Kutná Hora","Mělník","Mladá Boleslav","Nymburk","Praha-východ","Praha-západ","Příbram","Rakovník"],JHC:["České Budějovice","Český Krumlov","Jindřichův Hradec","Písek","Prachatice","Strakonice","Tábor"],PLK:["Domažlice","Klatovy","Plzeň-jih","Plzeň-město","Plzeň-sever","Rokycany","Tachov"],KVK:["Cheb","Karlovy Vary","Sokolov"],ULK:["Děčín","Chomutov","Litoměřice","Louny","Most","Teplice","Ústí nad Labem"],LBK:["Česká Lípa","Jablonec nad Nisou","Liberec","Semily"],HKK:["Hradec Králové","Jičín","Náchod","Rychnov nad Kněžnou","Trutnov"],PAK:["Chrudim","Pardubice","Svitavy","Ústí nad Orlicí"],VYS:["Havlíčkův Brod","Jihlava","Pelhřimov","Třebíč","Žďár nad Sázavou"],JHM:["Blansko","Brno-město","Brno-venkov","Břeclav","Hodonín","Vyškov","Znojmo"],OLK:["Jeseník","Olomouc","Prostějov","Přerov","Šumperk"],ZLK:["Kroměříž","Uherské Hradiště","Vsetín","Zlín"],MSK:["Bruntál","Frýdek-Místek","Karviná","Nový Jičín","Opava","Ostrava-město"]};
+const DSK=["Klasická masáž","Sportovní masáž","Relaxační masáž","Lymfatická masáž","Reflexní terapie","Thajská masáž","Hot stone","Trigger point","Baňkování","Myofasciální terapie","Aromaterapie","Prenatální masáž","Čínská masáž","Kraniosakrální terapie"];
+const TIMES=["8:00","8:30","9:00","9:30","10:00","10:30","11:00","11:30","12:00","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00"];
+
+// ── STAV ──────────────────────────────────────────────────────────────────────
+let maseurs=[],nabidky=[],poptavky=[],rezervace=[];
+let cSk=[],selSk=new Set(),pdSk=new Set(),selT=new Set();
+let selKraj=null,selM=null,selTime=null,rCnt=0,nCnt=0,pCnt=0;
+let mapSvg=null,gPath=null;
+const isDark=matchMedia("(prefers-color-scheme:dark)").matches;
+const today=new Date().toISOString().split("T")[0];
+
+const G=id=>document.getElementById(id);
+
+function notify(msg,err){
+  const t=G("toast"),s=G("tmsg");
+  s.textContent=msg;t.className="toast"+(err?" err":"")+" show";
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),2600);
+}
+
+// ── ZÁLOŽKY ───────────────────────────────────────────────────────────────────
+function sw(tab){
+  ["mapa","nabidka","poptavka","rezervace","admin"].forEach((t,i)=>{
+    document.querySelectorAll(".tab")[i].classList.toggle("on",t===tab);
+    G("view-"+t).classList.toggle("on",t===tab);
+  });
+  if(tab==="nabidka"){syncNF();renderNab();}
+  if(tab==="poptavka")renderPop();
+  if(tab==="rezervace")renderRM();
+  if(tab==="admin"){syncAF();renderAdm();renderAdmPop();}
+}
+
+// ── INICIALIZACE SELECTŮ ──────────────────────────────────────────────────────
+KS.forEach(id=>{
+  const n=SH[id];
+  ["mkr","pd-kr","nfk","pfk"].forEach(s=>{
+    const o=document.createElement("option");o.value=id;o.textContent=n;G(s).appendChild(o);
+  });
+});
+
+function fillOk(kId,sId){
+  const s=G(sId);s.innerHTML='<option value="">– okres –</option>';
+  if(kId&&OKR[kId])OKR[kId].forEach(d=>{const o=document.createElement("option");o.value=d;o.textContent=d;s.appendChild(o);});
+}
+function onMKC(){fillOk(G("mkr").value,"mok");G("mme").value="";}
+function onPDKC(){fillOk(G("pd-kr").value,"pd-ok");G("pd-m").value="";}
+
+// ── DOPRAVA ───────────────────────────────────────────────────────────────────
+function tT(t){
+  const els={auto:"ta",vlak:"tv",bus:"tb"};
+  const el=G(els[t]);
+  if(selT.has(t)){selT.delete(t);el.classList.remove("on");}
+  else{selT.add(t);el.classList.add("on");}
+  calcR();
+}
+function calcR(){
+  const km=parseFloat(G("mkm").value)||0,mn=parseFloat(G("mmi").value)||0;
+  const dur=parseFloat(G("mdu").value)||60,cl=parseFloat(G("mcl").value)||8;
+  const box=G("rcalc");
+  if(!km&&!mn){box.style.display="none";return;}
+  box.style.display="block";
+  const tk=km*2,tm=mn*2,fuel=Math.round(tk*0.07*9),eff=Math.max(0,Math.round(cl*dur-tm));
+  G("rc-k").textContent=tk+" km";
+  G("rc-t").textContent=Math.floor(tm/60)+"h "+tm%60+"min";
+  G("rc-f").textContent=selT.has("auto")?fuel+" Kč":"– (bez auta)";
+  G("rc-e").textContent=Math.floor(eff/60)+"h "+eff%60+"min";
+}
+
+// ── DOVEDNOSTI ────────────────────────────────────────────────────────────────
+function renderST(wid,sk){
+  const w=G(wid);w.innerHTML="";
+  [...DSK,...cSk].forEach(s=>{
+    const sp=document.createElement("span");
+    sp.className="stag"+(sk.has(s)?" on":"")+(cSk.includes(s)?" cs":"");
+    sp.textContent=s;
+    sp.onclick=()=>{sk.has(s)?sk.delete(s):sk.add(s);renderST(wid,sk);};
+    w.appendChild(sp);
+  });
+}
+function addCS(){
+  const v=G("mcs").value.trim();if(!v)return;
+  if(!cSk.includes(v)&&!DSK.includes(v)){cSk.push(v);selSk.add(v);}
+  G("mcs").value="";renderST("mst",selSk);renderST("pd-st",pdSk);
+}
+G("mcs").addEventListener("keydown",e=>{if(e.key==="Enter")addCS();});
+
+// ── BARVA KRAJE NA MAPĚ (OPRAVENO) ───────────────────────────────────────────
+function mCol(id){
+  const hasMe=maseurs.some(m=>m.kraj===id&&m.type==="me");
+  const hasCol=maseurs.some(m=>m.kraj===id&&m.type==="col");
+  const hasDem=poptavky.some(p=>p.kraj===id&&p.status==="open");
+  if(hasMe&&hasCol)return"#7F77DD";  // fialová – oba
+  if(hasMe)return"#185FA5";           // modrá – já
+  if(hasCol)return"#1D9E75";          // zelená – kolega ✅ OPRAVENO
+  if(hasDem)return"#D85A30";          // oranžová – poptávka bez maséra
+  return isDark?"#444441":"#D3D1C7";  // šedá – volné
+}
+
+function rMapCol(){
+  if(!mapSvg)return;
+  // Projdi všechny path elementy a nastav barvu podle uloženého krajId
+  document.querySelectorAll(".zoom-g .rp, .rp").forEach(el=>{
+    const id=el.dataset.krajId;
+    if(id){
+      el.setAttribute("fill", mCol(id));
+      el.classList.toggle("sel", id===selKraj);
+    }
+  });
+}
+
+// ── DETAIL KRAJE ──────────────────────────────────────────────────────────────
+function showKD(id){
+  selKraj=id;G("mkr").value=id;fillOk(id,"mok");rMapCol();
+  G("kd-t").textContent=SH[id]||id;
+  const ms=maseurs.filter(e=>e.kraj===id);
+  const ps=poptavky.filter(e=>e.kraj===id&&e.status==="open");
+  if(!ms.length&&!ps.length){G("kd-i").innerHTML="Žádné záznamy v tomto kraji.";return;}
+  let h="";
+  ms.forEach(e=>{
+    const loc=[e.okres,e.mesto].filter(Boolean).join(", ");
+    h+=`<div style="margin-bottom:6px;padding-bottom:6px;border-bottom:.5px solid var(--brd)">`;
+    h+=`<span class="pill ${e.type==="me"?"p-me":"p-col"}">${e.type==="me"?"Já":"Kolega"}</span> <strong>${e.name}</strong>`;
+    if(loc)h+=`<br>📍 ${loc}`;
+    if(e.clients)h+=`<br>👥 ${e.clients} klientů/den · ${e.duration} min`;
+    if(e.km)h+=`<br>🚗 ${e.km} km · ${e.tmin} min jízdy`;
+    if(e.skills&&e.skills.length)h+="<br>"+(e.skills||[]).map(s=>`<span class="pill p-sk">${s}</span>`).join("");
+    h+="</div>";
+  });
+  if(ps.length)h+=`<div style="font-size:10px;color:var(--txt2)">🔍 ${ps.length} otevřených poptávek</div>`;
+  G("kd-i").innerHTML=h;
+}
+
+
+// ── ZOOM & PÍSMO ─────────────────────────────────────────────────────────────
+let zoomLevel=1, panX=0, panY=0, isDragging=false, dragStart={x:0,y:0}, panStart={x:0,y:0};
+
+function applyZoom(){
+  const svg=document.getElementById("mapsvg");
+  if(!svg)return;
+  const g=svg.querySelector("g.zoom-g");
+  if(g)g.setAttribute("transform",`translate(${panX},${panY}) scale(${zoomLevel})`);
+  document.getElementById("zoom-pct").textContent=Math.round(zoomLevel*100)+"%";
+  // Přizpůsobit velikost popisků
+  svg.querySelectorAll(".kl").forEach(t=>{
+    t.setAttribute("font-size", Math.max(5, Math.round(8/zoomLevel))+"");
+  });
+}
+function zoomMap(delta){
+  zoomLevel=Math.min(4, Math.max(0.5, zoomLevel+delta));
+  applyZoom();
+}
+function zoomReset(){
+  zoomLevel=1;panX=0;panY=0;applyZoom();
+}
+function setFS(size){
+  document.body.style.fontSize=size+"px";
+  ["fs-s","fs-m","fs-l","fs-xl"].forEach(id=>{
+    document.getElementById(id).classList.remove("on");
+  });
+  const map={12:"fs-s",14:"fs-m",16:"fs-l",18:"fs-xl"};
+  if(map[size])document.getElementById(map[size]).classList.add("on");
+}
+function initMapInteraction(svgEl, wrap){
+  // Wheel zoom
+  wrap.addEventListener("wheel",e=>{
+    e.preventDefault();
+    const delta=e.deltaY>0?-0.15:0.15;
+    zoomLevel=Math.min(4,Math.max(0.5,zoomLevel+delta));
+    applyZoom();
+  },{passive:false});
+  // Drag pan
+  svgEl.addEventListener("mousedown",e=>{
+    if(e.button!==0)return;
+    isDragging=true;
+    dragStart={x:e.clientX,y:e.clientY};
+    panStart={x:panX,y:panY};
+    svgEl.style.cursor="grabbing";
+  });
+  window.addEventListener("mousemove",e=>{
+    if(!isDragging)return;
+    panX=panStart.x+(e.clientX-dragStart.x);
+    panY=panStart.y+(e.clientY-dragStart.y);
+    applyZoom();
+  });
+  window.addEventListener("mouseup",()=>{
+    isDragging=false;
+    svgEl.style.cursor="";
+  });
+  // Touch zoom (pinch)
+  let lastDist=0;
+  wrap.addEventListener("touchstart",e=>{
+    if(e.touches.length===2){
+      lastDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
+    }
+  },{passive:true});
+  wrap.addEventListener("touchmove",e=>{
+    if(e.touches.length===2){
+      const dist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
+      zoomLevel=Math.min(4,Math.max(0.5,zoomLevel*(dist/lastDist)));
+      lastDist=dist;applyZoom();
+    }
+  },{passive:true});
+}
+
+// ── NAČTENÍ MAPY ──────────────────────────────────────────────────────────────
+async function loadMap(){
+  const wrap=G("mapwrap");
+  const W=Math.max(wrap.clientWidth||760,300);
+  const H=Math.round(W*0.5);
+  let geo=null;
+  try{
+    const t=await d3.json("https://cdn.jsdelivr.net/npm/datamaps@0.5.10/src/js/data/cze.topo.json");
+    const key=Object.keys(t.objects)[0];
+    geo=topojson.feature(t,t.objects[key]);
+  }catch(e){
+    try{
+      const w=await d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json");
+      const f=topojson.feature(w,w.objects.countries).features.find(f=>+f.id===203);
+      if(f)geo={type:"FeatureCollection",features:[f]};
+    }catch(e2){}
+  }
+  G("mapload").style.display="none";
+  const svg=d3.select("#mapsvg").attr("height",H);
+  mapSvg=svg;
+  if(!geo){
+    svg.append("text").attr("x",W/2).attr("y",H/2).attr("text-anchor","middle").attr("font-size","13").attr("fill","var(--txt2)").text("Mapová data se nepodařilo načíst.");
+    return;
+  }
+  const proj=d3.geoMercator().fitSize([W,H],geo);
+  gPath=d3.geoPath().projection(proj);
+  const tip=G("maptip");
+  // Zoom skupina
+  const zg=svg.append("g").attr("class","zoom-g");
+  initMapInteraction(svg.node(), wrap);
+
+  zg.selectAll(".rp").data(geo.features).join("path")
+    .attr("class","rp")
+    .attr("d",gPath)
+    .attr("data-kraj-id",d=>{
+      const n=d.properties.name||d.properties.NAME_1||d.properties.NAME||"";
+      return KNMS[n]||"";
+    })
+    .attr("fill",d=>{
+      const n=d.properties.name||d.properties.NAME_1||d.properties.NAME||"";
+      const id=KNMS[n];return id?mCol(id):(isDark?"#444441":"#D3D1C7");
+    })
+    .on("mousemove",(ev,d)=>{
+      const n=d.properties.name||d.properties.NAME_1||d.properties.NAME||"";
+      const id=KNMS[n];
+      tip.textContent=SH[id]||n;tip.style.display="block";
+      const r=wrap.getBoundingClientRect();
+      tip.style.left=(ev.clientX-r.left+10)+"px";tip.style.top=(ev.clientY-r.top-26)+"px";
+    })
+    .on("mouseleave",()=>{tip.style.display="none";})
+    .on("click",(_,d)=>{
+      const n=d.properties.name||d.properties.NAME_1||d.properties.NAME||"";
+      const id=KNMS[n];if(id)showKD(id);
+    });
+  if(geo.features.length>1){
+    const lg=zg.append("g");
+    geo.features.forEach(f=>{
+      const n=f.properties.name||f.properties.NAME_1||f.properties.NAME||"";
+      const id=KNMS[n];if(!id)return;
+      const c=gPath.centroid(f);if(isNaN(c[0]))return;
+      lg.append("text").attr("class","kl").attr("x",c[0]).attr("y",c[1])
+        .attr("font-size","8").attr("fill","rgba(255,255,255,.92)").text(SH[id]);
+    });
+  }
+}
+
+// ── MASÉŘI ────────────────────────────────────────────────────────────────────
+function addM(){
+  const name=G("mn").value.trim(),kraj=G("mkr").value;
+  if(!name||!kraj){notify("Zadej jméno a vyber kraj.",true);return;}
+  maseurs.push({
+    id:Date.now(),name,kraj,
+    okres:G("mok").value,mesto:G("mme").value.trim(),
+    type:G("mt").value,
+    clients:parseInt(G("mcl").value)||8,
+    duration:parseInt(G("mdu").value)||60,
+    km:parseFloat(G("mkm").value)||0,
+    tmin:parseFloat(G("mmi").value)||0,
+    transport:[...selT],skills:[...selSk]
+  });
+  G("mn").value="";G("mme").value="";G("mkm").value="";G("mmi").value="";
+  selSk=new Set();selT=new Set();
+  ["ta","tv","tb"].forEach(id=>{G(id).classList.remove("on");});
+  G("rcalc").style.display="none";
+  renderST("mst",selSk);rMapCol();renderEL();updStats();showKD(kraj);syncNF();syncAF();
+  notify("Masér přidán ✓");
+}
+function delM(id,e){
+  e.stopPropagation();
+  maseurs=maseurs.filter(x=>x.id!==id);
+  rMapCol();renderEL();updStats();
+  if(selKraj)showKD(selKraj);
+}
+function renderEL(){
+  const el=G("elist");
+  G("ecount").textContent=maseurs.length?"("+maseurs.length+")":"";
+  if(!maseurs.length){el.innerHTML='<span style="font-size:11px;color:var(--txt2)">Zatím prázdné.</span>';return;}
+  el.innerHTML=maseurs.map(e=>{
+    const c=e.type==="me"?"var(--blue)":"var(--green)";
+    const loc=[SH[e.kraj]||"",e.okres,e.mesto].filter(Boolean).join(" · ");
+    return`<div class="ent" onclick="showKD('${e.kraj}')">
+      <div style="flex:1;min-width:0">
+        <span style="color:${c};font-weight:500">${e.name}</span>
+        <br><span style="font-size:10px;color:var(--txt2)">${loc}</span>
+      </div>
+      <span class="edel" onclick="delM(${e.id},event)">✕</span>
+    </div>`;
+  }).join("");
+}
+function updStats(){
+  const n=maseurs.length,cap=maseurs.reduce((s,e)=>s+e.clients,0);
+  const kme=maseurs.filter(e=>e.km>0);
+  G("s-m").textContent=n;G("s-c").textContent=cap;
+  G("s-r").textContent=n?Math.round(cap/n):"–";
+  G("s-k").textContent=kme.length?Math.round(kme.reduce((s,e)=>s+e.km,0)/kme.length)+" km":"–";
+  calcCap();renderCov();
+}
+function calcCap(){
+  const cap=maseurs.reduce((s,e)=>s+e.clients,0);
+  const kl=parseInt(G("ical").value)||0,pct=cap?Math.round(kl/cap*100):0;
+  const free=Math.max(0,cap-kl),over=kl-cap;
+  G("cc-c").textContent=cap;G("cc-p").textContent=pct+" %";G("cc-f").textContent=free;
+  const oel=G("cc-o");
+  if(over>0){oel.textContent="+"+over+" nedostatek";oel.className="cv cv-r";}
+  else if(over<0){oel.textContent=Math.abs(over)+" volných";oel.className="cv cv-g";}
+  else{oel.textContent=cap?"Přesně obsazeno":"–";oel.className="cv";}
+}
+function renderCov(){
+  const el=G("cov-detail");
+  if(!maseurs.length){el.textContent="Přidejte maséra pro zobrazení pokrytí.";return;}
+  const mine=maseurs.filter(e=>e.type==="me"),cols=maseurs.filter(e=>e.type==="col");
+  let h="<strong>Moje kraje:</strong> ";
+  const mk=[...new Set(mine.map(e=>e.kraj))];
+  h+=mk.length?mk.map(k=>`<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;padding:2px 6px;border-radius:10px;margin:2px;background:var(--blue-l);color:var(--blue-d)">📍 ${SH[k]||k}</span>`).join(""):"<span style='color:var(--txt2)'>žádné</span>";
+  h+="<br><strong>Kolegové:</strong> ";
+  const ck=[...new Set(cols.map(e=>e.kraj))];
+  h+=ck.length?ck.map(k=>`<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;padding:2px 6px;border-radius:10px;margin:2px;background:var(--green-l);color:var(--green-d)">📍 ${SH[k]||k}</span>`).join(""):"<span style='color:var(--txt2)'>žádní</span>";
+  const allSk=[...new Set(mine.flatMap(e=>e.skills||[]))];
+  if(allSk.length)h+="<br><strong>Dovednosti:</strong> "+allSk.map(s=>`<span class="pill p-sk">${s}</span>`).join("");
+  el.innerHTML=h;
+}
+
+// ── NABÍDKA ───────────────────────────────────────────────────────────────────
+function syncNF(){
+  const sf=G("nfs"),ex=new Set([...sf.options].map(o=>o.value));
+  [...new Set(maseurs.flatMap(m=>m.skills||[]))].forEach(s=>{
+    if(!ex.has(s)){const o=document.createElement("option");o.value=s;o.textContent=s;sf.appendChild(o);}
+  });
+  const mf=G("ns-m"),exm=new Set([...mf.options].map(o=>o.value));
+  maseurs.forEach(m=>{
+    if(!exm.has(String(m.id))){const o=document.createElement("option");o.value=m.id;o.textContent=m.name+" ("+SH[m.kraj]+")";mf.appendChild(o);}
+  });
+}
+function addNab(){
+  const naz=G("ns-n").value.trim(),mid=G("ns-m").value;
+  if(!naz||!mid){notify("Zadej název a vyber maséra.",true);return;}
+  const m=maseurs.find(x=>String(x.id)===mid);nCnt++;
+  nabidky.push({id:nCnt,naz,maseurId:parseInt(mid),maseurName:m?m.name:"",kraj:m?m.kraj:"",cena:parseInt(G("ns-c").value)||0,dur:parseInt(G("ns-d").value)||60,popis:G("ns-p").value.trim()});
+  G("ns-n").value="";G("ns-c").value="";G("ns-p").value="";
+  renderNab();renderNabMine();notify("Nabídka přidána ✓");
+}
+function renderNab(){
+  const fk=G("nfk").value,fo=G("nfo").value,fs=G("nfs").value,fq=G("nfq").value.toLowerCase();
+  let list=maseurs.filter(m=>{
+    if(fk&&m.kraj!==fk)return false;
+    if(fo&&m.okres!==fo)return false;
+    if(fs&&!(m.skills||[]).includes(fs))return false;
+    if(fq&&!m.name.toLowerCase().includes(fq))return false;
+    return true;
+  });
+  const el=G("nab-list");
+  if(!list.length){el.innerHTML='<div class="empty">Žádní maséři dle filtru.</div>';return;}
+  el.innerHTML=list.map(m=>{
+    const loc=[SH[m.kraj]||"",m.okres,m.mesto].filter(Boolean).join(" · ");
+    const myN=nabidky.filter(n=>n.maseurId===m.id);
+    const ticons=(m.transport||[]).map(t=>({auto:"🚗",vlak:"🚆",bus:"🚌"}[t]||"")).join(" ");
+    // ✅ OPRAVENO: m.type (ne e.type)
+    const typCls=m.type==="me"?"p-me":"p-col";
+    const typLbl=m.type==="me"?"Já":"Kolega";
+    return`<div class="nab-item">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+        <div>
+          <span class="pill ${typCls}">${typLbl}</span>
+          <strong style="font-size:13px">${m.name}</strong>
+          <span style="font-size:11px;color:var(--txt2);margin-left:5px">📍 ${loc}</span>
+        </div>
+        <div style="font-size:11px;color:var(--txt2);white-space:nowrap;text-align:right">
+          ${m.clients} kl/den · ${m.duration} min<br>${ticons}
+        </div>
+      </div>
+      <div style="margin-top:5px">${(m.skills||[]).map(s=>`<span class="pill p-sk">${s}</span>`).join("")}</div>
+      ${myN.length?`<div style="margin-top:6px;padding-top:6px;border-top:.5px solid var(--brd);font-size:11px">
+        🏷️ ${myN.map(n=>`<strong>${n.naz}</strong>${n.cena?" · "+n.cena+" Kč":""}`).join(" | ")}
+      </div>`:""}
+    </div>`;
+  }).join("");
+}
+function renderNabMine(){
+  const el=G("nab-mine");G("nabcnt").textContent=nabidky.length?"("+nabidky.length+")":"";
+  if(!nabidky.length){el.innerHTML='<span style="color:var(--txt2);font-size:11px">Zatím žádné.</span>';return;}
+  el.innerHTML=nabidky.map(n=>`<div class="ent">
+    <div style="flex:1">
+      <span style="font-weight:500">${n.naz}</span>
+      <br><span style="font-size:10px;color:var(--txt2)">${n.maseurName} · ${n.cena?n.cena+" Kč":"–"} · ${n.dur} min</span>
+    </div>
+    <span class="edel" onclick="delNab(${n.id},event)">✕</span>
+  </div>`).join("");
+}
+function delNab(id,e){e.stopPropagation();nabidky=nabidky.filter(x=>x.id!==id);renderNabMine();}
+
+// ── POPTÁVKA ──────────────────────────────────────────────────────────────────
+function addPop(){
+  const j=G("pd-j").value.trim(),kraj=G("pd-kr").value;
+  if(!j||!kraj){notify("Zadej jméno a vyber kraj.",true);return;}
+  pCnt++;
+  poptavky.push({id:pCnt,jmeno:j,kontakt:G("pd-k").value.trim(),kraj,okres:G("pd-ok").value,mesto:G("pd-m").value.trim(),skills:[...pdSk],datum:G("pd-d").value,note:G("pd-n").value.trim(),status:"open"});
+  G("pd-j").value="";G("pd-k").value="";G("pd-m").value="";G("pd-d").value="";G("pd-n").value="";
+  pdSk=new Set();renderST("pd-st",pdSk);
+  renderPop();updPdSt();rMapCol();notify("Poptávka přidána ✓");
+}
+function renderPop(){
+  const fk=G("pfk").value,fo=G("pfo").value,fs=G("pfs").value,fq=G("pfq").value.toLowerCase();
+  let list=poptavky.filter(p=>{
+    if(fk&&p.kraj!==fk)return false;
+    if(fo&&p.okres!==fo)return false;
+    if(fs&&p.status!==fs)return false;
+    if(fq&&!p.jmeno.toLowerCase().includes(fq))return false;
+    return true;
+  });
+  const el=G("pop-list");
+  if(!list.length){el.innerHTML='<div class="empty">Žádné poptávky dle filtru.</div>';return;}
+  el.innerHTML=list.map(p=>{
+    const loc=[SH[p.kraj]||"",p.okres,p.mesto].filter(Boolean).join(" · ");
+    const hasM=maseurs.some(m=>m.kraj===p.kraj);
+    return`<div class="pop-item">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <div>
+          <span class="pill ${p.status==="open"?"p-de":"p-co"}">${p.status==="open"?"Otevřená":"Spárovaná"}</span>
+          <strong>${p.jmeno}</strong>
+          <span style="font-size:11px;color:var(--txt2);margin-left:5px">📍 ${loc}</span>
+        </div>
+        <div style="display:flex;gap:5px;align-items:center">
+          ${!hasM?`<span style="font-size:10px;color:var(--amber)">⚠️ Bez maséra</span>`:""}
+          <button class="btn btn-sm" style="color:var(--red);border-color:var(--red)" onclick="delPop(${p.id},event)">✕</button>
+        </div>
+      </div>
+      ${(p.skills||[]).length?`<div style="margin-top:4px">${(p.skills||[]).map(s=>`<span class="pill p-sk">${s}</span>`).join("")}</div>`:""}
+      ${p.datum||p.note?`<div style="font-size:11px;color:var(--txt2);margin-top:3px">${p.datum?"📅 "+p.datum+" ":""}${p.note?`| ${p.note}`:""}</div>`:""}
+      ${p.kontakt?`<div style="font-size:11px;color:var(--txt2)">📞 ${p.kontakt}</div>`:""}
+    </div>`;
+  }).join("");
+}
+function delPop(id,e){e.stopPropagation();poptavky=poptavky.filter(x=>x.id!==id);renderPop();updPdSt();rMapCol();}
+function updPdSt(){
+  G("pd-tot").textContent=poptavky.length;
+  G("pd-op").textContent=poptavky.filter(p=>p.status==="open").length;
+  G("pd-ma").textContent=poptavky.filter(p=>p.status==="matched").length;
+  const f={};poptavky.forEach(p=>{f[p.kraj]=(f[p.kraj]||0)+1;});
+  const top=Object.entries(f).sort((a,b)=>b[1]-a[1])[0];
+  G("pd-tp").textContent=top?SH[top[0]]||top[0]:"–";
+}
+
+// ── REZERVACE ─────────────────────────────────────────────────────────────────
+function renderRM(){
+  const list=G("rm-list");
+  if(!maseurs.length){list.innerHTML='<div class="empty">Přidejte maséry na záložce Mapa.</div>';return;}
+  list.innerHTML=maseurs.map(m=>{
+    const loc=[SH[m.kraj]||"",m.okres,m.mesto].filter(Boolean).join(" · ");
+    return`<div class="mc${selM===m.id?" sel":""}" onclick="pickM(${m.id})">
+      <div style="font-size:13px;font-weight:500">${m.name}</div>
+      <div style="font-size:11px;color:var(--txt2)">📍 ${loc}</div>
+      <div style="margin-top:3px">${(m.skills||[]).slice(0,4).map(s=>`<span class="pill p-sk">${s}</span>`).join("")}</div>
+    </div>`;
+  }).join("");
+  updTS();updRS();
+}
+function pickM(id){selM=id;selTime=null;renderRM();}
+function updTS(){
+  const g=G("rtg");
+  if(!selM){g.innerHTML='<span style="font-size:11px;color:var(--txt2);grid-column:1/-1">Vyberte maséra.</span>';return;}
+  const date=G("rd").value;
+  const taken=rezervace.filter(b=>b.maseurId===selM&&b.date===date&&b.status!=="cancelled").map(b=>b.time);
+  g.innerHTML=TIMES.map(t=>{
+    const iT=taken.includes(t),iS=selTime===t;
+    return`<div class="tslot${iT?" taken":iS?" tsel":""}" onclick="${iT?"":"tsC('"+t+"')"}">${t}</div>`;
+  }).join("");
+}
+function tsC(t){selTime=t;updTS();}
+function updRS(){
+  const s=G("rsk");s.innerHTML='<option value="">– vyberte –</option>';
+  if(!selM)return;
+  const m=maseurs.find(x=>x.id===selM);
+  if(m)(m.skills||[]).forEach(sk=>{const o=document.createElement("option");o.value=sk;o.textContent=sk;s.appendChild(o);});
+}
+G("rd").addEventListener("change",()=>{selTime=null;updTS();});
+G("rdur").addEventListener("change",updTS);
+function submitR(){
+  const kl=G("rkl").value.trim(),date=G("rd").value;
+  if(!selM){notify("Vyberte maséra.",true);return;}
+  if(!selTime){notify("Vyberte čas.",true);return;}
+  if(!kl){notify("Zadejte jméno klienta.",true);return;}
+  if(!date){notify("Vyberte datum.",true);return;}
+  const m=maseurs.find(x=>x.id===selM);rCnt++;
+  rezervace.push({id:"R"+String(rCnt).padStart(3,"0"),maseurId:selM,maseurName:m.name,klient:kl,kontakt:G("rko").value.trim(),date,time:selTime,duration:G("rdur").value,skill:G("rsk").value,note:G("rno").value.trim(),status:"pending"});
+  G("rkl").value="";G("rko").value="";G("rno").value="";selTime=null;
+  updPB();renderMyR();renderRM();
+  notify("Rezervace odeslána – čeká na potvrzení adminem ✓");
+}
+function renderMyR(){
+  const el=G("my-r");
+  if(!rezervace.length){el.innerHTML='<span style="font-size:11px;color:var(--txt2)">Zatím žádné.</span>';return;}
+  el.innerHTML=rezervace.slice().reverse().map(b=>{
+    const sc={pending:"p-pe",confirmed:"p-co",cancelled:"p-ca"};
+    const st={pending:"Čeká na potvrzení",confirmed:"✓ Potvrzeno",cancelled:"✕ Zrušeno"};
+    return`<div style="font-size:11px;padding:5px 0;border-bottom:.5px solid var(--brd)">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong>${b.id}</strong>
+        <span class="pill ${sc[b.status]}">${st[b.status]}</span>
+      </div>
+      <div style="color:var(--txt2)">${b.maseurName} · ${b.date} ${b.time}</div>
+      ${b.skill?`<div style="color:var(--txt2)">${b.skill} · ${b.duration} min</div>`:""}
+    </div>`;
+  }).join("");
+}
+function updPB(){
+  const n=rezervace.filter(b=>b.status==="pending").length;
+  const el=G("pcount");el.style.display=n?"inline":"none";el.textContent=n;
+}
+
+// ── ADMIN ─────────────────────────────────────────────────────────────────────
+function syncAF(){
+  const fm=G("afm"),ex=new Set([...fm.options].map(o=>o.value));
+  maseurs.forEach(m=>{
+    if(!ex.has(String(m.id))){const o=document.createElement("option");o.value=m.id;o.textContent=m.name;fm.appendChild(o);}
+  });
+}
+function renderAdm(){
+  syncAF();
+  const fS=G("afs").value,fM=G("afm").value,fQ=G("afq").value.toLowerCase();
+  let list=rezervace.slice().reverse();
+  if(fS)list=list.filter(b=>b.status===fS);
+  if(fM)list=list.filter(b=>String(b.maseurId)===fM);
+  if(fQ)list=list.filter(b=>b.klient.toLowerCase().includes(fQ)||b.id.toLowerCase().includes(fQ));
+  const p=rezervace.filter(b=>b.status==="pending").length;
+  const c=rezervace.filter(b=>b.status==="confirmed").length;
+  const ca=rezervace.filter(b=>b.status==="cancelled").length;
+  G("adm-st").innerHTML=`
+    <div class="st"><div class="sv">${rezervace.length}</div><div class="sl">Celkem</div></div>
+    <div class="st"><div class="sv" style="color:var(--amber)">${p}</div><div class="sl">Čekající</div></div>
+    <div class="st"><div class="sv" style="color:var(--green)">${c}</div><div class="sl">Potvrzené</div></div>
+    <div class="st"><div class="sv" style="color:var(--red)">${ca}</div><div class="sl">Zrušené</div></div>`;
+  const tb=G("atb"),em=G("aem");
+  if(!list.length){tb.innerHTML="";em.style.display="block";return;}
+  em.style.display="none";
+  const sc={pending:"p-pe",confirmed:"p-co",cancelled:"p-ca"};
+  const st={pending:"Čeká",confirmed:"Potvrzeno",cancelled:"Zrušeno"};
+  tb.innerHTML=list.map(b=>`<tr>
+    <td style="font-weight:500;color:var(--blue)">${b.id}</td>
+    <td>${b.klient}</td>
+    <td>${b.maseurName}</td>
+    <td>${b.date}</td>
+    <td>${b.time}</td>
+    <td>${b.duration} min</td>
+    <td>${b.skill||"–"}</td>
+    <td>${b.kontakt||"–"}</td>
+    <td><span class="pill ${sc[b.status]}">${st[b.status]}</span></td>
+    <td><div class="actb">
+      ${b.status!=="confirmed"?`<button class="conf" onclick="chSt('${b.id}','confirmed')">✓ Potvrdit</button>`:""}
+      ${b.status!=="cancelled"?`<button class="canc" onclick="chSt('${b.id}','cancelled')">✕ Zrušit</button>`:""}
+    </div></td>
+  </tr>`).join("");
+}
+function chSt(id,status){
+  const b=rezervace.find(x=>x.id===id);if(!b)return;
+  b.status=status;updPB();renderAdm();renderMyR();
+  notify(status==="confirmed"?"Rezervace potvrzena ✓":"Rezervace zrušena.",status!=="confirmed");
+}
+function renderAdmPop(){
+  const open=poptavky.filter(p=>p.status==="open");
+  const el=G("adm-pop");
+  if(!open.length){el.innerHTML='<div class="empty">Žádné otevřené poptávky.</div>';return;}
+  el.innerHTML=open.map(p=>{
+    const loc=[SH[p.kraj]||"",p.okres,p.mesto].filter(Boolean).join(" · ");
+    const matches=maseurs.filter(m=>m.kraj===p.kraj);
+    return`<div style="display:flex;align-items:flex-start;justify-content:space-between;padding:7px 0;border-bottom:.5px solid var(--brd);gap:10px">
+      <div>
+        <strong>${p.jmeno}</strong>
+        <span style="font-size:11px;color:var(--txt2);margin-left:5px">📍 ${loc}</span>
+        ${(p.skills||[]).length?"<br>"+(p.skills||[]).map(s=>`<span class="pill p-sk">${s}</span>`).join(""):""}
+        ${p.kontakt?`<br><span style="font-size:11px;color:var(--txt2)">📞 ${p.kontakt}</span>`:""}
+      </div>
+      <div style="flex-shrink:0">
+        ${matches.length
+          ?`<button class="btn btn-sm btn-g" onclick="matchP(${p.id})">✓ Spárovat</button>`
+          :`<span style="font-size:10px;color:var(--amber)">⚠️ Bez maséra v kraji</span>`}
+      </div>
+    </div>`;
+  }).join("");
+}
+function matchP(id){
+  const p=poptavky.find(x=>x.id===id);
+  if(p){p.status="matched";renderAdmPop();updPdSt();renderPop();notify("Poptávka spárována ✓");}
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+G("rd").value=today;G("rd").min=today;G("pd-d").value=today;
+renderST("mst",selSk);renderST("pd-st",pdSk);
+updStats();updPdSt();loadMap();
+</script>
+</body>
+</html>

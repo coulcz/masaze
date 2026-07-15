@@ -1,0 +1,2179 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rozvoz SOS">
+<meta name="theme-color" content="#14151a">
+<title>Rozvoz SOS Příbor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#14151a;
+    --card:#1e2027;
+    --card-border:#2b2e38;
+    --text:#f4efe6;
+    --muted:#8b8d98;
+    --accent:#ff5a36;
+    --accent-dim:#5a281d;
+    --wait:#8b8d98;
+    --ready:#ff8a3d;
+    --road:#ffb020;
+    --done:#3ddc84;
+    --danger:#ff4d4d;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+  body{padding-bottom:90px;}
+  h1,h2,h3,.display{font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:0.02em;}
+
+  header{
+    position:sticky; top:0; z-index:20;
+    background:linear-gradient(180deg, var(--bg) 80%, transparent);
+    padding:16px 16px 8px;
+  }
+  .title-row{display:flex; align-items:baseline; justify-content:space-between;}
+  .brand{font-size:20px; font-weight:700; color:var(--text);}
+  .brand span{color:var(--accent);}
+  .me-badge{font-size:12px; color:var(--muted); background:var(--card); border:1px solid var(--card-border); padding:4px 10px; border-radius:20px;}
+  .me-badge b{color:var(--accent);}
+
+  .hero-clock{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-top:10px; padding-bottom:8px; border-bottom:1px solid var(--card-border);
+  }
+  .hero-time{font-family:'Oswald',sans-serif; font-size:32px; font-weight:700; line-height:1; letter-spacing:.01em;}
+  .hero-date{font-size:12px; color:var(--muted); text-align:right; max-width:55%; line-height:1.3;}
+  .hero-date .weekday{color:var(--text); font-weight:600;}
+  .hero-date .hero-name{color:var(--accent); font-weight:600; display:block; margin-top:0px; font-size:11px;}
+
+  .tabs{display:flex; gap:8px; margin-top:12px; overflow-x:auto;}
+  .tab{
+    font-family:'Oswald',sans-serif; font-size:13px; font-weight:600; letter-spacing:0.03em;
+    padding:7px 14px; border-radius:20px; border:1px solid var(--card-border);
+    background:var(--card); color:var(--muted); white-space:nowrap; cursor:pointer;
+  }
+  .tab.active{background:var(--accent); color:#1a0d08; border-color:var(--accent);}
+
+  main{padding:12px 16px;}
+
+  .route-line{
+    display:flex; align-items:center; gap:8px; margin:18px 0 8px; color:var(--muted); font-size:11px; letter-spacing:0.08em;
+  }
+  .route-line::before, .route-line::after{content:""; flex:1; height:1px; background-image:linear-gradient(to right, var(--card-border) 40%, transparent 0%); background-size:8px 1px; background-repeat:repeat-x;}
+
+  .card{
+    background:var(--card); border:1px solid var(--card-border); border-radius:14px;
+    padding:14px 16px; margin-bottom:12px; position:relative; overflow:hidden;
+    animation:fadeIn .35s ease;
+  }
+  @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+  .card::before{
+    content:""; position:absolute; left:0; top:0; bottom:0; width:5px;
+  }
+  .card.status-cekame::before{background:var(--wait);}
+  .card.status-pripraveno::before{background:var(--ready);}
+  .card.status-cesta::before{background:var(--road);}
+  .card.status-hotovo::before{background:var(--done); opacity:.6;}
+  .card.status-hotovo{opacity:.55;}
+
+  .card-top{display:flex; align-items:flex-start; gap:12px;}
+  .num-badge{
+    flex-shrink:0; width:40px; height:40px; border-radius:10px; background:#15161b; border:1px solid var(--card-border);
+    display:flex; align-items:center; justify-content:center; font-family:'Oswald',sans-serif; font-weight:700; font-size:18px; color:var(--accent);
+  }
+  .addr-wrap{flex:1; display:flex; justify-content:space-between; align-items:flex-start; gap:8px;}
+
+  .status-badge{
+    font-family:'Oswald',sans-serif; font-weight:600; font-size:10px; letter-spacing:.04em; text-transform:uppercase;
+    padding:3px 8px; border-radius:6px; white-space:nowrap;
+  }
+  .status-badge.status-cekame{background:rgba(139,141,152,.18); color:var(--wait);}
+  .status-badge.status-pripraveno{background:rgba(255,138,61,.18); color:var(--ready);}
+  .status-badge.status-cesta{background:rgba(255,176,32,.18); color:var(--road);}
+  .status-badge.status-hotovo{background:rgba(61,220,132,.18); color:var(--done);}
+
+  .timer-badge{
+    display:inline-block; margin-top:8px; padding:5px 10px; border-radius:8px;
+    font-family:'Oswald',sans-serif; font-weight:700; font-size:13px; letter-spacing:.03em;
+    background:rgba(255,138,61,.15); color:var(--ready);
+  }
+  .timer-badge.timer-done{
+    background:rgba(255,77,77,.2); color:var(--danger); animation:timerPulse 1s infinite;
+  }
+  @keyframes timerPulse{ 0%,100%{opacity:1;} 50%{opacity:.5;} }
+
+  #appNoticeBar{
+    background:rgba(255,77,77,.15); border:1px solid var(--danger); border-radius:10px;
+    padding:10px 12px; margin-top:10px; font-size:13px; color:#ffb3b3; display:flex; justify-content:space-between; align-items:center; gap:8px;
+  }
+  .addr{font-size:17px; font-weight:600; line-height:1.25;}
+  .time{font-size:12px; color:var(--muted); white-space:nowrap; margin-left:8px;}
+  .meta{font-size:13px; color:var(--muted); margin-top:4px; display:flex; flex-wrap:wrap; gap:x 10px;}
+  .meta span{margin-right:10px;}
+  .note{font-size:13px; color:var(--text); margin-top:8px; background:#15161b; border-radius:8px; padding:8px 10px;}
+
+  .card-bottom{display:flex; align-items:center; justify-content:space-between; margin-top:12px; gap:8px;}
+  .driver-select{
+    background:#15161b; color:var(--text); border:1px solid var(--card-border); border-radius:8px;
+    padding:7px 8px; font-size:13px; font-family:'Inter',sans-serif; max-width:110px;
+  }
+  .status-btn{
+    font-family:'Oswald',sans-serif; font-weight:600; font-size:12px; letter-spacing:0.03em;
+    border:none; border-radius:8px; padding:8px 10px; color:#1a0d08; cursor:pointer;
+  }
+  .status-cekame .status-btn{background:var(--wait); color:#14151a;}
+  .status-pripraveno .status-btn{background:var(--ready); color:#1a0d08;}
+  .status-cesta .status-btn{background:var(--road);}
+  .status-hotovo .status-btn{background:var(--done);}
+
+  .icon-btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:38px; height:38px; border-radius:10px; border:1px solid var(--card-border);
+    background:#15161b; color:var(--text); text-decoration:none; font-size:17px;
+  }
+  .actions{display:flex; gap:6px;}
+
+  .driver-toggle{display:flex; gap:6px; margin-top:10px;}
+  .driver-btn{
+    flex:1; font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
+    padding:9px 6px; border-radius:8px; border:1px solid var(--card-border); background:#15161b; color:var(--muted); cursor:pointer;
+  }
+  .driver-btn.active{background:var(--accent); color:#1a0d08; border-color:var(--accent);}
+
+  .pick-check{width:20px; height:20px; flex-shrink:0; accent-color:var(--accent); margin-top:2px;}
+
+  .bulk-bar{
+    position:fixed; left:16px; right:16px; bottom:90px; z-index:35;
+    background:var(--card); border:1px solid var(--accent); border-radius:14px;
+    padding:12px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px;
+    box-shadow:0 6px 20px rgba(0,0,0,.4);
+  }
+  .bulk-bar span{font-size:14px; color:var(--text);}
+  .bulk-bar .bulk-count{color:var(--accent); font-weight:700;}
+  .bulk-bar .btn{flex:none; padding:10px 16px;}
+
+  .close-btn{
+    width:100%; padding:14px; border-radius:12px; border:none;
+    font-family:'Oswald',sans-serif; font-weight:700; font-size:15px; letter-spacing:.03em; cursor:pointer;
+    background:var(--done); color:#0d1a12;
+  }
+  .locked-note{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    background:var(--card); border:1px solid var(--done); border-radius:12px; padding:12px 14px; font-size:13px;
+  }
+  .locked-note b{color:var(--done);}
+  .unlock-link{color:var(--muted); font-size:12px; text-decoration:underline; background:none; border:none; cursor:pointer;}
+
+  .history-row{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    padding:12px 4px; border-bottom:1px dashed var(--card-border); font-size:13px; cursor:pointer;
+  }
+  .history-row:last-child{border-bottom:none;}
+  .history-row .hist-cash{font-weight:700; color:var(--done);}
+
+  .empty{text-align:center; color:var(--muted); padding:40px 20px; font-size:14px;}
+
+  .fab{
+    position:fixed; right:18px; bottom:22px; z-index:30;
+    width:58px; height:58px; border-radius:50%; background:var(--accent); color:#1a0d08;
+    border:none; font-size:28px; box-shadow:0 6px 18px rgba(255,90,54,.4); cursor:pointer;
+  }
+
+  .sheet-overlay{
+    position:fixed; inset:0; background:rgba(10,10,12,.7); z-index:40;
+    display:none; align-items:flex-end; justify-content:center;
+  }
+  .sheet-overlay.open{display:flex;}
+  .sheet{
+    width:100%; max-width:480px; background:var(--card); border-radius:20px 20px 0 0;
+    padding:18px 18px 22px; max-height:88vh; overflow-y:auto;
+    animation:slideUp .25s ease;
+  }
+  @keyframes slideUp{from{transform:translateY(30px); opacity:0;} to{transform:translateY(0); opacity:1;}}
+  .sheet h2{font-size:18px; margin:0 0 14px;}
+  .field{margin-bottom:12px;}
+  .field label{display:block; font-size:12px; color:var(--muted); margin-bottom:5px; text-transform:uppercase; letter-spacing:.04em;}
+  .field input, .field textarea, .field select{
+    width:100%; background:#15161b; border:1px solid var(--card-border); border-radius:10px;
+    padding:11px 12px; color:var(--text); font-size:15px; font-family:'Inter',sans-serif;
+  }
+  .field textarea{resize:vertical; min-height:50px;}
+  .price-input{font-size:24px !important; font-weight:700; padding:16px 14px !important; letter-spacing:.02em;}
+  .row2{display:flex; gap:10px;}
+  .row2 .field{flex:1; min-width:0;}
+  .sheet-actions{display:flex; gap:10px; margin-top:16px;}
+  .btn{
+    flex:1; padding:13px; border-radius:10px; border:none; font-family:'Oswald',sans-serif;
+    font-weight:600; letter-spacing:.03em; font-size:14px; cursor:pointer;
+  }
+  .btn-primary{background:var(--accent); color:#1a0d08;}
+  .btn-secondary{background:#15161b; color:var(--muted); border:1px solid var(--card-border);}
+
+  .loading{text-align:center; padding:60px 0; color:var(--muted);}
+
+  .view-switch{display:flex; gap:8px; margin-top:14px; flex-wrap:wrap;}
+  .view-btn{
+    flex:1 1 30%; font-family:'Oswald',sans-serif; font-weight:600; font-size:13px; letter-spacing:.03em;
+    padding:10px; border-radius:10px; border:1px solid var(--card-border); background:var(--card); color:var(--muted); cursor:pointer;
+  }
+  .view-btn.active{background:var(--accent); color:#1a0d08; border-color:var(--accent); font-weight:700;}
+
+  .search-wrap{margin:14px 0;}
+  .search-wrap input{
+    width:100%; background:var(--card); border:1px solid var(--card-border); border-radius:10px;
+    padding:12px 14px; color:var(--text); font-size:15px; font-family:'Inter',sans-serif;
+  }
+
+  .day-group{margin-bottom:20px;}
+  .day-header{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-family:'Oswald',sans-serif; font-size:13px; letter-spacing:.04em; color:var(--muted);
+    padding:6px 2px; border-bottom:1px solid var(--card-border); margin-bottom:6px;
+  }
+  .day-header b{color:var(--text); font-size:14px;}
+  .day-total{color:var(--accent); font-weight:600;}
+
+  .book-row{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    padding:10px 4px; border-bottom:1px dashed var(--card-border); font-size:13px;
+  }
+  .book-row:last-child{border-bottom:none;}
+  .book-left{display:flex; flex-direction:column; gap:2px;}
+  .book-addr{font-size:14px; font-weight:600;}
+  .book-meta{color:var(--muted); font-size:12px;}
+  .book-right{text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:2px;}
+  .book-price{font-weight:600; color:var(--text);}
+  .book-status{font-size:11px; text-transform:uppercase; letter-spacing:.03em;}
+  .book-status.cekame{color:var(--wait);}
+  .book-status.pripraveno{color:var(--ready);}
+  .book-status.cesta{color:var(--road);}
+  .book-status.hotovo{color:var(--done);}
+
+  .pay-toggle{display:flex; gap:6px;}
+  .pay-btn{
+    flex:1; font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
+    padding:9px 4px; border-radius:8px; border:1px solid var(--card-border); background:#15161b; color:var(--muted); cursor:pointer;
+  }
+  .pay-btn.active{background:var(--accent); color:#1a0d08; border-color:var(--accent);}
+
+  .sort-row{margin-top:10px;}
+  .sort-btn{
+    font-family:'Oswald',sans-serif; font-weight:600; font-size:12px; letter-spacing:.03em;
+    background:var(--card); color:var(--muted); border:1px solid var(--card-border);
+    border-radius:8px; padding:7px 12px; cursor:pointer;
+  }
+
+  .stats-bar{
+    display:flex; justify-content:space-between; gap:8px; margin:14px 0;
+    background:var(--card); border:1px solid var(--card-border); border-radius:10px;
+    padding:10px 14px; font-size:12px; color:var(--muted);
+  }
+  .stats-bar b{color:var(--text); font-size:14px;}
+
+  .shift-card{
+    background:var(--card); border:1px solid var(--card-border); border-radius:14px;
+    padding:14px 16px; margin:14px 0;
+  }
+  .shift-row{display:flex; justify-content:space-between; padding:7px 0; font-size:14px; border-bottom:1px dashed var(--card-border);}
+  .shift-row:last-child{border-bottom:none;}
+  .shift-row .val{font-variant-numeric:tabular-nums; font-weight:600;}
+
+  .shift-result{
+    background:linear-gradient(135deg, var(--accent-dim), #1a1b21); border:1px solid var(--accent);
+    border-radius:14px; padding:20px; text-align:center; margin-top:4px;
+  }
+  .shift-result .label{font-family:'Oswald',sans-serif; font-size:12px; letter-spacing:.06em; color:#ffcbb8; text-transform:uppercase;}
+  .shift-result .amount{font-family:'Oswald',sans-serif; font-size:36px; font-weight:700; color:var(--text); margin-top:4px;}
+  #printReport{display:none;}
+  @media print{
+    body *{ visibility:hidden; }
+    #printReport, #printReport *{ visibility:visible; }
+    #printReport{
+      display:block !important; position:absolute; top:0; left:0; width:100%;
+      background:#fff; color:#000; padding:20px; font-family:Arial, sans-serif;
+    }
+    #printReport h1{font-size:20px; margin-bottom:4px;}
+    #printReport h2{font-size:15px; margin:18px 0 6px; border-bottom:1px solid #999; padding-bottom:4px;}
+    #printReport table{width:100%; border-collapse:collapse; font-size:12px; margin-bottom:6px;}
+    #printReport th, #printReport td{border:1px solid #ccc; padding:4px 6px; text-align:left;}
+    #printReport .pr-total{font-weight:bold; margin-top:4px; font-size:13px;}
+    #printReport .pr-grand{margin-top:24px; font-size:15px; font-weight:bold; border-top:2px solid #000; padding-top:10px;}
+  }
+</style>
+</head>
+<body>
+
+<div id="printReport" style="display:none;"></div>
+
+<div id="fsLog" style="display:none; position:fixed; bottom:0; left:0; right:0; z-index:9999; background:#000; color:#4dff4d; font-family:monospace; font-size:11px; line-height:1.5; max-height:140px; overflow-y:auto; padding:8px 10px 6px;"></div>
+<button id="fsLogClearBtn" onclick="clearFsLog()" style="display:none; position:fixed; bottom:6px; right:10px; z-index:10000; background:#333; color:#fff; border:none; border-radius:6px; padding:4px 10px; font-size:11px;">zavřít log</button>
+
+<header>
+  <div class="title-row">
+    <div class="brand">Rozvoz <span>SOS</span> Příbor</div>
+    <div style="display:flex; gap:6px; align-items:center;">
+      <button class="icon-btn" style="width:32px;height:32px;font-size:14px;" id="fsBtn" onclick="toggleFullscreen()">⛶</button>
+      <button class="icon-btn" style="width:32px;height:32px;font-size:14px;" onclick="openSettingsSheet()">⚙️</button>
+      <div class="me-badge" id="meBadge" onclick="openMeSheet()">Kdo jsi? 👋</div>
+    </div>
+  </div>
+  <div class="hero-clock">
+    <div class="hero-time" id="heroTime">--:--</div>
+    <div class="hero-date" id="heroDate"></div>
+  </div>
+  <div id="appNoticeBar" style="display:none;"></div>
+  <div class="view-switch">
+    <button class="view-btn active" data-view="book" onclick="switchView('book')">📖 Knížka</button>
+    <button class="view-btn" data-view="dispatch" onclick="switchView('dispatch')">🚗 Aktivní</button>
+    <button class="view-btn" data-view="shift" onclick="switchView('shift')">🧾 Uzávěrka</button>
+    <button class="view-btn" data-view="rozvoz" onclick="switchView('rozvoz')">🚗 Rozvoz</button>
+    <button class="view-btn" data-view="pizzerie" onclick="switchView('pizzerie')">🏠 Pizzerie</button>
+  </div>
+  <div class="tabs" id="dispatchTabs">
+    <div class="tab active" data-filter="vse">Vše</div>
+  </div>
+  <div class="sort-row">
+    <button class="sort-btn" id="sortBtn" onclick="toggleSort()">↓ Poslední dole</button>
+  </div>
+</header>
+
+<main>
+  <div id="dispatchView" style="display:none;">
+    <div id="statsBar" class="stats-bar"></div>
+    <div id="list" class="loading">Načítám objednávky…</div>
+  </div>
+  <div id="bookView">
+    <div class="tabs" id="bookTabs">
+      <div class="tab active" data-bookfilter="vse">Vše</div>
+      <div class="tab" data-bookfilter="hotove">Hotové</div>
+      <div class="tab" data-bookfilter="rozvoz">🚗 Rozvoz</div>
+      <div class="tab" data-bookfilter="pizzerie">🏠 Pizzerie</div>
+    </div>
+    <div class="search-wrap">
+      <input id="bookSearch" type="text" placeholder="Hledat adresu, jméno, telefon, číslo…" oninput="renderBook()">
+    </div>
+    <button class="sort-btn" style="width:100%; margin-bottom:10px;" onclick="exportHistory()">📥 Zálohovat celou historii (soubor)</button>
+    <button class="sort-btn" style="width:100%; margin-bottom:10px; background:var(--accent); color:#1a0d08;" onclick="exportPDF()">📄 Export do PDF (k tisku)</button>
+    <div id="bookList"></div>
+  </div>
+  <div id="shiftView" style="display:none;">
+    <div class="tabs" id="shiftEntityTabs" style="margin-top:14px;">
+      <div class="tab active" data-entity="rozvozce1">Rozvozce 1</div>
+      <div class="tab" data-entity="rozvozce2">Rozvozce 2</div>
+      <div class="tab" data-entity="pizzerie">Pizzerie</div>
+    </div>
+    <div class="field" style="margin-top:10px;">
+      <label>Den uzávěrky</label>
+      <input id="shiftDate" type="date" onchange="loadShift()">
+    </div>
+    <div class="shift-card" id="shiftStats"></div>
+    <div class="field">
+      <label>Tržba celkem (Kč) <span style="color:var(--muted); text-transform:none;">– jde přepsat, jinak se počítá z objednávek</span></label>
+      <input id="shiftTotal" type="number" inputmode="decimal" oninput="calcShift()" placeholder="0">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Terminál před směnou</label>
+        <input id="shiftTerminalBefore" type="number" inputmode="decimal" oninput="calcShift()" placeholder="0">
+      </div>
+      <div class="field">
+        <label>Terminál po směně</label>
+        <input id="shiftTerminalAfter" type="number" inputmode="decimal" oninput="calcShift()" placeholder="0">
+      </div>
+    </div>
+    <div id="shiftTerminalDiffNote" style="font-size:12px; color:var(--muted); margin-top:-8px; margin-bottom:10px;"></div>
+    <div class="row2">
+      <div class="field">
+        <label>Stravenky (Kč)</label>
+        <input id="shiftStravenky" type="number" inputmode="decimal" oninput="calcShift()" placeholder="0">
+      </div>
+      <div class="field">
+        <label>PHM (Kč)</label>
+        <input id="shiftPhm" type="number" inputmode="decimal" oninput="calcShift()" placeholder="0">
+      </div>
+    </div>
+    <div class="field">
+      <label>Jiný nákup (Kč)</label>
+      <input id="shiftOtherExpense" type="number" inputmode="decimal" oninput="calcShift()" placeholder="0">
+    </div>
+    <div class="shift-result" id="shiftResult"></div>
+    <div id="shiftCloseArea" style="margin-top:12px;"></div>
+
+    <div class="day-header" style="margin-top:24px;"><b>Náklady na směnu</b></div>
+    <div class="row2">
+      <div class="field">
+        <label>Ujeté km celkem</label>
+        <input id="shiftTotalKm" type="number" inputmode="decimal" oninput="calcShiftCosts()" placeholder="0">
+      </div>
+      <div class="field">
+        <label>Hodinová sazba (Kč/h)</label>
+        <input id="shiftHourlyRate" type="number" inputmode="decimal" oninput="calcShiftCosts()" placeholder="0">
+      </div>
+    </div>
+    <div class="field">
+      <label>Odpracované hodiny</label>
+      <input id="shiftHoursWorked" type="number" inputmode="decimal" oninput="calcShiftCosts()" placeholder="0">
+    </div>
+    <div class="shift-card" id="shiftCostsResult"></div>
+
+    <button class="sort-btn" style="width:100%; margin-top:16px;" onclick="resetOrderNumbering()">🔄 Restartovat číslování objednávek od #1</button>
+
+    <div class="day-header" style="margin-top:24px;"><b>Historie uzávěrek</b></div>
+    <div id="shiftHistory"></div>
+  </div>
+</main>
+
+<button class="fab" onclick="openOrderSheet()">+</button>
+
+<div id="bulkBar" class="bulk-bar" style="display:none; flex-direction:column; align-items:stretch; gap:8px;">
+  <div id="bulkDirectionWarn" style="display:none; font-size:12px; color:var(--road);"></div>
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <span><span class="bulk-count">0</span> vybráno</span>
+    <button class="btn btn-primary" onclick="takeSelected()">🚴 Vzít s sebou</button>
+  </div>
+</div>
+
+<!-- Sheet: nová objednávka -->
+<div class="sheet-overlay" id="orderOverlay">
+  <div class="sheet">
+    <h2>Nová objednávka <span id="formOrderNum" style="color:var(--accent);"></span></h2>
+    <div class="field">
+      <div class="pay-toggle">
+        <button type="button" class="pay-btn active" id="btn_type_rozvoz" onclick="setOrderType('rozvoz')">🚗 Rozvoz</button>
+        <button type="button" class="pay-btn" id="btn_type_pizzerie" onclick="setOrderType('pizzerie')">🏠 Na pizzerii</button>
+      </div>
+    </div>
+    <div class="field" id="field_address">
+      <label>Adresa</label>
+      <input id="f_addr" placeholder="Ulice, číslo, obec">
+      <input type="text" id="villageSearch" placeholder="🔍 Hledat obec/podnik…" oninput="renderVillageButtons()" style="width:100%; background:#15161b; border:1px solid var(--card-border); border-radius:10px; padding:8px 10px; color:var(--text); font-size:13px; margin-top:8px;">
+      <div class="pay-toggle" style="flex-wrap:wrap; margin-top:8px;" id="villageButtons"></div>
+      <div id="deliveryFeeNote" style="font-size:12px; color:var(--accent); margin-top:6px; display:none;"></div>
+      <label style="display:flex; align-items:center; gap:8px; margin-top:10px; cursor:pointer; font-size:13px; color:var(--muted);">
+        <input type="checkbox" id="f_noaddress" style="width:18px;height:18px;accent-color:var(--accent);" onchange="toggleNoAddress()"> 📦 Jen objednávka (bez adresy)
+      </label>
+    </div>
+    <div class="row2">
+      <div class="field" id="field_time" style="flex:1; min-width:0;">
+        <label>Datum a čas</label>
+        <input id="f_time" type="datetime-local" style="min-width:0;">
+      </div>
+      <div class="field" style="flex:0 0 110px;">
+        <label>Cena (Kč)</label>
+        <input id="f_price" type="number" inputmode="decimal" placeholder="350" class="price-input" style="width:100%; padding:16px 8px !important;" oninput="checkMinOrderWarning()">
+      </div>
+    </div>
+    <div id="minOrderWarn" style="display:none; color:var(--danger); font-size:12px; margin-top:-8px; margin-bottom:10px;"></div>
+    <div class="row2">
+      <div class="field" id="field_name">
+        <label>Jméno</label>
+        <input id="f_name" placeholder="Zákazník">
+      </div>
+      <div class="field" id="field_phone">
+        <label>Telefon</label>
+        <input id="f_phone" placeholder="+420">
+      </div>
+    </div>
+    <div class="field" id="field_note">
+      <label>Poznámka</label>
+      <textarea id="f_note" placeholder="Bez cibule…"></textarea>
+    </div>
+    <div class="sheet-actions">
+      <button class="btn btn-secondary" onclick="closeOrderSheet()">Zrušit</button>
+      <button class="btn btn-primary" onclick="saveOrder()">Přidat</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sheet: kdo jsem -->
+<div class="sheet-overlay" id="meOverlay">
+  <div class="sheet">
+    <h2>Kdo jsi?</h2>
+    <div class="field">
+      <label>Tvoje jméno</label>
+      <input id="f_me" placeholder="Např. Martin">
+    </div>
+    <div class="sheet-actions">
+      <button class="btn btn-secondary" onclick="closeMeSheet()">Zrušit</button>
+      <button class="btn btn-primary" onclick="saveMe()">Uložit</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sheet: nové místo -->
+<div class="sheet-overlay" id="newPlaceOverlay">
+  <div class="sheet">
+    <h2>Nové místo</h2>
+    <div class="field">
+      <label>Název (např. Mošnov 378)</label>
+      <input id="f_newplace" placeholder="Název místa">
+    </div>
+    <div class="sheet-actions">
+      <button class="btn btn-secondary" onclick="closeNewPlaceSheet()">Zrušit</button>
+      <button class="btn btn-primary" onclick="confirmNewPlace()">Přidat</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sheet: časovač pečení -->
+<div class="sheet-overlay" id="timerOverlay">
+  <div class="sheet">
+    <h2>⏱️ Časovač</h2>
+    <div class="pay-toggle" style="flex-wrap:wrap;">
+      <button type="button" class="driver-btn" onclick="startTimerMinutes(8)">8 min</button>
+      <button type="button" class="driver-btn" onclick="startTimerMinutes(10)">10 min</button>
+      <button type="button" class="driver-btn" onclick="startTimerMinutes(12)">12 min</button>
+      <button type="button" class="driver-btn" onclick="startTimerMinutes(15)">15 min</button>
+    </div>
+    <div class="field" style="margin-top:14px;">
+      <label>Nebo vlastní (minuty)</label>
+      <input id="f_timerCustom" type="number" inputmode="decimal" placeholder="např. 20">
+    </div>
+    <div class="sheet-actions">
+      <button class="btn btn-secondary" onclick="closeTimerSheet()">Zrušit</button>
+      <button class="btn btn-primary" onclick="startTimerCustom()">Spustit</button>
+    </div>
+    <button class="unlock-link" style="margin-top:12px;" onclick="cancelTimer()">Zrušit běžící časovač</button>
+  </div>
+</div>
+
+<!-- Sheet: poznámka řidiče -->
+<div class="sheet-overlay" id="driverNoteOverlay">
+  <div class="sheet">
+    <h2>Poznámka řidiče</h2>
+    <div class="field">
+      <textarea id="f_drivernote" placeholder="Např. platil kartou navíc, nikdo doma podruhé…"></textarea>
+    </div>
+    <div class="sheet-actions">
+      <button class="btn btn-secondary" onclick="closeDriverNoteSheet()">Zrušit</button>
+      <button class="btn btn-primary" onclick="saveDriverNote()">Uložit</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sheet: fotka objednávky -->
+<div class="sheet-overlay" id="photoViewerOverlay">
+  <div class="sheet" style="text-align:center;">
+    <h2>Fotka objednávky</h2>
+    <img id="photoViewerImg" style="max-width:100%; border-radius:12px; margin-bottom:14px;">
+    <div class="sheet-actions">
+      <button class="btn btn-secondary" onclick="closePhotoViewer()">Zavřít</button>
+      <button class="btn btn-primary" onclick="triggerPhotoUpload(photoTargetId)">📷 Nahradit</button>
+    </div>
+    <button class="unlock-link" style="margin-top:12px;" onclick="deletePhoto()">Smazat fotku</button>
+  </div>
+</div>
+<input type="file" accept="image/*" capture="environment" id="photoInput" style="display:none;" onchange="handlePhotoSelected(event)">
+
+<!-- Sheet: nastavení zobrazení -->
+<div class="sheet-overlay" id="settingsOverlay">
+  <div class="sheet">
+    <h2>Co zobrazovat</h2>
+    <div class="field">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+        <input type="checkbox" id="set_address" style="width:20px;height:20px;accent-color:var(--accent);"> 📍 Adresa
+      </label>
+    </div>
+    <div class="field">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+        <input type="checkbox" id="set_name" style="width:20px;height:20px;accent-color:var(--accent);"> 👤 Jméno zákazníka
+      </label>
+    </div>
+    <div class="field">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+        <input type="checkbox" id="set_phone" style="width:20px;height:20px;accent-color:var(--accent);"> 📞 Telefon
+      </label>
+    </div>
+    <div class="field">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+        <input type="checkbox" id="set_price" style="width:20px;height:20px;accent-color:var(--accent);"> 💰 Cena
+      </label>
+    </div>
+    <div class="field">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+        <input type="checkbox" id="set_note" style="width:20px;height:20px;accent-color:var(--accent);"> 📝 Poznámka
+      </label>
+    </div>
+    <div class="field">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+        <input type="checkbox" id="set_time" style="width:20px;height:20px;accent-color:var(--accent);"> 🕒 Čas objednávky
+      </label>
+    </div>
+    <p style="color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.04em; margin:18px 0 4px;">Toto platí jak na kartě, tak ve formuláři nové objednávky</p>
+
+    <h2 style="margin-top:22px;">Další prvky na kartě</h2>
+    <div class="field">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+        <input type="checkbox" id="set_status" style="width:20px;height:20px;accent-color:var(--accent);"> 🏷️ Štítek se stavem
+      </label>
+    </div>
+    <div class="field">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+        <input type="checkbox" id="set_numberBadge" style="width:20px;height:20px;accent-color:var(--accent);"> 🔢 Číslo objednávky
+      </label>
+    </div>
+    <div class="field">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+        <input type="checkbox" id="set_driverNote" style="width:20px;height:20px;accent-color:var(--accent);"> ✍️ Poznámka řidiče
+      </label>
+    </div>
+    <div class="field">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+        <input type="checkbox" id="set_photo" style="width:20px;height:20px;accent-color:var(--accent);"> 📷 Fotka objednávky
+      </label>
+    </div>
+    <div class="field">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+        <input type="checkbox" id="set_driverButtons" style="width:20px;height:20px;accent-color:var(--accent);"> 🔀 Tlačítka Já/Rozvozce 2
+      </label>
+    </div>
+    <div class="field">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+        <input type="checkbox" id="set_callButton" style="width:20px;height:20px;accent-color:var(--accent);"> 📞 Tlačítko volat
+      </label>
+    </div>
+    <div class="field">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+        <input type="checkbox" id="set_navButton" style="width:20px;height:20px;accent-color:var(--accent);"> 🧭 Tlačítko navigace
+      </label>
+    </div>
+    <div class="field">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+        <input type="checkbox" id="set_statusButton" style="width:20px;height:20px;accent-color:var(--accent);"> ▶️ Tlačítko změny stavu
+      </label>
+    </div>
+
+    <h2 style="margin-top:22px;">Dočasné upozornění</h2>
+    <p style="color:var(--muted); font-size:11px; margin:0 0 10px;">Zobrazí se všem nahoře v appce (např. uzávěrky, objížďky). Prázdné = nezobrazovat.</p>
+    <div class="field">
+      <input id="set_appNotice" placeholder="Např. Uzávěrky v Příboře, počítejte s delší dobou dojezdu">
+    </div>
+    <div class="field">
+      <label>Přirážka k dojezdu všech obcí (min)</label>
+      <input id="set_extraDojezd" type="number" inputmode="decimal" placeholder="0">
+    </div>
+
+    <h2 style="margin-top:22px;">Sazba za km</h2>
+    <div class="field">
+      <label>Kč / km (na palivo, k oběma směrům dohromady)</label>
+      <input type="number" inputmode="decimal" id="set_kmRate" placeholder="10">
+    </div>
+
+    <h2 style="margin-top:22px;">Ceny rozvozu podle obce</h2>
+    <p style="color:var(--muted); font-size:11px; margin:0 0 10px;">Kč za rozvoz, km tam a zpět, dojezd v minutách, min. cena objednávky, doplatek pod minimem (0 = nepočítat)</p>
+    <div class="row2" style="margin-bottom:4px;">
+      <span style="flex:1; font-size:11px;"></span>
+      <span style="width:40px; font-size:11px; color:var(--muted); text-align:center;">Kč</span>
+      <span style="width:38px; font-size:11px; color:var(--muted); text-align:center;">km</span>
+      <span style="width:40px; font-size:11px; color:var(--muted); text-align:center;">dojezd</span>
+      <span style="width:40px; font-size:11px; color:var(--muted); text-align:center;">min.obj</span>
+      <span style="width:40px; font-size:11px; color:var(--muted); text-align:center;">doplatek</span>
+    </div>
+    <div id="villageFeeFields"></div>
+
+    <h2 style="margin-top:22px;">Co zobrazit v menu</h2>
+    <div class="field">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+        <input type="checkbox" id="set_viewBook" style="width:20px;height:20px;accent-color:var(--accent);"> 📖 Knížka
+      </label>
+    </div>
+    <div class="field">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+        <input type="checkbox" id="set_viewDispatch" style="width:20px;height:20px;accent-color:var(--accent);"> 🚗 Aktivní
+      </label>
+    </div>
+    <div class="field">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+        <input type="checkbox" id="set_viewShift" style="width:20px;height:20px;accent-color:var(--accent);"> 🧾 Uzávěrka
+      </label>
+    </div>
+    <div class="field">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+        <input type="checkbox" id="set_viewRozvoz" style="width:20px;height:20px;accent-color:var(--accent);"> 🚗 Rozvoz (zkratka)
+      </label>
+    </div>
+    <div class="field">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+        <input type="checkbox" id="set_viewPizzerie" style="width:20px;height:20px;accent-color:var(--accent);"> 🏠 Pizzerie (zkratka)
+      </label>
+    </div>
+
+    <div class="sheet-actions">
+      <button class="btn btn-secondary" onclick="closeSettingsSheet()">Zavřít</button>
+      <button class="btn btn-primary" onclick="saveSettings()">Uložit</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function fsLog(msg){
+  const box = document.getElementById('fsLog');
+  if(!box) return;
+  box.style.display = 'block';
+  const clearBtn = document.getElementById('fsLogClearBtn');
+  if(clearBtn) clearBtn.style.display = 'block';
+  const line = document.createElement('div');
+  line.textContent = pad2(new Date().getHours())+':'+pad2(new Date().getMinutes())+':'+pad2(new Date().getSeconds())+' — '+msg;
+  box.appendChild(line);
+  box.scrollTop = box.scrollHeight;
+}
+function clearFsLog(){
+  const box = document.getElementById('fsLog');
+  const clearBtn = document.getElementById('fsLogClearBtn');
+  if(box){ box.innerHTML=''; box.style.display='none'; }
+  if(clearBtn) clearBtn.style.display='none';
+}
+
+function toggleFullscreen(){
+  const el = document.documentElement;
+  const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+  fsLog('Ťuknuto na FS. Podpora requestFullscreen: ' + (req ? 'ANO' : 'NE'));
+  if(!req){
+    fsLog('Tento prohlížeč fullscreen API nemá (typicky iPhone Safari).');
+    alert('Tenhle telefon/prohlížeč fullscreen pro weby nepodporuje (typicky iPhone).\n\nŘešení: v prohlížeči klikni na Sdílet → "Přidat na plochu". Appka se pak spustí bez adresního řádku, jako normální appka.');
+    return;
+  }
+  const isFs = document.fullscreenElement || document.webkitFullscreenElement;
+  fsLog('Aktuální stav fullscreen: ' + (isFs ? 'ZAPNUTO' : 'VYPNUTO'));
+  if(!isFs){
+    req.call(el).then(()=>{
+      fsLog('requestFullscreen proběhl úspěšně.');
+    }).catch((err)=>{
+      fsLog('requestFullscreen selhal: ' + (err && err.message ? err.message : err));
+      alert('Fullscreen se nepovedl spustit. Zkus appku otevřít přímo v prohlížeči (ne v náhledu), nebo použij "Přidat na plochu".');
+    });
+  }else{
+    const exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+    if(exit){ exit.call(document); fsLog('Fullscreen vypnut.'); }
+  }
+}
+function updateFsBtn(){
+  const btn = document.getElementById('fsBtn');
+  if(!btn) return;
+  const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+  btn.textContent = isFs ? '✕' : '⛶';
+  fsLog('Událost fullscreenchange, teď je: ' + (isFs ? 'ZAPNUTO' : 'VYPNUTO'));
+}
+document.addEventListener('fullscreenchange', updateFsBtn);
+document.addEventListener('webkitfullscreenchange', updateFsBtn);
+fsLog('Appka načtena. requestFullscreen je: ' + (document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen ? 'k dispozici' : 'NEDOSTUPNÉ'));
+
+let photoTargetId = null;
+
+function triggerPhotoUpload(id){
+  photoTargetId = id;
+  document.getElementById('photoInput').click();
+}
+
+function resizeImageFile(file, maxDim, quality){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = ()=>{
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = ()=>{
+        let w = img.width, h = img.height;
+        if(w > h && w > maxDim){ h = Math.round(h*maxDim/w); w = maxDim; }
+        else if(h >= w && h > maxDim){ w = Math.round(w*maxDim/h); h = maxDim; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handlePhotoSelected(e){
+  const file = e.target.files[0];
+  e.target.value = '';
+  if(!file || !photoTargetId) return;
+  try{
+    const dataUrl = await resizeImageFile(file, 900, 0.6);
+    await appStorage.set('photo:'+photoTargetId, dataUrl, true);
+    const o = orders.find(x=>x.id===photoTargetId);
+    if(o){ o.hasPhoto = true; await saveOrders(); }
+    render();
+    renderBook();
+    if(document.getElementById('photoViewerOverlay').classList.contains('open')){
+      document.getElementById('photoViewerImg').src = dataUrl;
+    }
+  }catch(err){
+    alert('Fotku se nepodařilo uložit, zkus to prosím znovu.');
+  }
+}
+
+async function viewPhoto(id){
+  photoTargetId = id;
+  try{
+    const r = await appStorage.get('photo:'+id, true);
+    if(r){
+      document.getElementById('photoViewerImg').src = r.value;
+      document.getElementById('photoViewerOverlay').classList.add('open');
+    }
+  }catch(e){
+    alert('Fotku se nepodařilo načíst.');
+  }
+}
+function closePhotoViewer(){
+  document.getElementById('photoViewerOverlay').classList.remove('open');
+}
+async function deletePhoto(){
+  if(!photoTargetId) return;
+  try{ await appStorage.delete('photo:'+photoTargetId, true); }catch(e){}
+  const o = orders.find(x=>x.id===photoTargetId);
+  if(o){ o.hasPhoto = false; await saveOrders(); }
+  closePhotoViewer();
+  render();
+  renderBook();
+}
+
+let noteEditingId = null;
+function openDriverNoteSheet(id){
+  noteEditingId = id;
+  const o = orders.find(x=>x.id===id);
+  document.getElementById('f_drivernote').value = (o && o.driverNote) ? o.driverNote : '';
+  document.getElementById('driverNoteOverlay').classList.add('open');
+}
+function closeDriverNoteSheet(){
+  document.getElementById('driverNoteOverlay').classList.remove('open');
+  noteEditingId = null;
+}
+async function saveDriverNote(){
+  const o = orders.find(x=>x.id===noteEditingId);
+  if(!o) return;
+  o.driverNote = document.getElementById('f_drivernote').value.trim();
+  await saveOrders();
+  closeDriverNoteSheet();
+  render();
+  renderBook();
+}
+
+let displaySettings = {
+  address:true, phone:true, price:true, note:true, time:true, name:true,
+  status:true, driverNote:true, photo:true, driverButtons:true,
+  callButton:true, navButton:true, statusButton:true, numberBadge:true,
+  viewBook:true, viewDispatch:true, viewShift:true, viewRozvoz:true, viewPizzerie:true
+};
+
+async function loadSettings(){
+  try{
+    const r = await appStorage.get('display-settings', true);
+    if(r) displaySettings = Object.assign(displaySettings, JSON.parse(r.value));
+  }catch(e){ /* keep defaults */ }
+  applyMenuVisibility();
+}
+async function saveSettingsToStorage(){
+  try{ await appStorage.set('display-settings', JSON.stringify(displaySettings), true); }
+  catch(e){ console.error('Chyba ukládání nastavení', e); }
+}
+
+function applyMenuVisibility(){
+  const map = {dispatch:'viewDispatch', book:'viewBook', shift:'viewShift', rozvoz:'viewRozvoz', pizzerie:'viewPizzerie'};
+  document.querySelectorAll('.view-btn').forEach(btn=>{
+    const key = map[btn.dataset.view];
+    btn.style.display = displaySettings[key] ? '' : 'none';
+  });
+  const currentBtn = document.querySelector('.view-btn.active');
+  const currentHidden = currentBtn && currentBtn.style.display === 'none';
+  if(currentHidden){
+    const firstVisible = document.querySelector('.view-btn:not([style*="display: none"])');
+    if(firstVisible) switchView(firstVisible.dataset.view);
+  }
+}
+
+const SETTING_KEYS = ['address','name','phone','price','note','time','status','driverNote','photo','driverButtons','callButton','navButton','statusButton','numberBadge'];
+const VIEW_SETTING_KEYS = ['viewBook','viewDispatch','viewShift','viewRozvoz','viewPizzerie'];
+
+function openSettingsSheet(){
+  [...SETTING_KEYS, ...VIEW_SETTING_KEYS].forEach(key=>{
+    const el = document.getElementById('set_'+key);
+    if(el) el.checked = displaySettings[key];
+  });
+  document.getElementById('set_kmRate').value = kmRate;
+  document.getElementById('set_appNotice').value = appNotice;
+  document.getElementById('set_extraDojezd').value = extraDojezd || '';
+  renderVillageFeeFields();
+  document.getElementById('settingsOverlay').classList.add('open');
+}
+function closeSettingsSheet(){
+  document.getElementById('settingsOverlay').classList.remove('open');
+}
+async function saveSettings(){
+  [...SETTING_KEYS, ...VIEW_SETTING_KEYS].forEach(key=>{
+    const el = document.getElementById('set_'+key);
+    if(el) displaySettings[key] = el.checked;
+  });
+  kmRate = parseFloat(document.getElementById('set_kmRate').value) || 0;
+  appNotice = document.getElementById('set_appNotice').value.trim();
+  extraDojezd = parseFloat(document.getElementById('set_extraDojezd').value) || 0;
+  await saveSettingsToStorage();
+  await saveVillageFeesFromForm();
+  try{ await appStorage.set('app-notice', appNotice, true); }catch(e){}
+  try{ await appStorage.set('extra-dojezd', String(extraDojezd), true); }catch(e){}
+  renderAppNoticeBar();
+  closeSettingsSheet();
+  applyMenuVisibility();
+  render();
+  renderBook();
+}
+
+// Úložná vrstva: uvnitř Claude použije window.storage (sdílené),
+// mimo Claude (stažený/hostovaný soubor) automaticky přejde na localStorage (jen v tomhle prohlížeči).
+const hasNativeStorage = (typeof window.storage !== 'undefined') && window.storage && typeof window.storage.get === 'function';
+if(!hasNativeStorage){
+  console.warn('window.storage není k dispozici, appka používá localStorage tohoto prohlížeče.');
+}
+const appStorage = hasNativeStorage ? window.storage : {
+  async get(key, shared){
+    try{
+      const raw = localStorage.getItem('rozvoz:'+key);
+      if(raw === null) return null;
+      return {key, value: raw, shared};
+    }catch(e){ return null; }
+  },
+  async set(key, value, shared){
+    try{ localStorage.setItem('rozvoz:'+key, value); return {key, value, shared}; }
+    catch(e){ console.error('localStorage set selhal', e); return null; }
+  },
+  async delete(key, shared){
+    try{ localStorage.removeItem('rozvoz:'+key); return {key, deleted:true, shared}; }
+    catch(e){ return null; }
+  },
+  async list(prefix, shared){
+    try{
+      const keys = [];
+      for(let i=0;i<localStorage.length;i++){
+        const k = localStorage.key(i);
+        if(k && k.indexOf('rozvoz:') === 0){
+          const stripped = k.slice(7);
+          if(!prefix || stripped.indexOf(prefix) === 0) keys.push(stripped);
+        }
+      }
+      return {keys, prefix, shared};
+    }catch(e){ return {keys:[]}; }
+  }
+};
+
+let orders = [];
+let drivers = [];
+let myName = '';
+let activeFilter = 'vse';
+
+async function loadAll(){
+  await loadSettings();
+  await loadVillageFees();
+  await loadNumberingReset();
+  try{
+    const o = await appStorage.get('orders', true);
+    orders = o ? JSON.parse(o.value) : [];
+  }catch(e){ orders = []; }
+  try{
+    const d = await appStorage.get('drivers', true);
+    drivers = d ? JSON.parse(d.value) : [];
+  }catch(e){ drivers = []; }
+  try{
+    const m = await appStorage.get('my-name', false);
+    myName = m ? m.value : '';
+  }catch(e){ myName = ''; }
+  updateMeBadge();
+  render();
+  renderBook();
+}
+
+async function saveOrders(){
+  try{ await appStorage.set('orders', JSON.stringify(orders), true); }
+  catch(e){ console.error('Chyba ukládání objednávek', e); }
+}
+async function saveDrivers(){
+  try{ await appStorage.set('drivers', JSON.stringify(drivers), true); }
+  catch(e){ console.error('Chyba ukládání rozvozců', e); }
+}
+async function saveMyName(){
+  try{ await appStorage.set('my-name', myName, false); }
+  catch(e){ console.error('Chyba ukládání jména', e); }
+}
+
+function updateMeBadge(){
+  const el = document.getElementById('meBadge');
+  el.innerHTML = myName ? ('Jsi <b>'+escapeHtml(myName)+'</b>') : 'Kdo jsi? 👋';
+}
+
+function driverOrderNumber(order){
+  if(!order.driver) return null;
+  const sameDriver = orders.filter(o => o.driver === order.driver).sort((a,b)=>a.time-b.time);
+  const idx = sameDriver.findIndex(o => o.id === order.id);
+  return idx + 1;
+}
+
+let numberingResetAt = 0;
+
+async function loadNumberingReset(){
+  try{
+    const r = await appStorage.get('numbering-reset-at', true);
+    if(r) numberingResetAt = parseFloat(r.value) || 0;
+  }catch(e){ /* keep default 0 */ }
+}
+
+async function resetOrderNumbering(){
+  const ok = confirm('Restartovat číslování objednávek zpátky na #1? Platí to jen pro nové objednávky odteď, staré zůstanou beze změny.');
+  if(!ok) return;
+  numberingResetAt = Date.now();
+  try{ await appStorage.set('numbering-reset-at', String(numberingResetAt), true); }
+  catch(e){ console.error('Chyba ukládání resetu číslování', e); }
+  alert('Hotovo, další objednávka bude #1.');
+}
+
+function nextOrderNumber(){
+  const todayKey = dayKey(Date.now());
+  const todays = orders.filter(o => dayKey(o.time) === todayKey && o.time >= numberingResetAt);
+  if(todays.length === 0) return 1;
+  return Math.max(...todays.map(o => o.number || 0)) + 1;
+}
+
+function escapeHtml(s){
+  return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function timeAgo(ts){
+  const mins = Math.round((Date.now()-ts)/60000);
+  if(mins < 1) return 'teď';
+  if(mins < 60) return mins+' min';
+  const h = Math.floor(mins/60);
+  return h+' h '+(mins%60)+' min';
+}
+
+function statusLabel(s){
+  return {cekame:'Čeká na výrobu', pripraveno:'Hotovo – čeká na odvoz', cesta:'Na cestě', hotovo:'Doručeno'}[s] || s;
+}
+function nextStatus(s){
+  return {cekame:'pripraveno', pripraveno:'cesta', cesta:'hotovo', hotovo:'cekame'}[s];
+}
+
+function updateStatsBar(){
+  const bar = document.getElementById('statsBar');
+  if(!bar) return;
+  const todayKey = dayKey(Date.now());
+  const todays = orders.filter(o => dayKey(o.time) === todayKey);
+  const mine = todays.filter(o => o.driver === myName).length;
+  const total = todays.length;
+  const rest = total - mine;
+  bar.innerHTML = `
+    <div>Dnes celkem<br><b>${total}</b></div>
+    <div>Moje<br><b>${mine}</b></div>
+    <div>Zbytek<br><b>${rest}</b></div>
+  `;
+}
+
+function driverButtonsHtml(o){
+  const meBtn = myName
+    ? `<button class="driver-btn ${o.driver===myName?'active':''}" data-order="${o.id}" data-driver="${escapeHtml(myName)}" onclick="assignDriverBtn(this)">${escapeHtml(myName)}</button>`
+    : `<button class="driver-btn" onclick="openMeSheet()">Nastav jméno</button>`;
+  const otherBtn = `<button class="driver-btn ${o.driver==='Rozvozce 2'?'active':''}" data-order="${o.id}" data-driver="Rozvozce 2" onclick="assignDriverBtn(this)">Rozvozce 2</button>`;
+  return {meBtn, otherBtn};
+}
+
+function render(){
+  updateStatsBar();
+  updateBulkBar();
+  const list = document.getElementById('list');
+  let filtered = orders.slice().sort((a,b)=> sortNewestFirst ? b.time-a.time : a.time-b.time);
+
+  if(activeFilter === 'moje') filtered = filtered.filter(o=>o.driver === myName);
+  else if(activeFilter === 'kodvozu') filtered = filtered.filter(o=>o.status==='pripraveno');
+  else if(activeFilter === 'volne') filtered = filtered.filter(o=>!o.driver && o.status!=='hotovo');
+  else if(activeFilter === 'hotovo') filtered = filtered.filter(o=>o.status==='hotovo');
+  else filtered = filtered.filter(o=>o.status!=='hotovo');
+
+  if(filtered.length === 0){
+    list.innerHTML = '<div class="empty">Žádné objednávky v tomhle výběru.<br>Přidej novou tlačítkem +</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(o => {
+    const {meBtn, otherBtn} = driverButtonsHtml(o);
+    const mapsUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(o.address);
+    const telUrl = o.phone ? 'tel:'+o.phone.replace(/\s+/g,'') : null;
+
+    return `
+      <div class="card status-${o.status}">
+        <div class="card-top">
+          ${o.status==='pripraveno' ? `<input type="checkbox" class="pick-check" ${selectedIds.has(o.id)?'checked':''} onchange="toggleSelect('${o.id}', this.checked)">` : '<div style="width:20px;"></div>'}
+          ${displaySettings.numberBadge ? '<div class="num-badge">'+(o.driver ? driverOrderNumber(o) : (o.number || '?'))+'</div>' : ''}
+          <div class="addr-wrap">
+            <div class="addr">${displaySettings.address ? escapeHtml(o.address) : '<span style="color:var(--muted); font-style:italic;">adresa skryta</span>'}</div>
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:2px;">
+              ${displaySettings.status ? '<span class="status-badge status-'+o.status+'">'+statusLabel(o.status)+'</span>' : ''}
+              ${displaySettings.time ? '<div class="time">'+formatCardTime(o.time)+'</div>' : ''}
+            </div>
+          </div>
+        </div>
+        <div class="meta">
+          ${displaySettings.phone && o.phone ? '<span>📞 '+escapeHtml(o.phone)+'</span>' : ''}
+          ${displaySettings.price && o.price ? '<span>'+paymentIcon(o.payment)+' '+o.price+' Kč</span>' : ''}
+        </div>
+        ${o.timerEndAt ? '<div class="timer-badge" data-timer-end="'+o.timerEndAt+'" data-order-id="'+o.id+'"></div>' : ''}
+        ${displaySettings.note && o.note ? '<div class="note">'+escapeHtml(o.note)+'</div>' : ''}
+        ${displaySettings.driverNote && o.driverNote ? '<div class="note" style="border-left:2px solid var(--accent);">✍️ '+escapeHtml(o.driverNote)+'</div>' : ''}
+        ${displaySettings.driverButtons ? '<div class="driver-toggle">'+meBtn+otherBtn+'</div>' : ''}
+        <div class="card-bottom">
+          <div class="actions" style="flex:1; justify-content:flex-end;">
+            ${o.status === 'cekame' ? `<button class="icon-btn" onclick="openTimerSheet('${o.id}')">⏱️</button>` : ''}
+            ${displaySettings.photo ? (o.hasPhoto ? `<button class="icon-btn" onclick="viewPhoto('${o.id}')">🖼️</button>` : `<button class="icon-btn" onclick="triggerPhotoUpload('${o.id}')">📷</button>`) : ''}
+            ${displaySettings.driverNote ? `<button class="icon-btn" onclick="openDriverNoteSheet('${o.id}')">✍️</button>` : ''}
+            ${displaySettings.callButton && telUrl ? '<a class="icon-btn" href="'+telUrl+'">📞</a>' : ''}
+            ${displaySettings.navButton ? '<a class="icon-btn" href="'+mapsUrl+'" target="_blank" rel="noopener">🧭</a>' : ''}
+            ${(o.status === 'pripraveno' || o.status === 'cesta') ? '<button class="status-btn" style="background:var(--done); color:#0d1a12;" onclick="moveToDorucheno(\''+o.id+'\')">✓ Doručeno</button>' : ''}
+            ${displaySettings.statusButton ? '<button class="status-btn" onclick="cycleStatus(\''+o.id+'\')">'+statusLabel(o.status)+'</button>' : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function assignDriverBtn(btn){
+  const id = btn.dataset.order;
+  const driver = btn.dataset.driver;
+  const o = orders.find(x=>x.id===id);
+  if(!o) return;
+  o.driver = (o.driver === driver) ? '' : driver;
+  await saveOrders();
+  render();
+  renderBook();
+}
+
+async function assignDriver(id, driver){
+  const o = orders.find(x=>x.id===id);
+  if(!o) return;
+  o.driver = driver;
+  await saveOrders();
+  render();
+  renderBook();
+}
+
+async function cycleStatus(id){
+  const o = orders.find(x=>x.id===id);
+  if(!o) return;
+  o.status = nextStatus(o.status);
+  if(o.status !== 'cekame') delete o.timerEndAt;
+  await saveOrders();
+  render();
+  renderBook();
+}
+
+const nameDays = {
+"1-2":"Karina","1-3":"Radmila","1-4":"Diana","1-5":"Dalimil","1-6":"Melichar","1-7":"Vilma","1-8":"Čestmír","1-9":"Vladan","1-10":"Břetislav","1-11":"Bohdana","1-12":"Pravoslav","1-13":"Edita","1-14":"Radovan","1-15":"Alice","1-16":"Ctirad","1-17":"Drahoslav","1-18":"Vladislav","1-19":"Doubravka","1-20":"Ilona","1-21":"Běla","1-22":"Slavomír","1-23":"Zdeněk","1-24":"Milena","1-25":"Miloš","1-26":"Zora","1-27":"Ingrid","1-28":"Otýlie","1-29":"Zdislava","1-30":"Robin","1-31":"Marika",
+"2-1":"Hynek","2-2":"Nela","2-3":"Blažej","2-4":"Jarmila","2-5":"Dobromila","2-6":"Vanda","2-7":"Veronika","2-8":"Milada","2-9":"Apolena","2-10":"Mojmír","2-11":"Božena","2-12":"Slavěna","2-13":"Věnceslav","2-14":"Valentýn","2-15":"Jiřina","2-16":"Ljuba","2-17":"Miloslava","2-18":"Gizela","2-19":"Patrik","2-20":"Oldřich","2-21":"Lenka","2-22":"Petr","2-23":"Svatopluk","2-24":"Matěj","2-25":"Liliana","2-26":"Dorota","2-27":"Alexandr","2-28":"Lumír","2-29":"Horymír",
+"3-1":"Bedřich","3-2":"Anežka","3-3":"Kamil","3-4":"Stela","3-5":"Kazimír","3-6":"Miroslav","3-7":"Tomáš","3-8":"Gabriela","3-9":"Františka","3-10":"Viktorie","3-11":"Anděla","3-12":"Řehoř","3-13":"Růžena","3-14":"Matylda","3-15":"Ida","3-16":"Elena","3-17":"Vlastimil","3-18":"Eduard","3-19":"Josef","3-20":"Světlana","3-21":"Radek","3-22":"Leona","3-23":"Ivona","3-24":"Gabriel","3-25":"Marián","3-26":"Emanuel","3-27":"Dita","3-28":"Soňa","3-29":"Taťána","3-30":"Arnošt","3-31":"Kvido",
+"4-1":"Hugo","4-2":"Erika","4-3":"Richard","4-4":"Ivana","4-5":"Miroslava","4-6":"Vendula","4-7":"Heřman","4-8":"Ema","4-9":"Dušan","4-10":"Darja","4-11":"Izabela","4-12":"Julius","4-13":"Aleš","4-14":"Vincenc","4-15":"Anastázie","4-16":"Irena","4-17":"Rudolf","4-18":"Valérie","4-19":"Rostislava","4-20":"Marcela","4-21":"Alexandra","4-22":"Evženie","4-23":"Vojtěch","4-24":"Jiří","4-25":"Marek","4-26":"Oto","4-27":"Jaroslav","4-28":"Vlastislav","4-29":"Robert","4-30":"Blahoslav",
+"5-2":"Zikmund","5-3":"Alexej","5-4":"Květoslav","5-5":"Klaudie","5-6":"Radoslav","5-7":"Stanislav","5-9":"Ctibor","5-10":"Blažena","5-11":"Svatava","5-12":"Pankrác","5-13":"Servác","5-14":"Bonifác","5-15":"Žofie","5-16":"Přemysl","5-17":"Aneta","5-18":"Nataša","5-19":"Ivo","5-20":"Zbyšek","5-21":"Monika","5-22":"Emil","5-23":"Vladimír","5-24":"Jana","5-25":"Viola","5-26":"Filip","5-27":"Valdemar","5-28":"Vilém","5-29":"Maxmilián","5-30":"Ferdinand","5-31":"Kamila",
+"6-1":"Laura","6-2":"Jarmil","6-3":"Tamara","6-4":"Dalibor","6-5":"Dobroslav","6-6":"Norbert","6-7":"Iveta","6-8":"Medard","6-9":"Stanislava","6-10":"Gita","6-11":"Bruno","6-12":"Antonie","6-13":"Antonín","6-14":"Roland","6-15":"Vít","6-16":"Zbyněk","6-17":"Adolf","6-18":"Milan","6-19":"Leoš","6-20":"Květa","6-21":"Alois","6-22":"Pavla","6-23":"Zdeňka","6-24":"Jan","6-25":"Ivan","6-26":"Adriana","6-27":"Ladislav","6-28":"Lubomír","6-29":"Petr a Pavel","6-30":"Šárka",
+"7-1":"Jaroslava","7-2":"Patricie","7-3":"Radomír","7-4":"Prokop","7-5":"Cyril a Metoděj","7-7":"Bohuslava","7-8":"Nora","7-9":"Drahoslava","7-10":"Libuše","7-11":"Olga","7-12":"Bořek","7-13":"Markéta","7-14":"Karolína","7-15":"Jindřich","7-16":"Luboš","7-17":"Martina","7-18":"Drahomíra","7-19":"Čeněk","7-20":"Ilja","7-21":"Vítězslav","7-22":"Magdaléna","7-23":"Libor","7-24":"Kristýna","7-25":"Jakub","7-26":"Anna","7-27":"Věroslav","7-28":"Viktor","7-29":"Marta","7-30":"Bořivoj","7-31":"Ignác",
+"8-1":"Oskar","8-2":"Gustav","8-3":"Miluše","8-4":"Dominik","8-5":"Kristián","8-6":"Oldřiška","8-7":"Lada","8-8":"Soběslav","8-9":"Roman","8-10":"Vavřinec","8-11":"Zuzana","8-12":"Klára","8-13":"Alena","8-14":"Alan","8-15":"Hana","8-16":"Jáchym","8-17":"Petra","8-18":"Helena","8-19":"Ludvík","8-20":"Bernard","8-21":"Johana","8-22":"Bohuslav","8-23":"Sandra","8-24":"Bartoloměj","8-25":"Radim","8-26":"Luděk","8-27":"Otakar","8-28":"Augustýn","8-29":"Evelína","8-30":"Vladěna","8-31":"Pavlína",
+"9-1":"Linda","9-2":"Adéla","9-3":"Bronislav","9-4":"Jindřiška","9-5":"Boris","9-6":"Boleslav","9-7":"Regina","9-8":"Mariana","9-9":"Daniela","9-10":"Irma","9-11":"Denisa","9-12":"Marie","9-13":"Lubor","9-14":"Radka","9-15":"Jolana","9-16":"Ludmila","9-17":"Naděžda","9-18":"Kryštof","9-19":"Zita","9-20":"Oleg","9-21":"Matouš","9-22":"Darina","9-23":"Berta","9-24":"Jaromír","9-25":"Zlata","9-26":"Andrea","9-27":"Jonáš","9-28":"Václav","9-29":"Michal","9-30":"Jeroným",
+"10-1":"Igor","10-2":"Olívie","10-3":"Bohumil","10-4":"František","10-5":"Eliška","10-6":"Hanuš","10-7":"Justýna","10-8":"Věra","10-9":"Štefan","10-10":"Marina","10-11":"Andrej","10-12":"Marcel","10-13":"Renáta","10-14":"Agáta","10-15":"Tereza","10-16":"Havel","10-17":"Hedvika","10-18":"Lukáš","10-19":"Michaela","10-20":"Vendelín","10-21":"Brigita","10-22":"Sabina","10-23":"Teodor","10-24":"Nina","10-25":"Beáta","10-26":"Erik","10-27":"Šarlota","10-29":"Silvie","10-30":"Tadeáš","10-31":"Štěpánka",
+"11-1":"Felix","11-3":"Hubert","11-4":"Karel","11-5":"Miriam","11-6":"Liběna","11-7":"Saskie","11-8":"Bohumír","11-9":"Bohdan","11-10":"Evžen","11-11":"Martin","11-12":"Benedikt","11-13":"Tibor","11-14":"Sáva","11-15":"Leopold","11-16":"Otmar","11-17":"Mahulena","11-18":"Romana","11-19":"Alžběta","11-20":"Nikola","11-21":"Albert","11-22":"Cecílie","11-23":"Klement","11-24":"Emílie","11-25":"Kateřina","11-26":"Artur","11-27":"Xenie","11-28":"René","11-29":"Zina","11-30":"Ondřej",
+"12-1":"Iva","12-2":"Blanka","12-3":"Svatoslav","12-4":"Barbora","12-5":"Jitka","12-6":"Mikuláš","12-7":"Ambrož","12-8":"Květoslava","12-9":"Vratislav","12-10":"Julie","12-11":"Dana","12-12":"Simona","12-13":"Lucie","12-14":"Lýdie","12-15":"Radana","12-16":"Albína","12-17":"Daniel","12-18":"Miloslav","12-19":"Ester","12-20":"Dagmar","12-21":"Natálie","12-22":"Šimon","12-23":"Vlasta","12-24":"Eva","12-26":"Štěpán","12-27":"Žaneta","12-28":"Bohumila","12-29":"Judita","12-30":"David","12-31":"Silvestr"
+};
+
+function getNameDay(d){
+  return nameDays[(d.getMonth()+1)+'-'+d.getDate()] || null;
+}
+
+function updateHeroClock(){
+  const now = new Date();
+  const days = ['Neděle','Pondělí','Úterý','Středa','Čtvrtek','Pátek','Sobota'];
+  document.getElementById('heroTime').textContent = pad2(now.getHours())+':'+pad2(now.getMinutes());
+  const nd = getNameDay(now);
+  document.getElementById('heroDate').innerHTML =
+    '<span class="weekday">'+days[now.getDay()]+'</span> '+now.getDate()+'. '+(now.getMonth()+1)+'.'+
+    (nd ? '<span class="hero-name">🎉 '+nd+'</span>' : '');
+}
+
+let selectedIds = new Set();
+
+function toggleSelect(id, checked){
+  if(checked) selectedIds.add(id); else selectedIds.delete(id);
+  updateBulkBar();
+}
+
+function updateBulkBar(){
+  const bar = document.getElementById('bulkBar');
+  if(!bar) return;
+  if(selectedIds.size === 0){ bar.style.display = 'none'; return; }
+  bar.style.display = 'flex';
+  bar.querySelector('.bulk-count').textContent = selectedIds.size;
+
+  const dirs = new Set();
+  selectedIds.forEach(id=>{
+    const o = orders.find(x=>x.id===id);
+    if(o && o.direction) dirs.add(o.direction);
+  });
+  const warn = document.getElementById('bulkDirectionWarn');
+  if(dirs.size > 1){
+    warn.style.display = 'block';
+    warn.textContent = '⚠ Různé směry vybrané: ' + Array.from(dirs).join(', ') + ' – možná to nejde stihnout jednou jízdou';
+  }else{
+    warn.style.display = 'none';
+  }
+}
+
+async function takeSelected(){
+  if(!myName){ openMeSheet(); return; }
+  selectedIds.forEach(id=>{
+    const o = orders.find(x=>x.id===id);
+    if(o){ o.driver = myName; o.status = 'cesta'; }
+  });
+  selectedIds.clear();
+  updateBulkBar();
+  await saveOrders();
+  render();
+  renderBook();
+}
+
+let sortNewestFirst = false;
+
+function toggleSort(){
+  sortNewestFirst = !sortNewestFirst;
+  updateSortBtn();
+  render();
+  renderBook();
+}
+function updateSortBtn(){
+  const btn = document.getElementById('sortBtn');
+  if(!btn) return;
+  btn.textContent = sortNewestFirst ? '↑ Poslední nahoře' : '↓ Poslední dole';
+}
+
+function switchView(view){
+  document.querySelectorAll('.view-btn').forEach(b=>b.classList.toggle('active', b.dataset.view===view));
+  const isBookLike = (view==='book' || view==='rozvoz' || view==='pizzerie');
+  document.getElementById('dispatchView').style.display = view==='dispatch' ? '' : 'none';
+  document.getElementById('bookView').style.display = isBookLike ? '' : 'none';
+  document.getElementById('shiftView').style.display = view==='shift' ? '' : 'none';
+
+  if(isBookLike){
+    const filterKey = (view==='rozvoz' || view==='pizzerie') ? view : 'vse';
+    bookActiveFilter = filterKey;
+    document.querySelectorAll('#bookTabs .tab').forEach(t=>t.classList.toggle('active', t.dataset.bookfilter===filterKey));
+    renderBook();
+  }
+  if(view==='shift') initShiftView();
+}
+
+let selectedPayment = 'hotove';
+function selectPayment(p){
+  selectedPayment = p;
+  document.querySelectorAll('.pay-btn').forEach(b=>b.classList.toggle('active', b.dataset.pay===p));
+}
+function paymentIcon(p){ return {hotove:'💵', karta:'💳', stravenky:'🍽️'}[p] || '💵'; }
+function paymentLabel(p){ return {hotove:'Hotově', karta:'Kartou', stravenky:'Stravenky'}[p] || 'Hotově'; }
+
+function pad2(n){ return String(n).padStart(2,'0'); }
+function toLocalDatetimeValue(d){
+  return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())+'T'+pad2(d.getHours())+':'+pad2(d.getMinutes());
+}
+function toLocalDateValue(d){
+  return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());
+}
+function formatCardTime(ts){
+  const d = new Date(ts);
+  const time = pad2(d.getHours())+':'+pad2(d.getMinutes());
+  if(dayKey(ts) === dayKey(Date.now())) return time;
+  return d.getDate()+'.'+(d.getMonth()+1)+'. '+time;
+}
+
+function dayKey(ts){
+  const d = new Date(ts);
+  return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+}
+function formatDayHeader(ts){
+  const days = ['Ne','Po','Út','St','Čt','Pá','So'];
+  const d = new Date(ts);
+  return days[d.getDay()]+' '+d.getDate()+'. '+(d.getMonth()+1)+'. '+d.getFullYear();
+}
+
+function renderBook(){
+  const bookList = document.getElementById('bookList');
+  const q = (document.getElementById('bookSearch').value||'').toLowerCase().trim();
+
+  let items = orders.slice();
+  if(bookActiveFilter === 'hotove') items = items.filter(o => o.status === 'pripraveno');
+  else if(bookActiveFilter === 'rozvoz') items = items.filter(o => o.orderType !== 'pizzerie');
+  else if(bookActiveFilter === 'pizzerie') items = items.filter(o => o.orderType === 'pizzerie');
+  if(q){
+    items = items.filter(o => [o.number, o.address,o.name,o.phone,o.note,o.driver].join(' ').toLowerCase().includes(q));
+  }
+  items.sort((a,b)=> sortNewestFirst ? b.time-a.time : a.time-b.time);
+
+  if(items.length === 0){
+    bookList.innerHTML = '<div class="empty">Nic tu není. Zkus jiné hledání, nebo přidej první objednávku.</div>';
+    return;
+  }
+
+  const groups = {};
+  const dayOrder = [];
+  items.forEach(o=>{
+    const k = dayKey(o.time);
+    if(!groups[k]){ groups[k]=[]; dayOrder.push(k); }
+    groups[k].push(o);
+  });
+
+  bookList.innerHTML = dayOrder.map(k=>{
+    const dayItems = groups[k];
+    const count = dayItems.length;
+    const revenue = dayItems.reduce((sum,o)=>sum+(o.price||0),0);
+    const rozvozRevenue = dayItems.filter(o=>o.orderType!=='pizzerie').reduce((sum,o)=>sum+(o.price||0),0);
+    const pizzerieRevenue = dayItems.filter(o=>o.orderType==='pizzerie').reduce((sum,o)=>sum+(o.price||0),0);
+    const deliverySum = dayItems.reduce((sum,o)=>sum+(o.deliveryFee||0),0);
+    const kmSum = dayItems.reduce((sum,o)=>sum+(o.deliveryKm||0),0);
+    const fuelSum = dayItems.reduce((sum,o)=>sum+(o.fuelCost||0),0);
+    const surchargeSum = dayItems.reduce((sum,o)=>sum+(o.surcharge||0),0);
+    const rows = dayItems.map(o => {
+      return `
+      <div class="book-row" style="flex-direction:column; align-items:stretch;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+          <div class="book-left">
+            <div class="book-addr">${o.orderType==='pizzerie' ? '🏠' : '🚗'} #${o.number || '?'} · ${displaySettings.address ? escapeHtml(o.address) : '<span style="color:var(--muted); font-style:italic;">adresa skryta</span>'}</div>
+            ${o.driverNote ? '<div class="book-meta" style="color:var(--accent);">✍️ '+escapeHtml(o.driverNote)+'</div>' : ''}
+          </div>
+          <div class="book-right" style="flex-direction:row; align-items:center; gap:6px;">
+            <button class="icon-btn" onclick="openDriverNoteSheet('${o.id}')">✍️</button>
+            ${o.status === 'cekame' ? '<button class="sort-btn" style="padding:4px 8px; white-space:nowrap;" onclick="moveToHotovo(\''+o.id+'\')">➡️ Hotovo</button>' : ''}
+            ${(o.status === 'pripraveno' || o.status === 'cesta') ? '<button class="sort-btn" style="padding:4px 8px; white-space:nowrap; background:var(--done); color:#0d1a12;" onclick="moveToDorucheno(\''+o.id+'\')">✓ Doručeno</button>' : ''}
+          </div>
+        </div>
+      </div>
+    `;
+    }).join('');
+    return `
+      <div class="day-group">
+        <div class="day-header" style="flex-direction:column; align-items:stretch; gap:2px;">
+          <div style="display:flex; justify-content:space-between;"><b>${formatDayHeader(dayItems[0].time)}</b><span class="day-total">${count}× • ${revenue} Kč</span></div>
+          <div style="font-size:11px; color:var(--muted); display:flex; justify-content:space-between; flex-wrap:wrap; gap:4px;">
+            <span>🚗 Rozvoz: ${rozvozRevenue} Kč · 🏠 Pizzerie: ${pizzerieRevenue} Kč</span>
+            <span>${deliverySum ? '🚚 '+deliverySum+' Kč · ' : ''}${kmSum ? '🛣️ '+kmSum+' km (≈'+fuelSum+' Kč) · ' : ''}${surchargeSum ? '🔔 '+surchargeSum+' Kč' : ''}</span>
+          </div>
+        </div>
+        ${rows}
+      </div>
+    `;
+  }).join('');
+}
+
+document.querySelectorAll('#dispatchTabs .tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('#dispatchTabs .tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    activeFilter = tab.dataset.filter;
+    render();
+  });
+});
+
+let bookActiveFilter = 'vse';
+document.querySelectorAll('#bookTabs .tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('#bookTabs .tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    bookActiveFilter = tab.dataset.bookfilter;
+    renderBook();
+  });
+});
+
+let timerTargetId = null;
+
+function openTimerSheet(id){
+  timerTargetId = id;
+  document.getElementById('f_timerCustom').value = '';
+  document.getElementById('timerOverlay').classList.add('open');
+}
+function closeTimerSheet(){
+  document.getElementById('timerOverlay').classList.remove('open');
+}
+async function setOrderTimer(id, minutes){
+  const o = orders.find(x=>x.id===id);
+  if(!o) return;
+  o.timerEndAt = Date.now() + minutes*60000;
+  await saveOrders();
+  render();
+  renderBook();
+}
+async function startTimerMinutes(minutes){
+  if(!timerTargetId) return;
+  await setOrderTimer(timerTargetId, minutes);
+  closeTimerSheet();
+}
+async function startTimerCustom(){
+  const minutes = parseFloat(document.getElementById('f_timerCustom').value);
+  if(!minutes || minutes <= 0){ closeTimerSheet(); return; }
+  await startTimerMinutes(minutes);
+}
+async function cancelTimer(){
+  if(!timerTargetId) return;
+  const o = orders.find(x=>x.id===timerTargetId);
+  if(o){ delete o.timerEndAt; await saveOrders(); render(); renderBook(); }
+  closeTimerSheet();
+}
+
+function updateTimerBadges(){
+  document.querySelectorAll('.timer-badge').forEach(el=>{
+    const endAt = parseFloat(el.dataset.timerEnd);
+    const diff = endAt - Date.now();
+    if(diff <= 0){
+      el.classList.add('timer-done');
+      el.textContent = '🔔 Hotovo, vyndej!';
+    }else{
+      el.classList.remove('timer-done');
+      const mins = Math.floor(diff/60000);
+      const secs = Math.floor((diff%60000)/1000);
+      el.textContent = '⏱️ ' + mins + ':' + pad2(secs);
+    }
+  });
+}
+setInterval(updateTimerBadges, 1000);
+
+async function moveToHotovo(id){
+  const o = orders.find(x=>x.id===id);
+  if(!o) return;
+  o.status = 'pripraveno';
+  o.readyAt = Date.now();
+  delete o.timerEndAt;
+  await saveOrders();
+  render();
+  renderBook();
+}
+
+async function moveToDorucheno(id){
+  const o = orders.find(x=>x.id===id);
+  if(!o) return;
+  o.status = 'hotovo';
+  o.deliveredAt = Date.now();
+  await saveOrders();
+  render();
+  renderBook();
+}
+
+function exportPDF(){
+  const groups = {};
+  const dayOrder = [];
+  orders.slice().sort((a,b)=>a.time-b.time).forEach(o=>{
+    const k = dayKey(o.time);
+    if(!groups[k]){ groups[k]=[]; dayOrder.push(k); }
+    groups[k].push(o);
+  });
+  dayOrder.sort((a,b)=>{
+    const [ay,am,ad] = a.split('-').map(Number);
+    const [by,bm,bd] = b.split('-').map(Number);
+    return (ay*10000+am*100+ad) - (by*10000+bm*100+bd);
+  });
+
+  let grandTotal = 0;
+  let html = '<h1>Rozvoz SOS Příbor – přehled objednávek</h1>';
+  html += '<div style="font-size:12px; color:#555; margin-bottom:10px;">Vytvořeno: ' + new Date().toLocaleString('cs-CZ') + '</div>';
+
+  dayOrder.forEach(k=>{
+    const dayItems = groups[k];
+    const dayTotal = dayItems.reduce((s,o)=>s+(o.price||0),0);
+    grandTotal += dayTotal;
+    html += '<h2>' + formatDayHeader(dayItems[0].time) + ' — ' + dayItems.length + '× objednávek</h2>';
+    html += '<table><tr><th>#</th><th>Typ</th><th>Adresa</th><th>Jméno</th><th>Telefon</th><th>Cena</th><th>Stav</th></tr>';
+    dayItems.forEach(o=>{
+      html += '<tr>'
+        + '<td>' + (o.number||'') + '</td>'
+        + '<td>' + (o.orderType==='pizzerie' ? 'Pizzerie' : 'Rozvoz') + '</td>'
+        + '<td>' + escapeHtml(o.address||'') + '</td>'
+        + '<td>' + escapeHtml(o.name||'') + '</td>'
+        + '<td>' + escapeHtml(o.phone||'') + '</td>'
+        + '<td>' + (o.price||0) + ' Kč</td>'
+        + '<td>' + statusLabel(o.status) + '</td>'
+        + '</tr>';
+    });
+    html += '</table>';
+    html += '<div class="pr-total">Součet za den: ' + dayTotal + ' Kč</div>';
+  });
+
+  html += '<div class="pr-grand">Celkem za celé období: ' + grandTotal + ' Kč</div>';
+
+  document.getElementById('printReport').innerHTML = html;
+  window.print();
+}
+
+async function exportHistory(){
+  try{
+    const shiftKeys = await appStorage.list('shift:', true);
+    const shifts = {};
+    if(shiftKeys && shiftKeys.keys){
+      for(const k of shiftKeys.keys){
+        try{
+          const r = await appStorage.get(k, true);
+          if(r) shifts[k] = JSON.parse(r.value);
+        }catch(e){}
+      }
+    }
+    const backup = {
+      exportedAt: new Date().toISOString(),
+      orders: orders,
+      drivers: drivers,
+      shifts: shifts
+    };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const now = new Date();
+    a.href = url;
+    a.download = 'rozvoz_historie_'+now.getFullYear()+pad2(now.getMonth()+1)+pad2(now.getDate())+'_'+pad2(now.getHours())+pad2(now.getMinutes())+'.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }catch(e){
+    alert('Export se nepovedl: ' + e.message);
+  }
+}
+
+async function loadShiftInputs(key){
+  try{
+    const r = await appStorage.get('shift:'+key, true);
+    return r ? JSON.parse(r.value) : {phm:0, terminal:0, stravenky:0, closed:false};
+  }catch(e){ return {phm:0, terminal:0, stravenky:0, closed:false}; }
+}
+async function saveShiftInputs(key, data){
+  try{ await appStorage.set('shift:'+key, JSON.stringify(data), true); }
+  catch(e){ console.error('Chyba ukládání uzávěrky', e); }
+}
+
+let currentShiftEntity = 'rozvozce1';
+
+function currentShiftDayKey(){
+  const [y,m,d] = document.getElementById('shiftDate').value.split('-').map(Number);
+  return y+'-'+m+'-'+d+':'+currentShiftEntity;
+}
+
+function entityLabel(e){
+  return {rozvozce1:'Rozvozce 1', rozvozce2:'Rozvozce 2', pizzerie:'Pizzerie'}[e] || e;
+}
+
+function filterOrdersForEntity(dayOrders, entity){
+  if(entity === 'pizzerie') return dayOrders.filter(o => o.orderType === 'pizzerie');
+  if(entity === 'rozvozce1') return dayOrders.filter(o => o.orderType !== 'pizzerie' && (o.driver === myName || (!o.driver && myName)));
+  if(entity === 'rozvozce2') return dayOrders.filter(o => o.orderType !== 'pizzerie' && o.driver === 'Rozvozce 2');
+  return dayOrders;
+}
+
+async function switchShiftEntity(entity){
+  currentShiftEntity = entity;
+  document.querySelectorAll('#shiftEntityTabs .tab').forEach(t=>t.classList.toggle('active', t.dataset.entity===entity));
+  await loadShift();
+}
+
+async function initShiftView(){
+  const dateInput = document.getElementById('shiftDate');
+  if(!dateInput.value) dateInput.value = toLocalDateValue(new Date());
+  document.querySelectorAll('#shiftEntityTabs .tab').forEach(tab=>{
+    tab.onclick = () => switchShiftEntity(tab.dataset.entity);
+  });
+  await loadShift();
+  await renderShiftHistory();
+}
+
+function setShiftInputsDisabled(disabled){
+  ['shiftTotal','shiftTerminalBefore','shiftTerminalAfter','shiftStravenky','shiftPhm','shiftOtherExpense'].forEach(id=>{
+    document.getElementById(id).disabled = disabled;
+  });
+}
+
+async function loadShift(){
+  const key = currentShiftDayKey();
+  const saved = await loadShiftInputs(key);
+  const dayKeyStr = key.split(':')[0];
+  const dayOrders = filterOrdersForEntity(orders.filter(o => dayKey(o.time) === dayKeyStr), currentShiftEntity);
+  const autoTotal = dayOrders.reduce((s,o)=>s+(o.price||0),0);
+
+  currentShiftClosed = !!saved.closed;
+  currentShiftClosedAt = saved.closedAt || null;
+
+  document.getElementById('shiftPhm').value = saved.phm || '';
+  document.getElementById('shiftTerminalBefore').value = (saved.terminalBefore !== undefined) ? saved.terminalBefore : '';
+  document.getElementById('shiftTerminalAfter').value = (saved.terminalAfter !== undefined) ? saved.terminalAfter : '';
+  document.getElementById('shiftStravenky').value = saved.stravenky || '';
+  document.getElementById('shiftOtherExpense').value = saved.otherExpense || '';
+  document.getElementById('shiftTotal').value = (saved.total !== undefined && saved.total !== null) ? saved.total : autoTotal;
+  document.getElementById('shiftTotalKm').value = saved.totalKm || '';
+  document.getElementById('shiftHourlyRate').value = saved.hourlyRate || '';
+  document.getElementById('shiftHoursWorked').value = saved.hoursWorked || '';
+  setShiftInputsDisabled(currentShiftClosed);
+  calcShift();
+  calcShiftCosts();
+}
+
+async function calcShiftCosts(){
+  const key = currentShiftDayKey();
+  const totalKm = parseFloat(document.getElementById('shiftTotalKm').value) || 0;
+  const hourlyRate = parseFloat(document.getElementById('shiftHourlyRate').value) || 0;
+  const hoursWorked = parseFloat(document.getElementById('shiftHoursWorked').value) || 0;
+
+  const kmCost = Math.round(totalKm * kmRate);
+  const wageCost = Math.round(hoursWorked * hourlyRate);
+  const totalWithWage = kmCost + wageCost;
+
+  document.getElementById('shiftCostsResult').innerHTML = `
+    <div class="shift-row"><span>1) Km × ${kmRate} Kč/km</span><span class="val">${kmCost} Kč</span></div>
+    <div class="shift-row"><span>+ Hodinovka (${hoursWorked} h × ${hourlyRate} Kč)</span><span class="val">${wageCost} Kč</span></div>
+    <div class="shift-row" style="font-weight:700; border-top:1px solid var(--card-border); padding-top:8px; margin-top:2px;"><span>2) Km + hodinovka celkem</span><span class="val">${totalWithWage} Kč</span></div>
+  `;
+
+  const saved = await loadShiftInputs(key);
+  saved.totalKm = totalKm;
+  saved.hourlyRate = hourlyRate;
+  saved.hoursWorked = hoursWorked;
+  await saveShiftInputs(key, saved);
+}
+
+async function calcShift(){
+  const key = currentShiftDayKey();
+  const dayKeyStr = key.split(':')[0];
+  const dayOrders = filterOrdersForEntity(orders.filter(o => dayKey(o.time) === dayKeyStr), currentShiftEntity);
+  const autoTotal = dayOrders.reduce((s,o)=>s+(o.price||0),0);
+
+  const totalInput = document.getElementById('shiftTotal').value;
+  const total = totalInput === '' ? autoTotal : (parseFloat(totalInput) || 0);
+
+  const terminalBefore = parseFloat(document.getElementById('shiftTerminalBefore').value) || 0;
+  const terminalAfter = parseFloat(document.getElementById('shiftTerminalAfter').value) || 0;
+  const terminal = Math.max(0, terminalAfter - terminalBefore);
+  const stravenky = parseFloat(document.getElementById('shiftStravenky').value) || 0;
+  const phm = parseFloat(document.getElementById('shiftPhm').value) || 0;
+  const otherExpense = parseFloat(document.getElementById('shiftOtherExpense').value) || 0;
+
+  const diffNote = document.getElementById('shiftTerminalDiffNote');
+  if(terminalBefore || terminalAfter){
+    diffNote.textContent = 'Terminál za směnu: ' + terminalAfter + ' − ' + terminalBefore + ' = ' + terminal + ' Kč';
+  }else{
+    diffNote.textContent = '';
+  }
+
+  const mismatch = Math.round((total - autoTotal)*100)/100;
+
+  document.getElementById('shiftStats').innerHTML = `
+    <div class="shift-row"><span>${entityLabel(currentShiftEntity)} — počet objednávek</span><span class="val">${dayOrders.length}</span></div>
+    <div class="shift-row"><span>Součet z objednávek</span><span class="val">${autoTotal} Kč</span></div>
+    <div class="shift-row"><span>💳 Terminál (po − před)</span><span class="val">− ${terminal} Kč</span></div>
+    <div class="shift-row"><span>🍽️ Stravenky</span><span class="val">− ${stravenky} Kč</span></div>
+    <div class="shift-row"><span>⛽ PHM</span><span class="val">− ${phm} Kč</span></div>
+    <div class="shift-row"><span>🛒 Jiný nákup</span><span class="val">− ${otherExpense} Kč</span></div>
+  `;
+
+  const cashToHandIn = total - terminal - stravenky - phm - otherExpense;
+
+  const mismatchNote = Math.abs(mismatch) > 0.01
+    ? '<div style="margin-top:8px;font-size:12px;color:var(--road);">ⓘ Zadaná tržba se liší od objednávek o '+Math.abs(mismatch)+' Kč</div>'
+    : '';
+
+  document.getElementById('shiftResult').innerHTML = `
+    <div class="label">Hotovost k odevzdání — ${entityLabel(currentShiftEntity)}</div>
+    <div class="amount">${cashToHandIn} Kč</div>
+    ${mismatchNote}
+  `;
+
+  const savedPrev = await loadShiftInputs(key);
+  await saveShiftInputs(key, Object.assign({}, savedPrev, {phm, terminalBefore, terminalAfter, stravenky, otherExpense, total, entity: currentShiftEntity, closed: currentShiftClosed, closedAt: currentShiftClosedAt}));
+  renderShiftCloseArea(cashToHandIn);
+}
+
+let currentShiftClosed = false;
+let currentShiftClosedAt = null;
+
+function renderShiftCloseArea(cashToHandIn){
+  const area = document.getElementById('shiftCloseArea');
+  if(!area) return;
+  if(currentShiftClosed){
+    const when = currentShiftClosedAt ? new Date(currentShiftClosedAt) : null;
+    const whenText = when ? (pad2(when.getHours())+':'+pad2(when.getMinutes())+' · '+when.getDate()+'.'+(when.getMonth()+1)+'.') : '';
+    area.innerHTML = `
+      <div class="locked-note">
+        <span>🔒 <b>Směna uzavřena</b> ${whenText}</span>
+        <button class="unlock-link" onclick="unlockShift()">odemknout</button>
+      </div>
+    `;
+  }else{
+    area.innerHTML = `<button class="close-btn" onclick="closeShift()">🔒 Uzavřít směnu</button>`;
+  }
+}
+
+async function closeShift(){
+  currentShiftClosed = true;
+  currentShiftClosedAt = Date.now();
+  setShiftInputsDisabled(true);
+  await calcShift();
+  await renderShiftHistory();
+}
+
+async function unlockShift(){
+  currentShiftClosed = false;
+  currentShiftClosedAt = null;
+  setShiftInputsDisabled(false);
+  await calcShift();
+  await renderShiftHistory();
+}
+
+let shiftSelected = {};
+
+async function renderShiftHistory(){
+  const box = document.getElementById('shiftHistory');
+  if(!box) return;
+  box.innerHTML = '<div class="empty" style="padding:16px;">Načítám…</div>';
+  try{
+    const res = await appStorage.list('shift:', true);
+    const keys = (res && res.keys) ? res.keys : [];
+    const items = [];
+    for(const k of keys){
+      try{
+        const r = await appStorage.get(k, true);
+        if(r){
+          const data = JSON.parse(r.value);
+          if(data.closed){
+            const dayEntityStr = k.replace('shift:','');
+            const [dayStr, entity] = dayEntityStr.split(':');
+            const [y,m,d] = dayStr.split('-').map(Number);
+            const terminal = Math.max(0, (data.terminalAfter||0) - (data.terminalBefore||0));
+            const cash = (data.total||0) - terminal - (data.stravenky||0) - (data.phm||0) - (data.otherExpense||0);
+            items.push({key: dayEntityStr, dayStr, y, m, d, entity: entity||'rozvozce1', cash});
+          }
+        }
+      }catch(e){}
+    }
+    items.sort((a,b)=> (b.y*10000+b.m*100+b.d) - (a.y*10000+a.m*100+a.d));
+
+    if(items.length === 0){
+      box.innerHTML = '<div class="empty" style="padding:16px;">Zatím žádná uzavřená směna.</div>';
+      return;
+    }
+    box.innerHTML = `
+      <div class="shift-row" style="font-weight:600;">
+        <span>Vybráno k součtu</span>
+        <span class="val" id="shiftSelSum">0 Kč</span>
+      </div>
+    ` + items.map(it => `
+      <div class="history-row" style="cursor:default;">
+        <input type="checkbox" style="width:18px;height:18px;accent-color:var(--accent); margin-right:4px;" onchange="toggleShiftSelect('${it.key}', ${it.cash}, this.checked)">
+        <span style="flex:1; cursor:pointer;" onclick="jumpToShiftDay('${it.y}-${it.m}-${it.d}', '${it.entity}')">${it.d}.${it.m}.${it.y} · ${entityLabel(it.entity)}</span>
+        <span class="hist-cash">${it.cash} Kč</span>
+      </div>
+    `).join('');
+    shiftSelected = {};
+    updateShiftSelSum();
+  }catch(e){
+    box.innerHTML = '<div class="empty" style="padding:16px;">Historii se nepodařilo načíst.</div>';
+  }
+}
+
+function toggleShiftSelect(key, cash, checked){
+  if(checked) shiftSelected[key] = cash;
+  else delete shiftSelected[key];
+  updateShiftSelSum();
+}
+function updateShiftSelSum(){
+  const el = document.getElementById('shiftSelSum');
+  if(!el) return;
+  const values = Object.values(shiftSelected);
+  const sum = values.reduce((s,v)=>s+v,0);
+  el.textContent = values.length ? (values.length+'× · '+sum+' Kč') : '0 Kč';
+}
+
+function jumpToShiftDay(dayStr, entity){
+  const [y,m,d] = dayStr.split('-').map(Number);
+  document.getElementById('shiftDate').value = y+'-'+pad2(m)+'-'+pad2(d);
+  if(entity){
+    currentShiftEntity = entity;
+    document.querySelectorAll('#shiftEntityTabs .tab').forEach(t=>t.classList.toggle('active', t.dataset.entity===entity));
+  }
+  loadShift();
+}
+
+let VILLAGES = ['Kopřivnice','Kopřivnice - průmyslová zóna','Příbor','Sedlnice','Lubina','Skotnice','Mošnov','Mošnov - průmyslová zóna','Petřvald','Petřvaldík','Bartošovice','Tichá'];
+let villageFees = {};
+let villageKm = {};
+let villageMin = {};
+let villageTime = {};
+let villageSurcharge = {};
+let villageDriver = {};
+let villageDirection = {};
+let kmRate = 10;
+let appNotice = '';
+let extraDojezd = 0;
+VILLAGES.forEach(v => { villageFees[v] = 0; villageKm[v] = 0; villageMin[v] = 0; villageTime[v] = 0; villageSurcharge[v] = 0; villageDriver[v] = ''; villageDirection[v] = ''; });
+let selectedDeliveryFee = 0;
+let selectedDeliveryKm = 0;
+let selectedMinOrder = 0;
+let selectedDriveTime = 0;
+let selectedSurcharge = 0;
+let selectedVillageDriver = '';
+let selectedDirection = '';
+let selectedVillageName = '';
+
+async function loadVillageFees(){
+  try{
+    const rc = await appStorage.get('custom-places', true);
+    if(rc){
+      const savedPlaces = JSON.parse(rc.value);
+      savedPlaces.forEach(v=>{
+        if(!VILLAGES.includes(v)) VILLAGES.push(v);
+      });
+    }
+  }catch(e){ /* no custom places yet */ }
+  VILLAGES.forEach(v=>{
+    if(villageFees[v] === undefined) villageFees[v] = 0;
+    if(villageKm[v] === undefined) villageKm[v] = 0;
+    if(villageMin[v] === undefined) villageMin[v] = 0;
+    if(villageTime[v] === undefined) villageTime[v] = 0;
+    if(villageSurcharge[v] === undefined) villageSurcharge[v] = 0;
+    if(villageDriver[v] === undefined) villageDriver[v] = '';
+    if(villageDirection[v] === undefined) villageDirection[v] = '';
+  });
+  try{
+    const r = await appStorage.get('village-fees', true);
+    if(r) villageFees = Object.assign(villageFees, JSON.parse(r.value));
+  }catch(e){ /* keep defaults */ }
+  try{
+    const r2 = await appStorage.get('village-km', true);
+    if(r2) villageKm = Object.assign(villageKm, JSON.parse(r2.value));
+  }catch(e){ /* keep defaults */ }
+  try{
+    const r3 = await appStorage.get('km-rate', true);
+    if(r3) kmRate = parseFloat(r3.value) || 10;
+  }catch(e){ /* keep default 10 */ }
+  try{
+    const r9 = await appStorage.get('app-notice', true);
+    appNotice = r9 ? r9.value : '';
+  }catch(e){ appNotice = ''; }
+  try{
+    const r10 = await appStorage.get('extra-dojezd', true);
+    extraDojezd = r10 ? (parseFloat(r10.value) || 0) : 0;
+  }catch(e){ extraDojezd = 0; }
+  renderAppNoticeBar();
+  try{
+    const r4 = await appStorage.get('village-min', true);
+    if(r4) villageMin = Object.assign(villageMin, JSON.parse(r4.value));
+  }catch(e){ /* keep defaults */ }
+  try{
+    const r5 = await appStorage.get('village-time', true);
+    if(r5) villageTime = Object.assign(villageTime, JSON.parse(r5.value));
+  }catch(e){ /* keep defaults */ }
+  try{
+    const r6 = await appStorage.get('village-surcharge', true);
+    if(r6) villageSurcharge = Object.assign(villageSurcharge, JSON.parse(r6.value));
+  }catch(e){ /* keep defaults */ }
+  try{
+    const r7 = await appStorage.get('village-driver', true);
+    if(r7) villageDriver = Object.assign(villageDriver, JSON.parse(r7.value));
+  }catch(e){ /* keep defaults */ }
+  try{
+    const r8 = await appStorage.get('village-direction', true);
+    if(r8) villageDirection = Object.assign(villageDirection, JSON.parse(r8.value));
+  }catch(e){ /* keep defaults */ }
+}
+async function saveVillageFees(){
+  try{ await appStorage.set('village-fees', JSON.stringify(villageFees), true); }
+  catch(e){ console.error('Chyba ukládání cen rozvozu', e); }
+  try{ await appStorage.set('village-km', JSON.stringify(villageKm), true); }
+  catch(e){ console.error('Chyba ukládání km', e); }
+  try{ await appStorage.set('km-rate', String(kmRate), true); }
+  catch(e){ console.error('Chyba ukládání sazby km', e); }
+  try{ await appStorage.set('village-min', JSON.stringify(villageMin), true); }
+  catch(e){ console.error('Chyba ukládání minimální ceny', e); }
+  try{ await appStorage.set('village-time', JSON.stringify(villageTime), true); }
+  catch(e){ console.error('Chyba ukládání dojezdu', e); }
+  try{ await appStorage.set('village-surcharge', JSON.stringify(villageSurcharge), true); }
+  catch(e){ console.error('Chyba ukládání doplatku', e); }
+  try{ await appStorage.set('village-driver', JSON.stringify(villageDriver), true); }
+  catch(e){ console.error('Chyba ukládání přiřazení rozvozce', e); }
+  try{ await appStorage.set('village-direction', JSON.stringify(villageDirection), true); }
+  catch(e){ console.error('Chyba ukládání směru', e); }
+}
+function renderVillageFeeFields(){
+  const box = document.getElementById('villageFeeFields');
+  if(!box) return;
+  box.innerHTML = VILLAGES.map(v => `
+    <div style="margin-bottom:14px; padding-bottom:10px; border-bottom:1px dashed var(--card-border);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:8px;">
+        <span style="font-size:13px; font-weight:600;">${v}</span>
+        <select id="vdriver_${v}" style="background:#15161b; border:1px solid var(--card-border); border-radius:8px; padding:6px 8px; color:var(--text); font-size:12px;">
+          <option value="" ${!villageDriver[v] ? 'selected':''}>Kdokoliv</option>
+          <option value="me" ${villageDriver[v]==='me' ? 'selected':''}>Já</option>
+          <option value="other" ${villageDriver[v]==='other' ? 'selected':''}>Rozvozce 2</option>
+        </select>
+      </div>
+      <div style="margin-bottom:6px;">
+        <input type="text" id="vdir_${v}" value="${escapeHtml(villageDirection[v]||'')}" placeholder="Směr (např. Sever, k Frýdku...)" style="width:100%; background:#15161b; border:1px solid var(--card-border); border-radius:8px; padding:6px 8px; color:var(--text); font-size:12px;">
+      </div>
+      <div class="row2" style="align-items:center;">
+        <input type="number" inputmode="decimal" id="vfee_${v}" value="${villageFees[v]||0}" placeholder="Kč" style="background:#15161b; border:1px solid var(--card-border); border-radius:8px; padding:8px 4px; color:var(--text); width:40px;">
+        <input type="number" inputmode="decimal" id="vkm_${v}" value="${villageKm[v]||0}" placeholder="km" style="background:#15161b; border:1px solid var(--card-border); border-radius:8px; padding:8px 4px; color:var(--text); width:38px;">
+        <input type="number" inputmode="decimal" id="vtime_${v}" value="${villageTime[v]||0}" placeholder="min" style="background:#15161b; border:1px solid var(--card-border); border-radius:8px; padding:8px 4px; color:var(--text); width:40px;">
+        <input type="number" inputmode="decimal" id="vmin_${v}" value="${villageMin[v]||0}" placeholder="min" style="background:#15161b; border:1px solid var(--card-border); border-radius:8px; padding:8px 4px; color:var(--text); width:40px;">
+        <input type="number" inputmode="decimal" id="vsur_${v}" value="${villageSurcharge[v]||0}" placeholder="Kč" style="background:#15161b; border:1px solid var(--card-border); border-radius:8px; padding:8px 4px; color:var(--text); width:40px;">
+      </div>
+    </div>
+  `).join('');
+}
+async function saveVillageFeesFromForm(){
+  VILLAGES.forEach(v=>{
+    const feeEl = document.getElementById('vfee_'+v);
+    const kmEl = document.getElementById('vkm_'+v);
+    const timeEl = document.getElementById('vtime_'+v);
+    const minEl = document.getElementById('vmin_'+v);
+    const surEl = document.getElementById('vsur_'+v);
+    const driverEl = document.getElementById('vdriver_'+v);
+    const dirEl = document.getElementById('vdir_'+v);
+    if(feeEl) villageFees[v] = parseFloat(feeEl.value) || 0;
+    if(kmEl) villageKm[v] = parseFloat(kmEl.value) || 0;
+    if(timeEl) villageTime[v] = parseFloat(timeEl.value) || 0;
+    if(minEl) villageMin[v] = parseFloat(minEl.value) || 0;
+    if(surEl) villageSurcharge[v] = parseFloat(surEl.value) || 0;
+    if(driverEl) villageDriver[v] = driverEl.value;
+    if(dirEl) villageDirection[v] = dirEl.value.trim();
+  });
+  await saveVillageFees();
+}
+
+function renderAppNoticeBar(){
+  const bar = document.getElementById('appNoticeBar');
+  if(!bar) return;
+  if(appNotice && appNotice.trim()){
+    bar.style.display = 'flex';
+    bar.innerHTML = '<span>⚠️ '+escapeHtml(appNotice)+'</span>';
+  }else{
+    bar.style.display = 'none';
+    bar.innerHTML = '';
+  }
+}
+
+function renderVillageButtons(){
+  const box = document.getElementById('villageButtons');
+  if(!box) return;
+  const searchEl = document.getElementById('villageSearch');
+  const q = searchEl ? searchEl.value.toLowerCase().trim() : '';
+  const filtered = q ? VILLAGES.filter(v => v.toLowerCase().indexOf(q) !== -1) : VILLAGES;
+  box.innerHTML = filtered.map(v =>
+    '<button type="button" class="driver-btn" style="flex:0 0 auto; padding:6px 10px;" onclick="appendVillage(\''+v.replace(/'/g,"\\'")+'\')">'+escapeHtml(v)+'</button>'
+  ).join('') + '<button type="button" class="driver-btn" style="flex:0 0 auto; padding:6px 10px; background:var(--accent); color:#1a0d08; font-weight:700;" onclick="addCustomPlace()">+ Přidat</button>';
+}
+
+async function saveCustomPlaces(){
+  try{ await appStorage.set('custom-places', JSON.stringify(VILLAGES), true); }
+  catch(e){ console.error('Chyba ukládání vlastních míst', e); }
+}
+
+function addCustomPlace(){
+  document.getElementById('f_newplace').value = '';
+  document.getElementById('newPlaceOverlay').classList.add('open');
+}
+function closeNewPlaceSheet(){
+  document.getElementById('newPlaceOverlay').classList.remove('open');
+}
+async function confirmNewPlace(){
+  const name = document.getElementById('f_newplace').value;
+  const trimmed = (name||'').trim();
+  if(!trimmed){ closeNewPlaceSheet(); return; }
+  if(!VILLAGES.includes(trimmed)){
+    VILLAGES.push(trimmed);
+    villageFees[trimmed] = 0;
+    villageKm[trimmed] = 0;
+    villageMin[trimmed] = 0;
+    villageTime[trimmed] = 0;
+    villageSurcharge[trimmed] = 0;
+    villageDriver[trimmed] = '';
+    villageDirection[trimmed] = '';
+    await saveCustomPlaces();
+  }
+  renderVillageButtons();
+  appendVillage(trimmed);
+  closeNewPlaceSheet();
+}
+
+function appendVillage(v){
+  const input = document.getElementById('f_addr');
+  const val = input.value.trim();
+  input.value = val ? val + ', ' + v : v;
+
+  selectedVillageName = v;
+  selectedDeliveryFee = villageFees[v] || 0;
+  selectedDeliveryKm = villageKm[v] || 0;
+  selectedMinOrder = villageMin[v] || 0;
+  selectedDriveTime = villageTime[v] || 0;
+  selectedVillageDriver = villageDriver[v] || '';
+  selectedDirection = villageDirection[v] || '';
+  const kmCost = Math.round(selectedDeliveryKm * kmRate);
+  const note = document.getElementById('deliveryFeeNote');
+  const parts = [];
+  if(selectedDeliveryFee > 0) parts.push(selectedDeliveryFee + ' Kč rozvoz');
+  if(selectedDeliveryKm > 0) parts.push(selectedDeliveryKm + ' km tam a zpět (≈ '+kmCost+' Kč palivo)');
+  if(selectedDriveTime > 0) parts.push('dojezd ~' + (selectedDriveTime + (extraDojezd||0)) + ' min' + (extraDojezd ? ' (vč. +'+extraDojezd+' min kvůli uzávěrkám)' : ''));
+  if(selectedMinOrder > 0) parts.push('min. objednávka ' + selectedMinOrder + ' Kč (jinak doplatek ' + (villageSurcharge[v]||0) + ' Kč)');
+  if(selectedVillageDriver === 'me') parts.push('obvykle: ' + (myName || 'Já'));
+  if(selectedVillageDriver === 'other') parts.push('obvykle: Rozvozce 2');
+  if(parts.length){
+    note.style.display = 'block';
+    note.textContent = '🚚 Do ' + v + ': ' + parts.join(' · ');
+  }else{
+    note.style.display = 'none';
+  }
+  checkMinOrderWarning();
+}
+function checkMinOrderWarning(){
+  const warn = document.getElementById('minOrderWarn');
+  if(!warn) return;
+  const price = parseFloat(document.getElementById('f_price').value) || 0;
+  const surchargeAmount = villageSurcharge[selectedVillageName] || 0;
+  if(selectedMinOrder > 0 && price > 0 && price <= selectedMinOrder){
+    selectedSurcharge = surchargeAmount;
+    warn.style.display = 'block';
+    warn.textContent = surchargeAmount > 0
+      ? '🔔 Objednávka do ' + selectedMinOrder + ' Kč → doplatek ' + surchargeAmount + ' Kč (' + selectedVillageName + ')'
+      : '⚠ Pod minimální objednávkou pro ' + selectedVillageName + ' (' + selectedMinOrder + ' Kč)';
+  }else{
+    selectedSurcharge = 0;
+    warn.style.display = 'none';
+  }
+}
+function toggleNoAddress(){
+  const checked = document.getElementById('f_noaddress').checked;
+  const addrInput = document.getElementById('f_addr');
+  addrInput.disabled = checked;
+  if(checked) addrInput.value = '';
+}
+
+let selectedOrderType = 'rozvoz';
+function setOrderType(type){
+  selectedOrderType = type;
+  document.getElementById('btn_type_rozvoz').classList.toggle('active', type==='rozvoz');
+  document.getElementById('btn_type_pizzerie').classList.toggle('active', type==='pizzerie');
+  const noAddrCheck = document.getElementById('f_noaddress');
+  if(type === 'pizzerie'){
+    noAddrCheck.checked = true;
+    toggleNoAddress();
+  }else{
+    noAddrCheck.checked = false;
+    toggleNoAddress();
+  }
+}
+
+function openOrderSheet(){
+  document.getElementById('formOrderNum').textContent = '#' + nextOrderNumber();
+  document.getElementById('villageSearch').value = '';
+  renderVillageButtons();
+  document.getElementById('f_addr').value='';
+  document.getElementById('f_addr').disabled = false;
+  document.getElementById('f_noaddress').checked = false;
+  selectedOrderType = 'rozvoz';
+  document.getElementById('btn_type_rozvoz').classList.add('active');
+  document.getElementById('btn_type_pizzerie').classList.remove('active');
+  selectedDeliveryFee = 0;
+  selectedDeliveryKm = 0;
+  selectedMinOrder = 0;
+  selectedDriveTime = 0;
+  selectedSurcharge = 0;
+  selectedVillageDriver = '';
+  selectedDirection = '';
+  selectedVillageName = '';
+  document.getElementById('deliveryFeeNote').style.display = 'none';
+  document.getElementById('minOrderWarn').style.display = 'none';
+  document.getElementById('f_name').value='';
+  document.getElementById('f_phone').value='';
+  document.getElementById('f_note').value='';
+  document.getElementById('f_price').value='';
+  document.getElementById('f_time').value = toLocalDatetimeValue(new Date());
+  document.getElementById('field_address').style.display = displaySettings.address ? '' : 'none';
+  document.getElementById('field_time').style.display = displaySettings.time ? '' : 'none';
+  document.getElementById('field_name').style.display = displaySettings.name ? '' : 'none';
+  document.getElementById('field_phone').style.display = displaySettings.phone ? '' : 'none';
+  document.getElementById('field_note').style.display = displaySettings.note ? '' : 'none';
+  selectPayment('hotove');
+  document.getElementById('orderOverlay').classList.add('open');
+}
+function closeOrderSheet(){
+  document.getElementById('orderOverlay').classList.remove('open');
+}
+async function saveOrder(){
+  const noAddress = document.getElementById('f_noaddress').checked;
+  const address = document.getElementById('f_addr').value.trim();
+  if(displaySettings.address && !noAddress && !address){ alert('Zadej aspoň adresu.'); return; }
+  const priceCheck = parseFloat(document.getElementById('f_price').value) || 0;
+  if(selectedMinOrder > 0 && priceCheck > 0 && priceCheck <= selectedMinOrder && selectedSurcharge === 0){
+    const ok = confirm('Cena ' + priceCheck + ' Kč je pod minimální objednávkou pro ' + selectedVillageName + ' (' + selectedMinOrder + ' Kč). Uložit i tak?');
+    if(!ok) return;
+  }
+  let ts = Date.now();
+  const timeVal = document.getElementById('f_time').value;
+  if(timeVal){
+    const parsed = new Date(timeVal);
+    if(!isNaN(parsed.getTime())) ts = parsed.getTime();
+  }
+  const order = {
+    id: 'o'+Date.now()+Math.random().toString(36).slice(2,6),
+    number: nextOrderNumber(),
+    address,
+    name: document.getElementById('f_name').value.trim(),
+    phone: document.getElementById('f_phone').value.trim(),
+    note: document.getElementById('f_note').value.trim(),
+    price: parseFloat(document.getElementById('f_price').value) || 0,
+    deliveryFee: selectedDeliveryFee || 0,
+    deliveryKm: selectedDeliveryKm || 0,
+    fuelCost: Math.round((selectedDeliveryKm || 0) * kmRate),
+    driveTime: selectedDriveTime || 0,
+    surcharge: selectedSurcharge || 0,
+    payment: selectedPayment,
+    driver: selectedVillageDriver === 'me' ? (myName || '') : (selectedVillageDriver === 'other' ? 'Rozvozce 2' : (myName || '')),
+    direction: selectedDirection || '',
+    orderType: selectedOrderType || 'rozvoz',
+    status: 'cekame',
+    time: ts
+  };
+  orders.push(order);
+  if(myName && !drivers.includes(myName)){
+    drivers.push(myName);
+    await saveDrivers();
+  }
+  await saveOrders();
+  closeOrderSheet();
+  render();
+  renderBook();
+}
+
+function openMeSheet(){
+  document.getElementById('f_me').value = myName;
+  document.getElementById('meOverlay').classList.add('open');
+}
+function closeMeSheet(){
+  document.getElementById('meOverlay').classList.remove('open');
+}
+async function saveMe(){
+  const val = document.getElementById('f_me').value.trim();
+  if(!val) return;
+  myName = val;
+  if(!drivers.includes(myName)){
+    drivers.push(myName);
+    await saveDrivers();
+  }
+  await saveMyName();
+  updateMeBadge();
+  closeMeSheet();
+  render();
+}
+
+loadAll();
+updateHeroClock();
+setInterval(render, 60000);
+setInterval(updateHeroClock, 20000);
+</script>
+</body>
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moje první masérna – Masážní HUB CZ/SK</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#fff;--bg2:#f5f5f3;--txt:#1a1a18;--txt2:#6b6b67;--brd:rgba(0,0,0,.12);--blue:#185FA5;--green:#1D9E75;--red:#A32D2D;--amber:#BA7517;--r:10px;--rl:14px}
+body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;color:var(--txt);background:var(--bg2)}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#1D9E75,#0d6b4f);color:#fff;padding:24px 16px;text-align:center}
+.header h1{font-size:22px;font-weight:500;margin-bottom:4px}
+.header p{font-size:13px;opacity:.85}
+
+/* PROGRESS */
+.progress-wrap{background:var(--bg);border-bottom:.5px solid var(--brd);padding:12px 16px;position:sticky;top:0;z-index:10}
+.progress-bar{height:6px;background:var(--bg2);border-radius:3px;margin:6px 0}
+.progress-fill{height:100%;border-radius:3px;background:var(--green);transition:width .3s}
+.progress-info{display:flex;justify-content:space-between;font-size:11px;color:var(--txt2)}
+
+.wrap{max-width:680px;margin:0 auto;padding:14px}
+
+/* KROKY NAVIGACE */
+.kroky{display:flex;gap:4px;overflow-x:auto;margin-bottom:14px;padding-bottom:4px;scrollbar-width:none}
+.kroky::-webkit-scrollbar{display:none}
+.krok-btn{padding:7px 12px;border-radius:20px;border:.5px solid var(--brd);background:var(--bg);cursor:pointer;font-size:12px;white-space:nowrap;flex-shrink:0;transition:all .15s}
+.krok-btn.on{background:var(--green);color:#fff;border-color:var(--green)}
+.krok-btn.done{background:#E1F5EE;color:#085041;border-color:var(--green)}
+
+/* SEKCE */
+.sekce{display:none}.sekce.on{display:block}
+.card{background:var(--bg);border:.5px solid var(--brd);border-radius:var(--rl);padding:16px;margin-bottom:12px}
+.card h2{font-size:16px;font-weight:500;margin-bottom:4px}
+.card h3{font-size:14px;font-weight:500;margin-bottom:10px;color:var(--blue)}
+.card p{font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:10px}
+
+/* CHECKLIST */
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:8px 6px;border-radius:var(--r);cursor:pointer;border-bottom:.5px solid var(--brd);transition:background .1s}
+.check-item:hover{background:var(--bg2)}
+.check-item:last-child{border-bottom:none}
+.check-item.done{opacity:.6}
+.check-item.done .ci-txt{text-decoration:line-through;color:var(--txt2)}
+.ci-box{width:22px;height:22px;border-radius:6px;border:2px solid var(--brd);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .15s;font-size:13px}
+.check-item.done .ci-box{background:var(--green);border-color:var(--green);color:#fff}
+.ci-txt{flex:1;font-size:13px;line-height:1.5}
+.ci-sub{font-size:11px;color:var(--txt2);margin-top:2px}
+.ci-tip{font-size:11px;color:var(--amber);margin-top:3px}
+
+/* PŘÍBĚH */
+.pribeh{background:linear-gradient(135deg,#E6F1FB,#d4e8f7);border-radius:var(--rl);padding:16px;margin-bottom:12px;border-left:4px solid var(--blue)}
+.pribeh p{color:var(--txt);font-style:italic;line-height:1.8}
+.pribeh .autor{font-size:12px;color:var(--txt2);margin-top:8px;font-style:normal}
+
+/* INFO BOXY */
+.info-box{border-radius:var(--r);padding:12px;margin-bottom:8px;font-size:12px;line-height:1.7}
+.info-green{background:#E1F5EE;border-left:3px solid var(--green)}
+.info-amber{background:#FFF8E1;border-left:3px solid var(--amber)}
+.info-blue{background:#E6F1FB;border-left:3px solid var(--blue)}
+.info-red{background:#FCEBEB;border-left:3px solid var(--red)}
+
+/* NAVIGAČNÍ TLAČÍTKA */
+.nav-btns{display:flex;gap:8px;margin-top:16px}
+.btn{padding:11px 20px;border-radius:var(--r);border:none;cursor:pointer;font-size:13px;font-family:inherit;font-weight:500;transition:all .1s}
+.btn-green{background:var(--green);color:#fff}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-outline{background:transparent;border:.5px solid var(--brd);color:var(--txt)}
+
+/* CENY TABULKA */
+.ceny-table{width:100%;border-collapse:collapse;font-size:12px}
+.ceny-table th{background:var(--bg2);padding:8px;text-align:left;font-weight:500;border-bottom:.5px solid var(--brd)}
+.ceny-table td{padding:8px;border-bottom:.5px solid var(--brd)}
+.ceny-table tr:last-child td{border-bottom:none}
+
+/* STAT */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.stat{background:var(--bg2);border-radius:var(--r);padding:10px;text-align:center}
+.stat-val{font-size:20px;font-weight:600;color:var(--green)}
+.stat-lab{font-size:10px;color:var(--txt2);margin-top:2px}
+
+/* ODKAZ KARTY */
+.odkaz-karta{display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg2);border-radius:var(--r);margin-bottom:8px;text-decoration:none;color:var(--txt);border:.5px solid var(--brd);transition:all .15s}
+.odkaz-karta:hover{border-color:var(--blue);background:#E6F1FB}
+
+@media(max-width:600px){
+  .stats{grid-template-columns:1fr 1fr}
+  .nav-btns{flex-wrap:wrap}
+}
+@media(prefers-color-scheme:dark){
+  :root{--bg:#1c1c1a;--bg2:#252523;--txt:#f0ede8;--txt2:#a8a89e;--brd:rgba(255,255,255,.12)}
+  .pribeh{background:linear-gradient(135deg,#1a2a3a,#152236)}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div style="font-size:44px;margin-bottom:8px">🏠</div>
+  <h1>Moje první masérna</h1>
+  <p>Průvodce od nuly k první masáži · Masážní HUB CZ/SK</p>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-info">
+    <span>Tvůj pokrok</span>
+    <span id="prog-txt">0 / 0 splněno</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+</div>
+
+<div class="wrap">
+
+  <!-- NAVIGACE KROKŮ -->
+  <div class="kroky">
+    <button class="krok-btn on" onclick="goKrok(0)" id="kb-0">1️⃣ Začínám</button>
+    <button class="krok-btn" onclick="goKrok(1)" id="kb-1">📜 Vzdělání</button>
+    <button class="krok-btn" onclick="goKrok(2)" id="kb-2">🛏 Vybavení</button>
+    <button class="krok-btn" onclick="goKrok(3)" id="kb-3">💼 Byznys</button>
+    <button class="krok-btn" onclick="goKrok(4)" id="kb-4">👥 Klienti</button>
+    <button class="krok-btn" onclick="goKrok(5)" id="kb-5">💰 Finance</button>
+    <button class="krok-btn" onclick="goKrok(6)" id="kb-6">🚀 Jdeme!</button>
+  </div>
+
+  <!-- ═══ SEKCE 0: ÚVOD ═══ -->
+  <div class="sekce on" id="s-0">
+    <div class="pribeh">
+      <p>„Začínal jsem úplně od nuly. Luboš mě přivedl k masírování a já věděl, že toto je moje cesta. První masáž jsem dělal u kamaráda na gauči s levným olejem z drogerie. Dnes mám mobilní masérnu, jezdím po celé ČR a buduju Masážní HUB CZ/SK. Každý začátek je těžký – ale stojí to za to!"</p>
+      <div class="autor">— Martin, zakladatel Masážní HUB CZ/SK 🧘</div>
+    </div>
+
+    <div class="card">
+      <h2>👋 Vítej v průvodci!</h2>
+      <p>Tento průvodce tě provede od úplného začátku až k první masáži a prvnímu klientovi. Krok za krokem, jednoduše.</p>
+      <div class="stats">
+        <div class="stat"><div class="stat-val">7</div><div class="stat-lab">Kroků</div></div>
+        <div class="stat"><div class="stat-val">50+</div><div class="stat-lab">Tipů</div></div>
+        <div class="stat"><div class="stat-val">∞</div><div class="stat-lab">Možností</div></div>
+      </div>
+      <div class="info-box info-green">
+        ✅ <strong>Dobré zprávy:</strong> K začátku nepotřebuješ skoro nic. Stačí chuť, základní kurz a trochu odvahy!
+      </div>
+      <div class="info-box info-amber">
+        💡 <strong>Tip od Martina:</strong> Nezačínej tím že koupíš drahé vybavení. Začni tím že se naučíš masírovat. Vybavení přijde samo.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>✅ Checklist – jsem připraven/a začít?</h3>
+      <div id="checks-0"></div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-green" onclick="goKrok(1)">Pokračovat – Vzdělání →</button>
+    </div>
+  </div>
+
+  <!-- ═══ SEKCE 1: VZDĚLÁNÍ ═══ -->
+  <div class="sekce" id="s-1">
+    <div class="card">
+      <h2>📜 Vzdělání a certifikace</h2>
+      <p>V ČR není masérství striktně regulováno, ale certifikát ti otevře dveře ke klientům a dodá ti jistotu.</p>
+
+      <div class="info-box info-blue">
+        📋 <strong>Minimum pro začátek:</strong> Základní kurz klasické masáže (40–80 hodin). Cena: 5 000 – 15 000 Kč.
+      </div>
+
+      <h3 style="margin-top:12px">Typy kurzů:</h3>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">
+        <div class="info-box info-green" style="margin:0">💆 <strong>Klasická masáž</strong> – základ všeho. Bez toho ani krok!</div>
+        <div class="info-box info-blue" style="margin:0">🏋 <strong>Sportovní masáž</strong> – výborná pro sportovce</div>
+        <div class="info-box info-blue" style="margin:0">🪨 <strong>Hot stone</strong> – prémiová služba, vyšší cena</div>
+        <div class="info-box info-blue" style="margin:0">🤰 <strong>Prenatální</strong> – speciální skupina klientů</div>
+        <div class="info-box info-amber" style="margin:0">💧 <strong>Lymfatická</strong> – zdravotní masáž, vysoká poptávka</div>
+      </div>
+
+      <div class="info-box info-amber">
+        💡 <strong>Tip od Martina:</strong> Začni klasickou masáží. Pak přidávej specializace dle zájmu klientů. Neptej se co chceš dělat ty – ptej se co potřebují oni!
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>✅ Checklist – vzdělání</h3>
+      <div id="checks-1"></div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-outline" onclick="goKrok(0)">← Zpět</button>
+      <button class="btn btn-green" onclick="goKrok(2)">Vybavení →</button>
+    </div>
+  </div>
+
+  <!-- ═══ SEKCE 2: VYBAVENÍ ═══ -->
+  <div class="sekce" id="s-2">
+    <div class="card">
+      <h2>🛏 Vybavení masérny</h2>
+      <p>Nepotřebuješ hned vše. Začni s minimem a rozšiřuj postupně.</p>
+
+      <div class="info-box info-green">
+        ✅ <strong>Absolutní minimum pro start:</strong> Masážní stůl + olej + prostěradla = můžeš začít!
+      </div>
+
+      <h3 style="margin-top:12px">💰 Orientační ceny:</h3>
+      <table class="ceny-table">
+        <tr><th>Položka</th><th>Min. cena</th><th>Doporučeno</th></tr>
+        <tr><td>Masážní stůl</td><td>2 500 Kč</td><td>5 000–8 000 Kč</td></tr>
+        <tr><td>Masážní olej (1L)</td><td>150 Kč</td><td>300–500 Kč</td></tr>
+        <tr><td>Prostěradla (5x)</td><td>500 Kč</td><td>1 000 Kč</td></tr>
+        <tr><td>Čelenka/ručníky</td><td>200 Kč</td><td>500 Kč</td></tr>
+        <tr><td>Dezinfekce</td><td>100 Kč</td><td>200 Kč</td></tr>
+        <tr><td><strong>CELKEM</strong></td><td><strong>3 450 Kč</strong></td><td><strong>~10 000 Kč</strong></td></tr>
+      </table>
+
+      <div class="info-box info-amber" style="margin-top:10px">
+        💡 <strong>Tip:</strong> Masážní stůl kup raději levnější na začátek. Až budeš mít klienty, investuj do lepšího.
+      </div>
+      <div class="info-box info-blue" style="margin-top:6px">
+        🚗 <strong>Mobilní masér:</strong> Přidej přenosný stůl (3–5 kg) a tašku. Jezdíš za klienty = nižší náklady na provoz!
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>✅ Checklist – vybavení</h3>
+      <div id="checks-2"></div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-outline" onclick="goKrok(1)">← Zpět</button>
+      <button class="btn btn-green" onclick="goKrok(3)">Byznys →</button>
+    </div>
+  </div>
+
+  <!-- ═══ SEKCE 3: BYZNYS ═══ -->
+  <div class="sekce" id="s-3">
+    <div class="card">
+      <h2>💼 Byznys stránka</h2>
+      <p>Aby ses vyhnul/a problémům, potřebuješ vše nastavit správně od začátku.</p>
+
+      <h3>📋 Živnostenský list</h3>
+      <div class="info-box info-blue">
+        Masáže = živnost volná nebo vázaná dle specializace.<br>
+        💰 Poplatek: 1 000 Kč · Vyřídíš online na živnostenském úřadě.<br>
+        📅 Vyřízení: do 5 pracovních dnů.
+      </div>
+
+      <h3 style="margin-top:12px">💰 Daně a odvody</h3>
+      <div class="info-box info-amber">
+        🧮 <strong>Paušální výdaj: 60 %</strong> z příjmů (živnost řemeslná/volná).<br>
+        📊 Sociální + zdravotní pojištění = ~5 000 Kč/měsíc (zálohy).<br>
+        💡 Na začátek: vedení daňové evidence nebo paušál.
+      </div>
+
+      <h3 style="margin-top:12px">📱 Marketing – jak získat klienty</h3>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div class="info-box info-green" style="margin:0">📘 <strong>Facebook/Instagram</strong> – nejrychlejší cesta k prvním klientům. Přidej se do lokálních skupin!</div>
+        <div class="info-box info-green" style="margin:0">🌐 <strong>Google My Business</strong> – zdarma, zobrazí tě ve vyhledávání!</div>
+        <div class="info-box info-blue" style="margin:0">🤝 <strong>Doporučení</strong> – spokojený klient přivede 3 další. Nejlepší marketing!</div>
+        <div class="info-box info-blue" style="margin:0">🧘 <strong>Masážní HUB CZ/SK</strong> – přidej svůj profil na naši platformu!</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>✅ Checklist – byznys</h3>
+      <div id="checks-3"></div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-outline" onclick="goKrok(2)">← Zpět</button>
+      <button class="btn btn-green" onclick="goKrok(4)">Klienti →</button>
+    </div>
+  </div>
+
+  <!-- ═══ SEKCE 4: KLIENTI ═══ -->
+  <div class="sekce" id="s-4">
+    <div class="card">
+      <h2>👥 Práce s klienty</h2>
+      <p>Klient je středem všeho. Jak se k němu chováš, to určuje tvůj úspěch.</p>
+
+      <h3>🌟 Zlatá pravidla</h3>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">
+        <div class="info-box info-green" style="margin:0">👂 <strong>Naslouchej</strong> – klient ví kde ho bolí, ty víš jak pomoci.</div>
+        <div class="info-box info-green" style="margin:0">🩺 <strong>Zdravotní dotazník</strong> – vždy při první návštěvě!</div>
+        <div class="info-box info-green" style="margin:0">🔒 <strong>GDPR</strong> – souhlas se zpracováním osobních údajů.</div>
+        <div class="info-box info-green" style="margin:0">📞 <strong>Kontaktuj po masáži</strong> – "Jak se cítíte?" buduje vztah.</div>
+        <div class="info-box info-amber" style="margin:0">⚠️ <strong>Kontraindikace</strong> – umět říct NE je profesionalita!</div>
+      </div>
+
+      <div class="pribeh" style="margin-bottom:0">
+        <p>„Jednou za mnou přišla paní s bolestmi zad. Dala jsem jí zdravotní dotazník a zjistila jsem, že má nádorové onemocnění. Masáž jsem odmítla – a paní mi poděkovala. Řekla, že jsem první masér/ka kdo se jí na to zeptal. To je profesionalita."</p>
+        <div class="autor">— zkušenost z praxe</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>✅ Checklist – klienti</h3>
+      <div id="checks-4"></div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-outline" onclick="goKrok(3)">← Zpět</button>
+      <button class="btn btn-green" onclick="goKrok(5)">Finance →</button>
+    </div>
+  </div>
+
+  <!-- ═══ SEKCE 5: FINANCE ═══ -->
+  <div class="sekce" id="s-5">
+    <div class="card">
+      <h2>💰 Cenotvorba a finance</h2>
+      <p>Jak nastavit ceny aby byly spravedlivé pro klienta i pro tebe.</p>
+
+      <h3>📊 Průměrné ceny masáží v ČR (2026)</h3>
+      <table class="ceny-table">
+        <tr><th>Typ masáže</th><th>30 min</th><th>60 min</th><th>90 min</th></tr>
+        <tr><td>Klasická</td><td>300–400 Kč</td><td>600–900 Kč</td><td>900–1300 Kč</td></tr>
+        <tr><td>Sportovní</td><td>350–450 Kč</td><td>700–1000 Kč</td><td>1000–1400 Kč</td></tr>
+        <tr><td>Hot stone</td><td>–</td><td>900–1300 Kč</td><td>1300–1800 Kč</td></tr>
+        <tr><td>Lymfatická</td><td>–</td><td>800–1200 Kč</td><td>1200–1600 Kč</td></tr>
+      </table>
+
+      <div class="info-box info-amber" style="margin-top:10px">
+        💡 <strong>Tip:</strong> Na začátek nastav ceny o 20–30% nižší než průměr. Jakmile budeš mít klienty a zkušenosti – zdrav ceny!
+      </div>
+
+      <h3 style="margin-top:12px">🧮 Kolik můžu vydělat?</h3>
+      <div class="info-box info-green">
+        Příklad: 5 masáží/den × 700 Kč × 20 dní = <strong>70 000 Kč/měsíc</strong> (hrubý příjem)<br>
+        Po odečtení nákladů (~30%) = <strong>~49 000 Kč čistého</strong> 💪
+      </div>
+      <div class="info-box info-blue">
+        🚗 <strong>Mobilní masér</strong> – přičti náklady na cestování ale ušetříš za pronájem prostoru!
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>✅ Checklist – finance</h3>
+      <div id="checks-5"></div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-outline" onclick="goKrok(4)">← Zpět</button>
+      <button class="btn btn-green" onclick="goKrok(6)">Jdeme! →</button>
+    </div>
+  </div>
+
+  <!-- ═══ SEKCE 6: GO! ═══ -->
+  <div class="sekce" id="s-6">
+    <div class="pribeh">
+      <p>„Každý velký masér začínal s první masáží. Ta první masáž je nejdůležitější – ne proto že je dokonalá, ale proto že ji uděláš. Pak přijde druhá, třetí... a jednoho dne se ohlédneš a zjistíš, že jsi pomohl/a stovkám lidí."</p>
+      <div class="autor">— Martin, Masážní HUB CZ/SK 🧘</div>
+    </div>
+
+    <div class="card" style="text-align:center;padding:24px">
+      <div style="font-size:56px;margin-bottom:12px">🎉</div>
+      <h2 style="margin-bottom:8px">Jsi připraven/a!</h2>
+      <p style="margin-bottom:16px">Splnil/a jsi průvodce. Teď je čas na akci!</p>
+      <div id="final-score" style="font-size:24px;font-weight:600;color:var(--green);margin-bottom:16px"></div>
+    </div>
+
+    <div class="card">
+      <h3>🚀 Další kroky</h3>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <a href="index.html" class="odkaz-karta">
+          <span style="font-size:24px">🧘</span>
+          <div><div style="font-weight:500">Masážní HUB CZ/SK</div><div style="font-size:11px;color:var(--txt2)">Přidej svůj profil na mapu masérů</div></div>
+          <span style="margin-left:auto;color:var(--blue)">→</span>
+        </a>
+        <a href="sesity.html" class="odkaz-karta">
+          <span style="font-size:24px">📓</span>
+          <div><div style="font-weight:500">Pracovní sešity</div><div style="font-size:11px;color:var(--txt2)">Příjem klienta, zdravotní dotazník, záznamy</div></div>
+          <span style="margin-left:auto;color:var(--blue)">→</span>
+        </a>
+        <a href="klient.html" class="odkaz-karta">
+          <span style="font-size:24px">🌐</span>
+          <div><div style="font-weight:500">Veřejná stránka</div><div style="font-size:11px;color:var(--txt2)">Kde tě klienti najdou online</div></div>
+          <span style="margin-left:auto;color:var(--blue)">→</span>
+        </a>
+        <a href="todo.html" class="odkaz-karta">
+          <span style="font-size:24px">✅</span>
+          <div><div style="font-weight:500">GTD + TODO</div><div style="font-size:11px;color:var(--txt2)">Plánuj a organizuj svou práci</div></div>
+          <span style="margin-left:auto;color:var(--blue)">→</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>✅ Finální checklist</h3>
+      <div id="checks-6"></div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-outline" onclick="goKrok(5)">← Zpět</button>
+      <button class="btn btn-blue" onclick="window.print()">🖨 Vytisknout průvodce</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var STORAGE_KEY = 'prvni_maserna_checks';
+
+// ── DATA – CHECKLISTY ─────────────────────────────────────────────────────────
+var CHECKS = {
+  0: [
+    {id:'s0c1', txt:'Mám chuť a motivaci pomáhat lidem', sub:'To nejdůležitější ze všeho!'},
+    {id:'s0c2', txt:'Vím proč chci masírovat', sub:'Relaxace? Zdraví? Byznys? Kombinace?'},
+    {id:'s0c3', txt:'Mám základní fyzické předpoklady', sub:'Silné ruce, kondice, empatie'},
+    {id:'s0c4', txt:'Jsem připraven/a investovat čas do vzdělání', sub:'Kurz = minimum 40 hodin'},
+    {id:'s0c5', txt:'Mám podporu rodiny / blízkých', tip:'Tip: Sdílej svůj plán s lidmi kolem tebe!'},
+  ],
+  1: [
+    {id:'s1c1', txt:'Absolvoval/a jsem nebo se přihlásil/a na kurz klasické masáže', sub:'Základ všeho!'},
+    {id:'s1c2', txt:'Mám certifikát nebo ho brzy získám'},
+    {id:'s1c3', txt:'Znám základní kontraindikace masáže', tip:'Tip: Stáhni si seznam kontraindikací!'},
+    {id:'s1c4', txt:'Vím jak postupovat při zdravotním dotazníku'},
+    {id:'s1c5', txt:'Plánuji další specializaci (sport, hot stone...)', sub:'Jednou – ne hned!'},
+  ],
+  2: [
+    {id:'s2c1', txt:'Mám nebo pořizuji masážní stůl', sub:'Min. 2 500 Kč – začni jednoduše'},
+    {id:'s2c2', txt:'Mám masážní olej (neutrální základ)', sub:'Mandlový nebo jojoba olej'},
+    {id:'s2c3', txt:'Mám prostěradla (min. 3-5 kusů)'},
+    {id:'s2c4', txt:'Mám dezinfekci a papírové utěrky'},
+    {id:'s2c5', txt:'Připravil/a jsem místo pro masáž', sub:'Doma, studio, nebo mobilně?', tip:'Tip: Mobilní masér = nižší náklady!'},
+    {id:'s2c6', txt:'Mám hudbu / atmosféru připravenou', sub:'Relaxační playlist nebo generátor zvuků'},
+  ],
+  3: [
+    {id:'s3c1', txt:'Mám živnostenský list nebo vím jak ho získat'},
+    {id:'s3c2', txt:'Vím jak fungují daně pro OSVČ', sub:'Paušál 60% nebo skutečné výdaje'},
+    {id:'s3c3', txt:'Mám profil na Facebooku / Instagramu'},
+    {id:'s3c4', txt:'Jsem přidán/a na Google My Business'},
+    {id:'s3c5', txt:'Přidal/a jsem se do Masážní HUB CZ/SK', tip:'Tip: Přidej profil na naši mapu!'},
+    {id:'s3c6', txt:'Mám vizitky nebo QR kód s kontaktem'},
+  ],
+  4: [
+    {id:'s4c1', txt:'Mám připravený zdravotní dotazník pro klienty'},
+    {id:'s4c2', txt:'Mám souhlas GDPR pro zpracování osobních údajů'},
+    {id:'s4c3', txt:'Znám postup při kontraindikacích', sub:'Vím kdy odmítnout masáž'},
+    {id:'s4c4', txt:'Mám způsob jak evidovat klienty', sub:'Kartotéka v Masážní HUB nebo sešit'},
+    {id:'s4c5', txt:'Vím co říct klientovi před a po masáži', tip:'Tip: Stáhni si průvodce "Pro klienta"!'},
+  ],
+  5: [
+    {id:'s5c1', txt:'Mám stanovené ceny svých služeb'},
+    {id:'s5c2', txt:'Mám způsob přijímání plateb (hotovost, karta, převod)'},
+    {id:'s5c3', txt:'Vedu nebo plánuji vést evidenci příjmů', sub:'Výkaz práce v Masážní HUB'},
+    {id:'s5c4', txt:'Vím kolik potřebuji vydělat na pokrytí nákladů'},
+    {id:'s5c5', txt:'Mám finanční rezervu na start', sub:'Alespoň 10 000 – 20 000 Kč'},
+  ],
+  6: [
+    {id:'s6c1', txt:'Mám první klienta (nebo vím kdo to bude)!', tip:'Tip: Začni s kamarádem nebo rodinou!'},
+    {id:'s6c2', txt:'Mám profil na Masážní HUB CZ/SK'},
+    {id:'s6c3', txt:'Mám vyplněné pracovní sešity připravené'},
+    {id:'s6c4', txt:'Jsem připraven/a na první masáž! 💪'},
+  ],
+};
+
+// ── STAV ─────────────────────────────────────────────────────────────────────
+function loadState(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}'); }catch(e){ return {}; } }
+function saveState(s){ try{ localStorage.setItem(STORAGE_KEY,JSON.stringify(s)); }catch(e){} }
+
+// ── RENDER CHECKLISTŮ ─────────────────────────────────────────────────────────
+function renderChecks(){
+  var state = loadState();
+  Object.entries(CHECKS).forEach(function(e){
+    var sekceId = e[0], items = e[1];
+    var el = document.getElementById('checks-'+sekceId); if(!el) return;
+    el.innerHTML = items.map(function(item){
+      var done = !!state[item.id];
+      return '<div class="check-item'+(done?' done':'')+'" onclick="toggleCheck(\''+item.id+'\')">' +
+        '<div class="ci-box">'+(done?'✓':'')+'</div>' +
+        '<div class="ci-txt">'+item.txt+
+          (item.sub?'<div class="ci-sub">'+item.sub+'</div>':'')+
+          (item.tip?'<div class="ci-tip">'+item.tip+'</div>':'')+
+        '</div>' +
+      '</div>';
+    }).join('');
+  });
+  updateProgress();
+}
+
+function toggleCheck(id){
+  var state = loadState();
+  state[id] = !state[id];
+  saveState(state);
+  renderChecks();
+}
+
+function updateProgress(){
+  var state = loadState();
+  var total = Object.values(CHECKS).reduce(function(s,a){ return s+a.length; },0);
+  var done = Object.values(state).filter(Boolean).length;
+  var pct = total ? Math.round(done/total*100) : 0;
+
+  var fill = document.getElementById('prog-fill');
+  var txt = document.getElementById('prog-txt');
+  if(fill) fill.style.width = pct+'%';
+  if(txt) txt.textContent = done+' / '+total+' splněno ('+pct+'%)';
+
+  // Barva
+  if(fill) fill.style.background = pct>=80?'var(--green)':pct>=50?'var(--amber)':'var(--blue)';
+
+  // Finální skóre
+  var fs = document.getElementById('final-score');
+  if(fs){
+    if(pct>=100) fs.textContent = '🏆 100% – Jsi připraven/a! Gratulujeme!';
+    else if(pct>=80) fs.textContent = '🌟 '+pct+'% – Skoro tam! Dokončíš to!';
+    else fs.textContent = '💪 '+pct+'% – Pokračuj, jdeš správnou cestou!';
+  }
+
+  // Označit hotové kroky
+  Object.entries(CHECKS).forEach(function(e){
+    var sekceId = e[0], items = e[1];
+    var sectionDone = items.every(function(item){ return !!state[item.id]; });
+    var btn = document.getElementById('kb-'+sekceId);
+    if(btn && sectionDone) btn.classList.add('done');
+  });
+}
+
+// ── NAVIGACE ─────────────────────────────────────────────────────────────────
+var aktualniKrok = 0;
+function goKrok(k){
+  document.querySelectorAll('.sekce').forEach(function(s){ s.classList.remove('on'); });
+  document.querySelectorAll('.krok-btn').forEach(function(b){ b.classList.remove('on'); });
+  var s = document.getElementById('s-'+k); if(s) s.classList.add('on');
+  var b = document.getElementById('kb-'+k); if(b) b.classList.add('on');
+  aktualniKrok = k;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+renderChecks();
+</script>
+</body>
+</html>

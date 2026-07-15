@@ -1,0 +1,79 @@
+NÁVOD – IMPORT DO MEMENTO DATABASE
+=====================================
+
+1. INSTALACE
+   • Stáhni Memento Database z Google Play nebo App Store
+   • Je zdarma (základní verze plně postačuje)
+
+2. VYTVOŘENÍ KNIHOVNY
+   • Otevři aplikaci
+   • Klikni na "+" (nová knihovna)
+   • Název: "Maséři ČR"
+   • Vyber prázdnou šablonu
+
+3. IMPORT CSV
+   • V knihovně klikni na ⋮ (tři tečky) vpravo nahoře
+   • Vyber "Import"
+   • Vyber soubor: masaze_memento.csv
+   • Potvrď mapování sloupců (vše by mělo sedět automaticky)
+   • Klikni "Importovat"
+
+4. POLE V DATABÁZI
+   Po importu budeš mít tato pole:
+   ┌─────────────────────┬────────────────────────────────┐
+   │ Pole                │ Popis                          │
+   ├─────────────────────┼────────────────────────────────┤
+   │ Kraj                │ Název kraje (předvyplněno)     │
+   │ Okres               │ Název okresu (předvyplněno)    │
+   │ Město               │ Konkrétní město v okrese       │
+   │ Jméno maséra        │ Celé jméno                     │
+   │ Telefon             │ Kontaktní telefon              │
+   │ E-mail              │ Kontaktní e-mail               │
+   │ Typ                 │ Já / Kolega / Externí          │
+   │ Dovednosti          │ Co masér umí                   │
+   │ Cena od (Kč)        │ Minimální cena                 │
+   │ Cena do (Kč)        │ Maximální cena                 │
+   │ Délka masáže (min)  │ Délka ošetření                 │
+   │ Mobilní masér       │ Ano / Ne                       │
+   │ Poznámka            │ Cokoliv dalšího                │
+   └─────────────────────┴────────────────────────────────┘
+
+5. DOPORUČENÉ TYPY POLÍ V MEMENTO
+   • Kraj          → Text (jednořádkový)
+   • Okres         → Text (jednořádkový)
+   • Město         → Text (jednořádkový)
+   • Jméno maséra  → Text (jednořádkový)
+   • Telefon       → Telefon
+   • E-mail        → E-mail
+   • Typ           → Výběr (Já / Kolega / Externí)
+   • Dovednosti    → Text (víceřádkový) nebo Tagy
+   • Cena od/do    → Číslo (celé)
+   • Délka masáže  → Číslo (celé)
+   • Mobilní masér → Zaškrtávací pole (Ano/Ne)
+   • Poznámka      → Text (víceřádkový)
+
+6. PŘÍKLAD VYPLNĚNÍ
+   Kraj:           Moravskoslezský
+   Okres:          Ostrava-město
+   Město:          Ostrava – Poruba
+   Jméno maséra:   Jana Nováková
+   Telefon:        +420 777 123 456
+   E-mail:         jana@masaze.cz
+   Typ:            Kolega
+   Dovednosti:     Klasická masáž, Sportovní masáž, Hot stone
+   Cena od:        600
+   Cena do:        1200
+   Délka masáže:   60
+   Mobilní masér:  Ano
+   Poznámka:       Jezdí i do Ostravy-Jihu
+
+7. TIPY
+   • Lze přidat více masérů ve stejném okrese
+     → Zkopíruj řádek a uprav jméno
+   • Filtrování: v aplikaci filtruj podle kraje nebo dovedností
+   • Sdílení: vyexportuj CSV a pošli kolegovi e-mailem
+   • Záloha: Memento umí synchronizovat s Google Drive
+
+=====================================
+Celkem připraveno: 14 krajů, 77 okresů
+=====================================

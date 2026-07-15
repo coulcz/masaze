@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🧪 Test Suite — Masážní HUB</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#1a1a18;color:#f0ede8;padding:16px;font-size:13px}
+h1{font-size:20px;margin-bottom:4px;color:#1D9E75}
+.sub{font-size:11px;color:#555;margin-bottom:16px}
+.sec{background:#252523;border-radius:8px;padding:12px;margin-bottom:10px}
+.sec h2{font-size:11px;font-weight:600;margin-bottom:8px;color:#888;text-transform:uppercase;letter-spacing:1px}
+.row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:.5px solid #333}
+.row:last-child{border-bottom:none}
+.ico{width:18px;text-align:center;font-size:14px}
+.lbl{flex:1;font-size:12px}
+.val{font-size:11px;color:#555;margin-right:6px}
+.badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px}
+.ok{background:rgba(29,158,117,.2);color:#1D9E75}
+.err{background:rgba(231,76,60,.2);color:#e74c3c}
+.wrn{background:rgba(230,126,34,.2);color:#e67e22}
+.sum{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
+.box{flex:1;min-width:70px;background:#1a1a18;border-radius:8px;padding:10px;text-align:center}
+.bnum{font-size:26px;font-weight:700}
+.blab{font-size:10px;color:#555;margin-top:2px}
+.bar{background:#333;border-radius:4px;height:10px;overflow:hidden;margin-top:8px}
+.bar-fill{height:100%;border-radius:4px}
+</style>
+</head>
+<body>
+<h1>🧪 Test Suite</h1>
+<div class="sub">12.07.2026 03:36 · 758KB</div>
+
+<div id="out"></div>
+<div class="sum" id="sum"></div>
+<div class="bar"><div class="bar-fill" id="bar" style="width:0%"></div></div>
+
+<script>
+var P=0,F=0,W=0;
+var rows=[];
+
+function t(sec,ico,lbl,status,val){
+  rows.push({sec:sec,ico:ico,lbl:lbl,s:status,val:val||''});
+  if(status==='ok') P++;
+  else if(status==='err') F++;
+  else W++;
+}
+
+// ── STATICKÉ TESTY ───────────────────────────────
+t('JS','✅','Node --check','ok','PASSED');
+t('JS','✅','Backtiky `','ok','0×');
+t('JS','✅','${} mimo backtick','ok','0×');
+t('JS','✅','Arrow => v kódu','ok','0×');
+t('JS','✅','const/let','ok','0×');
+t('JS','✅','Špatné konverze','ok','žádné');
+
+t('HTML','✅','Div balance','ok','0');
+t('HTML','✅','Script tagy','ok','1×');
+t('HTML','✅','Views ON v HTML','ok','0');
+t('HTML','✅','Tabs-bar tag','ok','OK');
+
+t('Tabs','✅','ALL_TABS','ok','55 záložek');
+t('Tabs','✅','Views v HTML','ok','56');
+t('Tabs','✅','Chybí view','ok','žádné');
+t('Tabs','✅','Chybí tab','ok','žádné');
+t('Tabs','⚠️','Duplicitní taby','wrn','['rezervace', 'bezpecnost', 'kartoteka', 'vykaz', ');
+
+// ── RUNTIME TESTY ────────────────────────────────
+function runtime(){
+  function rt(sec,ico,lbl,status,val){
+    t(sec,ico,lbl,status,val);
+  }
+
+  // sw()
+  try{
+    rt('Runtime',typeof sw==='function'?'✅':'❌','sw() definována',typeof sw==='function'?'ok':'err',typeof sw);
+  }catch(e){ rt('Runtime','❌','sw()','err',e.message); }
+
+  // G()
+  try{
+    rt('Runtime',typeof G==='function'?'✅':'❌','G() definována',typeof G==='function'?'ok':'err',typeof G);
+  }catch(e){ rt('Runtime','❌','G()','err',e.message); }
+
+  // ALL_TABS
+  try{
+    var ok=typeof ALL_TABS!=='undefined'&&ALL_TABS.length>0;
+    rt('Runtime',ok?'✅':'❌','ALL_TABS v paměti',ok?'ok':'err',ok?ALL_TABS.length+' záložek':'UNDEFINED');
+  }catch(e){ rt('Runtime','❌','ALL_TABS','err',e.message); }
+
+  // localStorage
+  try{
+    localStorage.setItem('_t','1'); localStorage.removeItem('_t');
+    rt('Runtime','✅','localStorage','ok','OK');
+  }catch(e){ rt('Runtime','⚠️','localStorage','wrn','Nedostupný'); }
+
+  // DOM views
+  var dv=document.querySelectorAll('.view').length;
+  rt('Runtime',dv>=50?'✅':'❌','Views v DOM',dv>=50?'ok':'err',dv+' (má být 56)');
+
+  // DOM tabs
+  var dt=document.querySelectorAll('#tabs-bar .tab').length;
+  rt('Runtime',dt>=50?'✅':'❌','Tabs v DOM',dt>=50?'ok':'err',dt+' (má být 55)');
+
+  // sw() test
+  try{
+    sw('mapa');
+    var el=document.getElementById('view-mapa');
+    var vis=el&&el.style.display!=='none';
+    rt('Runtime',vis?'✅':'❌','sw(mapa) funguje',vis?'ok':'err',vis?'✅ view zobrazen':'❌ view skrytý');
+  }catch(e){ rt('Runtime','❌','sw() volání','err',e.message); }
+
+  // Onclick format
+  var tabs=document.querySelectorAll('#tabs-bar .tab');
+  var onclickOk=tabs.length>0&&tabs[0].getAttribute('onclick');
+  rt('Runtime',onclickOk?'✅':'❌','onclick na tabu',onclickOk?'ok':'err',onclickOk?onclickOk.substring(0,30):'CHYBÍ');
+
+  // Kritické funkce
+  ['notify','slog','loadSkin','applyVisibility'].forEach(function(fn){
+    var ok=typeof window[fn]==='function';
+    rt('Funkce',ok?'✅':'⚠️',fn+'()',ok?'ok':'wrn',ok?'OK':'CHYBÍ');
+  });
+
+  render();
+}
+
+function render(){
+  var secs={};
+  rows.forEach(function(r){
+    if(!secs[r.sec]) secs[r.sec]=[];
+    secs[r.sec].push(r);
+  });
+  var h='';
+  Object.keys(secs).forEach(function(sec){
+    h+='<div class="sec"><h2>'+sec+'</h2>';
+    secs[sec].forEach(function(r){
+      h+='<div class="row"><span class="ico">'+r.ico+'</span>';
+      h+='<span class="lbl">'+r.lbl+'</span>';
+      if(r.val) h+='<span class="val">'+r.val+'</span>';
+      h+='<span class="badge '+r.s+'">'+(r.s==='ok'?'OK':r.s==='err'?'FAIL':'WARN')+'</span></div>';
+    });
+    h+='</div>';
+  });
+  document.getElementById('out').innerHTML=h;
+
+  var tot=P+F+W;
+  var pct=tot>0?Math.round(P/tot*100):0;
+  var col=pct>=90?'#1D9E75':pct>=70?'#e67e22':'#e74c3c';
+  document.getElementById('sum').innerHTML=
+    '<div class="box"><div class="bnum" style="color:#1D9E75">'+P+'</div><div class="blab">PASSED</div></div>'+
+    '<div class="box"><div class="bnum" style="color:#e74c3c">'+F+'</div><div class="blab">FAILED</div></div>'+
+    '<div class="box"><div class="bnum" style="color:#e67e22">'+W+'</div><div class="blab">WARN</div></div>'+
+    '<div class="box"><div class="bnum" style="color:'+col+'">'+pct+'%</div><div class="blab">SKÓRE</div></div>';
+  document.getElementById('bar').style.cssText='width:'+pct+'%;background:'+col;
+}
+
+// Spustit
+render();
+window.onload=function(){ setTimeout(runtime,300); };
+</script>
+</body></html>

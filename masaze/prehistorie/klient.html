@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Masážní HUB CZ/SK – Najdi svého maséra</title>
+<meta name="description" content="Najdi maséra ve svém okolí. Rezervace, poptávky, masáže po celé ČR a SR.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#fff;--bg2:#f5f5f3;--txt:#1a1a18;--txt2:#6b6b67;--brd:rgba(0,0,0,.12);--blue:#185FA5;--green:#1D9E75;--red:#A32D2D;--r:10px;--rl:14px}
+body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;color:var(--txt);background:var(--bg2)}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#185FA5,#0C447C);color:#fff;padding:0}
+.header-top{display:flex;justify-content:space-between;align-items:center;padding:14px 16px}
+.header-logo{display:flex;align-items:center;gap:10px}
+.header-logo .ico{font-size:28px}
+.header-logo h1{font-size:18px;font-weight:500}
+.header-logo p{font-size:11px;opacity:.8;margin-top:1px}
+.header-nav{display:flex;gap:6px;flex-wrap:wrap}
+.nav-btn{background:rgba(255,255,255,.15);color:#fff;border:none;padding:7px 12px;border-radius:20px;font-size:12px;cursor:pointer;transition:background .15s}
+.nav-btn:hover,.nav-btn.on{background:rgba(255,255,255,.3)}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0C447C,#185FA5);color:#fff;padding:30px 16px;text-align:center}
+.hero h2{font-size:24px;font-weight:400;margin-bottom:8px}
+.hero p{font-size:14px;opacity:.85;margin-bottom:20px}
+.hero-search{display:flex;gap:8px;max-width:400px;margin:0 auto;flex-wrap:wrap}
+.hero-search select,.hero-search input{flex:1;padding:12px 14px;border-radius:var(--r);border:none;font-size:14px;min-width:120px}
+.hero-search button{padding:12px 20px;border-radius:var(--r);border:none;background:#1D9E75;color:#fff;font-size:14px;cursor:pointer;font-weight:500;white-space:nowrap}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.1)}
+.stat{padding:12px;text-align:center;background:rgba(0,0,0,.15)}
+.stat-val{font-size:22px;font-weight:600;color:#fff}
+.stat-lab{font-size:10px;color:rgba(255,255,255,.7);margin-top:2px}
+
+/* WRAPPER */
+.wrap{max-width:900px;margin:0 auto;padding:14px}
+
+/* VIEWS */
+.view{display:none}.view.on{display:block}
+
+/* CARDS */
+.card{background:var(--bg);border:.5px solid var(--brd);border-radius:var(--rl);padding:16px;margin-bottom:12px}
+.card h2{font-size:16px;font-weight:500;margin-bottom:12px}
+.card h3{font-size:14px;font-weight:500;margin-bottom:10px}
+
+/* MASÉR KARTA */
+.maser-card{background:var(--bg);border:.5px solid var(--brd);border-radius:var(--rl);padding:14px;margin-bottom:10px;transition:box-shadow .15s}
+.maser-card:hover{box-shadow:0 2px 12px rgba(0,0,0,.1)}
+.maser-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:8px}
+.maser-avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#1D9E75);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;color:#fff}
+.maser-info h3{font-size:14px;font-weight:500;margin-bottom:2px}
+.maser-info p{font-size:11px;color:var(--txt2)}
+.pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;margin:2px 2px 2px 0}
+.p-blue{background:#E6F1FB;color:#0C447C}
+.p-green{background:#E1F5EE;color:#085041}
+.p-gray{background:var(--bg2);color:var(--txt2)}
+
+/* FORMULÁŘ */
+.field{margin-bottom:10px}
+.field label{display:block;font-size:12px;color:var(--txt2);margin-bottom:4px}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg2);color:var(--txt);font-size:13px;font-family:inherit;outline:none}
+.field textarea{min-height:80px;resize:vertical}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* TLAČÍTKA */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:10px 16px;border-radius:var(--r);border:none;cursor:pointer;font-size:13px;font-family:inherit;font-weight:500;transition:all .1s}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-green{background:var(--green);color:#fff}
+.btn-full{width:100%;justify-content:center;padding:13px}
+.btn-outline{background:transparent;border:.5px solid var(--brd);color:var(--txt)}
+
+/* KROKY */
+.steps{display:flex;gap:0;margin-bottom:20px;counter-reset:step}
+.step{flex:1;text-align:center;position:relative}
+.step::before{content:counter(step);counter-increment:step;display:block;width:28px;height:28px;border-radius:50%;background:var(--bg2);border:.5px solid var(--brd);line-height:28px;font-size:12px;margin:0 auto 6px;color:var(--txt2)}
+.step.on::before{background:var(--blue);color:#fff;border-color:var(--blue)}
+.step.done::before{background:var(--green);color:#fff;border-color:var(--green);content:"✓"}
+.step span{font-size:10px;color:var(--txt2)}
+.step::after{content:'';position:absolute;top:14px;left:50%;width:100%;height:1px;background:var(--brd);z-index:-1}
+.step:last-child::after{display:none}
+
+/* RECENZE */
+.stars{color:#F5A623;font-size:16px}
+
+/* FOOTER */
+.footer{background:#1a1a18;color:#a8a89e;padding:20px 16px;text-align:center;margin-top:20px;font-size:12px}
+.footer a{color:#f0ede8;text-decoration:none}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a18;color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;z-index:9999;display:none;white-space:nowrap}
+
+/* DARK MODE */
+@media(prefers-color-scheme:dark){
+  :root{--bg:#1c1c1a;--bg2:#252523;--txt:#f0ede8;--txt2:#a8a89e;--brd:rgba(255,255,255,.12)}
+}
+
+/* MOBIL */
+@media(max-width:600px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .r2{grid-template-columns:1fr}
+  .header-nav{display:none}
+  .hero h2{font-size:20px}
+}
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="header-logo">
+      <div class="ico">💆</div>
+      <div>
+        <h1>Masážní HUB CZ/SK</h1>
+        <p>Najdi svého maséra</p>
+      </div>
+    </div>
+    <div class="header-nav">
+      <button class="nav-btn on" onclick="sw('mapa')">🗺 Maséři</button>
+      <button class="nav-btn" onclick="sw('poptavka')">🔍 Poptávka</button>
+      <button class="nav-btn" onclick="sw('rezervace')">📅 Rezervace</button>
+      <button class="nav-btn" onclick="sw('akce')">🎪 Akce</button>
+      <button class="nav-btn" onclick="sw('firmy')">🚂 Firmy</button>
+      <button class="nav-btn" onclick="sw('onas')">ℹ️ O nás</button>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <h2>Masáž ve vašem okolí</h2>
+    <p>Profesionální maséři po celé ČR a SR. Rezervujte online za pár sekund.</p>
+    <div class="hero-search">
+      <select id="hs-kraj" onchange="filterMaseri()">
+        <option value="">Všechny kraje</option>
+      </select>
+      <button onclick="sw('poptavka')">🔍 Hledat maséra</button>
+    </div>
+  </div>
+
+  <!-- GEOLOKAČNÍ BANNER -->
+  <div id="geo-banner" style="display:none;background:rgba(255,255,255,.15);border-top:.5px solid rgba(255,255,255,.2);padding:12px 16px;text-align:center">
+    <div style="font-size:13px;color:#fff">
+      📍 <span id="geo-txt">Detekuji vaši polohu...</span>
+    </div>
+    <button onclick="sw('poptavka')" style="margin-top:6px;padding:6px 16px;border-radius:20px;border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.2);color:#fff;cursor:pointer;font-size:12px">
+      📅 Objednat se zde
+    </button>
+  </div>
+
+  <!-- STATISTIKY -->
+  <div class="stats">
+    <div class="stat"><div class="stat-val" id="st-maseri">0</div><div class="stat-lab">Masérů</div></div>
+    <div class="stat"><div class="stat-val" id="st-okresy">77</div><div class="stat-lab">Okresů</div></div>
+    <div class="stat"><div class="stat-val" id="st-masaze">1000+</div><div class="stat-lab">Masáží</div></div>
+    <div class="stat"><div class="stat-val">⭐ 4.9</div><div class="stat-lab">Hodnocení</div></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- VIEW: MAPA / MASÉŘI -->
+  <div class="view on" id="view-mapa">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <h2 style="margin:0">🧘 Naši maséři</h2>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <select id="f-kraj" onchange="filterMaseri()" style="font-size:12px;padding:6px 10px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg2)">
+            <option value="">Všechny kraje</option>
+          </select>
+          <select id="f-skill" onchange="filterMaseri()" style="font-size:12px;padding:6px 10px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg2)">
+            <option value="">Všechny masáže</option>
+            <option>Klasická masáž</option>
+            <option>Sportovní masáž</option>
+            <option>Relaxační masáž</option>
+            <option>Hot stone</option>
+            <option>Prenatální masáž</option>
+            <option>Baňkování</option>
+          </select>
+        </div>
+      </div>
+      <div id="maseri-list"><div style="text-align:center;padding:30px;color:var(--txt2)">⏳ Načítám maséry...</div></div>
+    </div>
+  </div>
+
+  <!-- VIEW: POPTÁVKA -->
+  <div class="view" id="view-poptavka">
+    <div class="card">
+      <h2>🔍 Poptávka masáže</h2>
+      <p style="font-size:12px;color:var(--txt2);margin-bottom:16px">Vyplň co hledáš a my ti najdeme ideálního maséra!</p>
+
+      <div class="field"><label>Vaše jméno <span style="color:var(--red)">*</span></label>
+        <input type="text" id="p-jmeno" placeholder="Jana Nováková"/>
+      </div>
+      <div class="field"><label>Telefon / email</label>
+        <input type="text" id="p-kontakt" placeholder="+420 777 123 456"/>
+      </div>
+      <div class="r2">
+        <div class="field"><label>Kraj</label>
+          <select id="p-kraj"><option value="">– kraj –</option></select>
+        </div>
+        <div class="field"><label>Typ masáže</label>
+          <select id="p-typ">
+            <option value="">Nevím / cokoliv</option>
+            <option>Klasická masáž</option>
+            <option>Sportovní masáž</option>
+            <option>Relaxační masáž</option>
+            <option>Hot stone</option>
+            <option>Prenatální masáž</option>
+            <option>Lymfatická masáž</option>
+            <option>Baňkování</option>
+          </select>
+        </div>
+      </div>
+      <div class="r2">
+        <div class="field"><label>Kdy</label>
+          <select id="p-kdy">
+            <option>Ihned / co nejdříve</option>
+            <option>Do týdne</option>
+            <option>Do měsíce</option>
+            <option>Po dohodě</option>
+          </select>
+        </div>
+        <div class="field"><label>Kde</label>
+          <select id="p-kde">
+            <option value="u-klienta">U mě doma</option>
+            <option value="studio">Ve studiu maséra</option>
+            <option value="jine">Jiné místo</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Poznámka (zdravotní omezení, přání...)</label>
+        <textarea id="p-note" placeholder="Mám napětí v šíji, preferuji silný tlak..."></textarea>
+      </div>
+      <button class="btn btn-blue btn-full" onclick="odeslat_poptavku()">📨 Odeslat poptávku</button>
+    </div>
+
+    <!-- POTVRZENÍ -->
+    <div id="p-confirm" style="display:none" class="card" style="text-align:center">
+      <div style="font-size:48px;margin-bottom:12px">🎉</div>
+      <h2>Poptávka odeslána!</h2>
+      <p style="font-size:13px;color:var(--txt2);margin-top:8px">Náš tým vás brzy kontaktuje. Průměrná doba odpovědi je <strong>2 hodiny</strong>.</p>
+      <button class="btn btn-outline" onclick="sw('mapa')" style="margin-top:16px">← Zpět na maséry</button>
+    </div>
+  </div>
+
+  <!-- VIEW: REZERVACE -->
+  <div class="view" id="view-rezervace">
+    <div class="card">
+      <h2>📅 Rezervace masáže</h2>
+
+      <!-- KROKY -->
+      <div class="steps">
+        <div class="step on" id="rez-step-1"><span>Masér</span></div>
+        <div class="step" id="rez-step-2"><span>Termín</span></div>
+        <div class="step" id="rez-step-3"><span>Kontakt</span></div>
+        <div class="step" id="rez-step-4"><span>Hotovo</span></div>
+      </div>
+
+      <!-- KROK 1: Výběr maséra -->
+      <div id="rez-k1">
+        <h3>Vyber maséra:</h3>
+        <div id="rez-maseri-list"></div>
+      </div>
+
+      <!-- KROK 2: Termín -->
+      <div id="rez-k2" style="display:none">
+        <h3>Vyber termín:</h3>
+        <div id="rez-predstih-info" style="font-size:11px;color:var(--blue);background:#E6F1FB;border-radius:var(--r);padding:6px 10px;margin-bottom:10px"></div>
+        <div class="r2">
+          <div class="field"><label>Datum</label>
+            <input type="date" id="rez-datum" onchange="checkDov(this.value)"/>
+            <div id="rez-dov-warn" style="display:none;font-size:11px;color:var(--red);margin-top:4px;padding:5px 8px;background:#FCEBEB;border-radius:var(--r)"></div>
+          </div>
+          <div class="field"><label>Čas</label>
+            <select id="rez-cas">
+              <option>09:00</option><option>10:00</option><option>11:00</option>
+              <option>12:00</option><option>13:00</option><option>14:00</option>
+              <option>15:00</option><option>16:00</option><option>17:00</option>
+            </select>
+          </div>
+        </div>
+        <div class="field"><label>Typ masáže</label>
+          <select id="rez-typ">
+            <option>Klasická masáž (60 min)</option>
+            <option>Relaxační masáž (60 min)</option>
+            <option>Sportovní masáž (60 min)</option>
+            <option>Hot stone (90 min)</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn btn-outline" onclick="rezKrok(1)">← Zpět</button>
+          <button class="btn btn-blue" style="flex:1" onclick="rezKrok(3)">Pokračovat →</button>
+        </div>
+      </div>
+
+      <!-- KROK 3: Kontakt -->
+      <div id="rez-k3" style="display:none">
+        <h3>Vaše údaje:</h3>
+        <div class="field"><label>Jméno <span style="color:var(--red)">*</span></label>
+          <input type="text" id="rez-jmeno" placeholder="Jana Nováková"/>
+        </div>
+        <div class="field"><label>Telefon <span style="color:var(--red)">*</span></label>
+          <input type="tel" id="rez-tel" placeholder="+420 777 123 456"/>
+        </div>
+        <div class="field"><label>Poznámka</label>
+          <textarea id="rez-note" placeholder="Zdravotní omezení, přání..." style="min-height:60px"></textarea>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn btn-outline" onclick="rezKrok(2)">← Zpět</button>
+          <button class="btn btn-green" style="flex:1" onclick="odeslat_rezervaci()">✅ Potvrdit rezervaci</button>
+        </div>
+      </div>
+
+      <!-- KROK 4: Hotovo -->
+      <div id="rez-k4" style="display:none;text-align:center;padding:20px">
+        <div style="font-size:48px;margin-bottom:12px">✅</div>
+        <h2>Rezervace potvrzena!</h2>
+        <div id="rez-souhrn" style="background:var(--bg2);border-radius:var(--r);padding:12px;margin:12px 0;font-size:13px;text-align:left"></div>
+        <p style="font-size:12px;color:var(--txt2)">Masér rezervaci zkontroluje a potvrdí telefonicky nebo SMS. Obvykle do <strong>2 hodin</strong>.</p>
+        <button class="btn btn-outline" onclick="sw('mapa')" style="margin-top:16px">← Zpět na maséry</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW: AKCE -->
+  <div class="view" id="view-akce">
+    <div class="card">
+      <h2>🎪 Nadcházející akce</h2>
+      <p style="font-size:12px;color:var(--txt2);margin-bottom:14px">Venkovní masáže, workshopy a setkání ve vašem okolí.</p>
+      <div id="akce-list"><div style="text-align:center;padding:20px;color:var(--txt2)">⏳ Načítám akce...</div></div>
+    </div>
+    <div class="card" style="background:linear-gradient(135deg,#E6F1FB,#d4e8f7);border-color:var(--blue)">
+      <h3>📱 SOS Masáž na akci?</h3>
+      <p style="font-size:12px;color:var(--txt2);margin:8px 0">Jsi na festivalu nebo venkovní akci a chceš masáž? Naskenuj QR kód u stánku maséra!</p>
+      <a href="akce_fronta.html" class="btn btn-blue" style="text-decoration:none;display:inline-flex">🚀 Otevřít frontu</a>
+    </div>
+  </div>
+
+  <!-- VIEW: O NÁS -->
+  <div class="view" id="view-onas">
+    <div class="card">
+      <h2>ℹ️ O Masážní HUB CZ/SK</h2>
+      <p style="font-size:13px;line-height:1.8;margin-bottom:12px">
+        Jsme platforma která spojuje profesionální maséry s klienty po celé České a Slovenské republice.
+        Věříme že kvalitní masáž by měla být dostupná každému – kdekoli a kdykoli.
+      </p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+        <div style="background:var(--bg2);border-radius:var(--r);padding:12px;text-align:center">
+          <div style="font-size:28px;margin-bottom:4px">🇨🇿</div>
+          <div style="font-size:12px;font-weight:500">Česká republika</div>
+          <div style="font-size:11px;color:var(--txt2)">77 okresů pokryto</div>
+        </div>
+        <div style="background:var(--bg2);border-radius:var(--r);padding:12px;text-align:center">
+          <div style="font-size:28px;margin-bottom:4px">🇸🇰</div>
+          <div style="font-size:12px;font-weight:500">Slovensko</div>
+          <div style="font-size:11px;color:var(--txt2)">Připravujeme</div>
+        </div>
+      </div>
+      <h3>👥 Náš tým</h3>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg2);border-radius:var(--r)">
+          <div style="width:40px;height:40px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px">🧘</div>
+          <div><div style="font-size:13px;font-weight:500">Martin</div><div style="font-size:11px;color:var(--txt2)">Ostrava · Mobilní masér · Zakladatel</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg2);border-radius:var(--r)">
+          <div style="width:40px;height:40px;border-radius:50%;background:#D4547A;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px">💆</div>
+          <div><div style="font-size:13px;font-weight:500">Lucie</div><div style="font-size:11px;color:var(--txt2)">Ostrava · Antakarana · Masérka</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg2);border-radius:var(--r)">
+          <div style="width:40px;height:40px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px">💆</div>
+          <div><div style="font-size:13px;font-weight:500">Honza</div><div style="font-size:11px;color:var(--txt2)">Praha · Masér</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg2);border-radius:var(--r)">
+          <div style="width:40px;height:40px;border-radius:50%;background:#7F77DD;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px">⭐</div>
+          <div><div style="font-size:13px;font-weight:500">Luboš</div><div style="font-size:11px;color:var(--txt2)">Mentor a inspirátor</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📞 Kontakt</h3>
+      <div style="font-size:13px;line-height:2">
+        <div>🌐 <a href="https://coulcz.github.io/masaze" style="color:var(--blue)">coulcz.github.io/masaze</a></div>
+        <div>📧 info@masazni-hub.cz</div>
+        <div>📱 Sledujte nás na sociálních sítích</div>
+      </div>
+      <div style="margin-top:12px">
+        <a href="index.html" style="font-size:11px;color:var(--txt2);text-decoration:none">🔐 Přihlášení pro maséry →</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FIRMY -->
+<div class="view" id="view-firmy">
+<div class="wrap">
+
+  <!-- HERO SEKCE -->
+  <div style="background:linear-gradient(135deg,#1a1a18,#2d2d2a);border-radius:var(--rl);padding:24px 20px;margin-bottom:12px;text-align:center;color:#f0ede8">
+    <div style="font-size:48px;margin-bottom:8px">🚂</div>
+    <h2 style="font-size:20px;font-weight:400;margin-bottom:6px">Masáž ve vlaku & pro firmy</h2>
+    <p style="font-size:13px;opacity:.7;margin-bottom:16px">5minutová rychlovka pro zaměstnance na směně.<br>Průvodčí, řidiči, kancelář – kdekoli!</p>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <div style="background:rgba(255,255,255,.1);border-radius:var(--r);padding:10px 16px;font-size:12px">
+        ⚡ Od <strong>5 minut</strong>
+      </div>
+      <div style="background:rgba(255,255,255,.1);border-radius:var(--r);padding:10px 16px;font-size:12px">
+        💰 Od <strong>100 Kč</strong>
+      </div>
+      <div style="background:rgba(255,255,255,.1);border-radius:var(--r);padding:10px 16px;font-size:12px">
+        🚂 Přijedeme <strong>k vám</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- TYPY SLUŽEB -->
+  <div class="card">
+    <h3>⚡ Rychlovky pro pracující lidi</h3>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+
+      <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg2);border-radius:var(--r)">
+        <div style="font-size:32px">🚂</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:500">Masáž ve vlaku</div>
+          <div style="font-size:11px;color:var(--txt2);margin-top:2px">Pro průvodčí a řidiče vlaků na jejich pracovišti. Šíje, ramena, záda – tam kde to nejvíc bolí.</div>
+          <div style="margin-top:5px">
+            <span class="pill p-blue">5 min · 100 Kč</span>
+            <span class="pill p-blue">10 min · 180 Kč</span>
+            <span class="pill p-blue">15 min · 250 Kč</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg2);border-radius:var(--r)">
+        <div style="font-size:32px">🏢</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:500">Firemní masáž v kanceláři</div>
+          <div style="font-size:11px;color:var(--txt2);margin-top:2px">Pravidelné masáže pro zaměstnance přímo na pracovišti. Skvělý benefit pro tým!</div>
+          <div style="margin-top:5px">
+            <span class="pill p-green">15 min · od 250 Kč/os</span>
+            <span class="pill p-green">Pravidelně = sleva</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg2);border-radius:var(--r)">
+        <div style="font-size:32px">🚌</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:500">Dopravní firmy</div>
+          <div style="font-size:11px;color:var(--txt2);margin-top:2px">Řidiči autobusů, kamionů – profese s chronickým přetížením zad a šíje.</div>
+          <div style="margin-top:5px">
+            <span class="pill p-blue">15–30 min</span>
+            <span class="pill p-blue">Skupinové slevy</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg2);border-radius:var(--r)">
+        <div style="font-size:32px">🏥</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:500">Zdravotníci a sociální pracovníci</div>
+          <div style="font-size:11px;color:var(--txt2);margin-top:2px">Těžká fyzická i psychická práce. Zaslouží si péči více než kdokoli jiný!</div>
+          <div style="margin-top:5px">
+            <span class="pill p-green">Speciální ceny</span>
+            <span class="pill p-green">❤️ Pomáháme těm co pomáhají</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- POPTÁVKOVÝ FORMULÁŘ -->
+  <div class="card">
+    <h3>📨 Mám zájem pro svou firmu</h3>
+    <div class="field"><label>Firma / organizace <span style="color:var(--red)">*</span></label>
+      <input type="text" id="f-firma" placeholder="České dráhy, RegioJet, ABC s.r.o...."/>
+    </div>
+    <div class="field"><label>Kontaktní osoba <span style="color:var(--red)">*</span></label>
+      <input type="text" id="f-jmeno" placeholder="Jana Nováková – vedoucí směny"/>
+    </div>
+    <div class="field"><label>Telefon / email <span style="color:var(--red)">*</span></label>
+      <input type="text" id="f-kontakt" placeholder="+420 777 123 456"/>
+    </div>
+    <div class="r2">
+      <div class="field"><label>Počet zaměstnanců</label>
+        <select id="f-pocet">
+          <option>1–5 lidí</option>
+          <option>6–15 lidí</option>
+          <option>16–30 lidí</option>
+          <option>30+ lidí</option>
+        </select>
+      </div>
+      <div class="field"><label>Typ služby</label>
+        <select id="f-typ">
+          <option>🚂 Masáž ve vlaku</option>
+          <option>🏢 Firemní masáž</option>
+          <option>🚌 Dopravní firma</option>
+          <option>🏥 Zdravotnictví</option>
+          <option>📝 Jiné</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Lokalita / kde působíte</label>
+      <input type="text" id="f-lokalita" placeholder="Ostrava, Praha, trať Ostrava–Praha..."/>
+    </div>
+    <div class="field"><label>Poznámka</label>
+      <textarea id="f-note" placeholder="Pracujeme na ranní směně 6:00–14:00, ideálně 2x týdně..." style="min-height:70px"></textarea>
+    </div>
+    <button class="btn btn-blue btn-full" onclick="odeslat_firmy()">🚂 Odeslat poptávku</button>
+    <div id="f-confirm" style="display:none;margin-top:12px;background:#E1F5EE;border-radius:var(--r);padding:12px;text-align:center;font-size:13px">
+      🎉 Poptávka odeslána! Ozve se vám Martin do 24 hodin.
+    </div>
+  </div>
+
+  <!-- PROČ MY -->
+  <div class="card" style="background:linear-gradient(135deg,#E6F1FB,#d4e8f7);border-color:var(--blue)">
+    <h3>💡 Proč Masážní HUB?</h3>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;font-size:12px">
+      <div>✅ Přijedeme přímo k vám – žádné cestování</div>
+      <div>✅ Flexibilní časy – i ranní/večerní směny</div>
+      <div>✅ Certifikovaní maséři</div>
+      <div>✅ Pravidelnost = lepší cena</div>
+      <div>✅ Faktura pro firmu</div>
+      <div>✅ Zkušenost s dopravními firmami</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div>🧘 <strong style="color:#f0ede8">Masážní HUB CZ/SK</strong> · Platforma pro českou a slovenskou masérskou komunitu</div>
+  <div style="margin-top:6px"><a href="index.html">Pro maséry</a> · <a href="akce_fronta.html">SOS Masáž</a></div>
+  <div style="margin-top:6px;font-size:10px">© 2026 Masážní HUB CZ/SK · Duo IO + Martin</div>
+</div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────────────────────
+var maseurs = [];
+var vybranyMaserRez = null;
+
+var KRAJ_NAME = {
+  'PHA':'Praha','STC':'Středočeský','JHC':'Jihočeský','PLK':'Plzeňský',
+  'KVK':'Karlovarský','ULK':'Ústecký','LBK':'Liberecký','HKK':'Královéhradecký',
+  'PAK':'Pardubický','VYS':'Kraj Vysočina','JHM':'Jihomoravský','OLK':'Olomoucký',
+  'ZLK':'Zlínský','MSK':'Moravskoslezský'
+};
+
+// Načíst maséry z data.json
+function loadMaseri(){
+  fetch('data.json')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      maseurs = d.maseri || d.maser || [];
+      initSelects();
+      renderMaseri();
+      G('st-maseri').textContent = maseurs.length;
+    })
+    .catch(function(){
+      // Fallback - demo maséři
+      maseurs = [
+        {id:1, name:'Martin', kraj:'MSK', okres:'Ostrava-město', mesto:'Ostrava', skills:['Klasická masáž','Sportovní masáž','Baňkování'], dostupnost:'Ihned', mobilni:'ano', telefon:'', type:'me'},
+        {id:2, name:'Lucie', kraj:'MSK', okres:'Ostrava-město', mesto:'Ostrava', skills:['Klasická masáž','Relaxační masáž','Lymfatická masáž'], dostupnost:'Do 2 dnů', mobilni:'ano', type:'col'},
+        {id:3, name:'Honza', kraj:'PHA', okres:'Praha', mesto:'Praha', skills:['Sportovní masáž','Klasická masáž'], dostupnost:'Do týdne', mobilni:'ne', type:'col'},
+      ];
+      initSelects();
+      renderMaseri();
+      G('st-maseri').textContent = maseurs.length;
+    });
+}
+
+function initSelects(){
+  ['hs-kraj','f-kraj','p-kraj'].forEach(function(id){
+    var sel = G(id); if(!sel) return;
+    if(sel.options.length > 1) return;
+    Object.entries(KRAJ_NAME).forEach(function(e){
+      var o = document.createElement('option');
+      o.value = e[0]; o.textContent = e[1];
+      sel.appendChild(o);
+    });
+  });
+}
+
+// ── NAVIGACE ─────────────────────────────────────────────────────────────────
+function sw(tab){
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('on'); });
+  document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('on'); });
+  var v = G('view-'+tab); if(v) v.classList.add('on');
+  var btns = document.querySelectorAll('.nav-btn');
+  btns.forEach(function(b){ if(b.getAttribute('onclick').includes("'"+tab+"'")) b.classList.add('on'); });
+  if(tab==='mapa') renderMaseri();
+  if(tab==='rezervace') initRezervace();
+  if(tab==='akce') renderAkce();
+  window.scrollTo(0,0);
+}
+
+// ── MASÉŘI ───────────────────────────────────────────────────────────────────
+function filterMaseri(){
+  var kraj = G('f-kraj') ? G('f-kraj').value : '';
+  var skill = G('f-skill') ? G('f-skill').value : '';
+  renderMaseri(kraj, skill);
+}
+
+function renderMaseri(kraj, skill){
+  var el = G('maseri-list'); if(!el) return;
+  var list = maseurs.filter(function(m){
+    if(kraj && m.kraj !== kraj) return false;
+    if(skill && !(m.skills||[]).some(function(s){ return s.includes(skill); })) return false;
+    return true;
+  });
+
+  if(!list.length){
+    el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--txt2)">😔 Žádní maséři v tomto filtru. Zkus jiný kraj.</div>';
+    return;
+  }
+
+  var dostIco = {'Ihned':'🟢','Do 2 dnů':'🟡','Do týdne':'🟠','Do měsíce':'🔴','Po dohodě':'⚪'};
+
+  el.innerHTML = list.map(function(m){
+    var dost = dostIco[m.dostupnost] || '⚪';
+    return '<div class="maser-card">' +
+      '<div class="maser-header">' +
+        '<div class="maser-avatar">' + (m.name ? m.name[0] : '?') + '</div>' +
+        '<div class="maser-info" style="flex:1">' +
+          '<h3>' + m.name + ' <span style="font-size:11px">' + dost + ' ' + (m.dostupnost||'') + '</span></h3>' +
+          '<p>📍 ' + (m.mesto||m.okres||KRAJ_NAME[m.kraj]||m.kraj) + '</p>' +
+          '<div style="margin-top:4px">' + (m.skills||[]).slice(0,3).map(function(s){
+            return '<span class="pill p-blue">' + s + '</span>';
+          }).join('') + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">' +
+        (m.mobilni==='ano'?'<span class="pill p-green">🚗 Mobilní masér</span>':'')+
+        '<span class="pill p-gray">💆 ' + (m.skills||[]).length + ' masáží</span>' +
+      '</div>' +
+      '<div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">' +
+        (m.telefon?'<a href="tel:'+m.telefon+'" class="btn btn-green" style="text-decoration:none;font-size:12px;padding:8px 12px">📞 Zavolat</a>':'')+
+        '<button class="btn btn-blue" style="font-size:12px;padding:8px 12px" onclick="rezervovatMasera('+m.id+')">📅 Rezervovat</button>' +
+        '<button class="btn btn-outline" style="font-size:12px;padding:8px 12px" onclick="poptavkaProMasera('+m.id+')">📨 Poptávka</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ── REZERVACE ────────────────────────────────────────────────────────────────
+// Minimální předstih rezervace (dny)
+var MIN_PREDSTIH_DNI = 2;
+
+function initRezervace(){
+  renderRezMaseri();
+  rezKrok(1);
+  // Nastavit min datum = dnes + MIN_PREDSTIH_DNI
+  var minDatum = new Date();
+  minDatum.setDate(minDatum.getDate() + MIN_PREDSTIH_DNI);
+  var minStr = minDatum.toISOString().split('T')[0];
+  var datEl = G('rez-datum');
+  if(datEl){ datEl.min = minStr; datEl.value = minStr; }
+  // Zobrazit info o předstihu
+  var infoEl = G('rez-predstih-info');
+  if(infoEl) infoEl.textContent = '📅 Nejdříve možný termín: ' + minDatum.toLocaleDateString('cs-CZ',{day:'numeric',month:'long',year:'numeric'});
+}
+
+function rezervovatMasera(id){
+  vybranyMaserRez = id;
+  sw('rezervace');
+  rezKrok(2);
+}
+
+function poptavkaProMasera(id){
+  sw('poptavka');
+}
+
+function renderRezMaseri(){
+  var el = G('rez-maseri-list'); if(!el) return;
+  el.innerHTML = maseurs.map(function(m){
+    var isVyb = vybranyMaserRez === m.id;
+    return '<div onclick="vybratMaseraRez('+m.id+')" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);border:'+(isVyb?'2px solid var(--blue)':'0.5px solid var(--brd)')+';background:'+(isVyb?'#E6F1FB':'var(--bg2)')+';margin-bottom:6px;cursor:pointer">' +
+      '<div style="width:36px;height:36px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;flex-shrink:0">' + (m.name?m.name[0]:'?') + '</div>' +
+      '<div><div style="font-size:13px;font-weight:'+(isVyb?'600':'400')+'">🧘 ' + m.name + '</div>' +
+      '<div style="font-size:11px;color:var(--txt2)">📍 ' + (m.mesto||m.okres||KRAJ_NAME[m.kraj]||'') + '</div></div>' +
+      (isVyb?'<div style="margin-left:auto;color:var(--blue);font-size:18px">✓</div>':'') +
+    '</div>';
+  }).join('');
+}
+
+function vybratMaseraRez(id){
+  vybranyMaserRez = id;
+  renderRezMaseri();
+}
+
+function rezKrok(k){
+  [1,2,3,4].forEach(function(i){
+    var kEl = G('rez-k'+i); if(kEl) kEl.style.display = i===k ? 'block' : 'none';
+    var sEl = G('rez-step-'+i); if(sEl){
+      sEl.className = 'step' + (i===k?' on':i<k?' done':'');
+    }
+  });
+  if(k===1) renderRezMaseri();
+}
+
+function odeslat_rezervaci(){
+  var jmeno = G('rez-jmeno').value.trim();
+  var tel = G('rez-tel').value.trim();
+  if(!jmeno||!tel){ notify('Vyplň jméno a telefon!'); return; }
+  // Zkontrolovat minimální předstih
+  var datum = G('rez-datum').value;
+  if(datum){
+    var minDatum = new Date();
+    minDatum.setDate(minDatum.getDate() + MIN_PREDSTIH_DNI);
+    var minStr = minDatum.toISOString().split('T')[0];
+    if(datum < minStr){
+      notify('❌ Rezervace musí být min. ' + MIN_PREDSTIH_DNI + ' dny dopředu! Nejdříve ' + minDatum.toLocaleDateString('cs-CZ'));
+      return;
+    }
+    // Zkontrolovat dovolenou
+    try{
+      var dov = localStorage.getItem('dovolena');
+      if(dov){
+        var dovObj = JSON.parse(dov);
+        if(datum >= dovObj.od && datum <= dovObj.do){
+          var dovDo = new Date(dovObj.do);
+          dovDo.setDate(dovDo.getDate() + 1);
+          notify('🌴 Masér je v tomto termínu na dovolené (' + dovObj.od + ' – ' + dovObj.do + '). Rezervujte od ' + dovDo.toLocaleDateString('cs-CZ') + '!');
+          return;
+        }
+      }
+    }catch(e){}
+  }
+  var m = maseurs.find(function(x){ return x.id === vybranyMaserRez; });
+
+  // Uložit rezervaci do localStorage (sdílené s index.html přes stejnou doménu)
+  var rezervace = [];
+  try{ var r = localStorage.getItem('rezervace_cekajici'); if(r) rezervace = JSON.parse(r); }catch(e){}
+  var novaRez = {
+    id: Date.now(),
+    klient_jmeno: jmeno,
+    klient_tel: tel,
+    maser_id: vybranyMaserRez,
+    maser_jmeno: m ? m.name : '–',
+    datum: G('rez-datum').value,
+    cas: G('rez-cas').value,
+    typ: G('rez-typ').value,
+    note: G('rez-note').value.trim(),
+    stav: 'ceka',
+    odeslano: new Date().toLocaleString('cs-CZ')
+  };
+  rezervace.push(novaRez);
+  try{ localStorage.setItem('rezervace_cekajici', JSON.stringify(rezervace)); }catch(e){}
+
+  // Zobrazit souhrn
+  var souhrn = G('rez-souhrn');
+  if(souhrn){
+    souhrn.innerHTML =
+      '<div style="margin-bottom:6px;padding:8px;background:#E1F5EE;border-radius:var(--r);font-size:12px">⏳ Rezervace čeká na potvrzení masérem. Budeme vás kontaktovat.</div>' +
+      '<div style="margin-bottom:4px">🧘 <strong>Masér:</strong> ' + (m?m.name:'–') + '</div>' +
+      '<div style="margin-bottom:4px">📅 <strong>Datum:</strong> ' + (G('rez-datum').value||'–') + ' v ' + (G('rez-cas').value||'–') + '</div>' +
+      '<div style="margin-bottom:4px">💆 <strong>Masáž:</strong> ' + (G('rez-typ').value||'–') + '</div>' +
+      '<div style="margin-bottom:4px">👤 <strong>Klient:</strong> ' + jmeno + ' · ' + tel + '</div>' +
+      '<div style="font-size:11px;color:var(--txt2);margin-top:6px">📋 Číslo rezervace: #' + novaRez.id + '</div>';
+  }
+  rezKrok(4);
+  notify('📨 Rezervace odeslána – čeká na potvrzení maséra!');
+}
+
+// ── POPTÁVKA ─────────────────────────────────────────────────────────────────
+function odeslat_poptavku(){
+  var jmeno = G('p-jmeno').value.trim();
+  if(!jmeno){ notify('Zadej jméno!'); return; }
+  G('p-confirm').style.display = 'block';
+  document.querySelector('#view-poptavka .card').style.display = 'none';
+  notify('📨 Poptávka odeslána!');
+}
+
+// ── AKCE ─────────────────────────────────────────────────────────────────────
+function renderAkce(){
+  var el = G('akce-list'); if(!el) return;
+  // Zkusit načíst z data.json
+  fetch('data.json')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var akce = d.akce || [];
+      var dnes = new Date().toISOString().split('T')[0];
+      var budouci = akce.filter(function(a){ return a.datum_od >= dnes; });
+      if(!budouci.length){
+        el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--txt2)">😔 Zatím žádné plánované akce. Sledujte nás!</div>';
+        return;
+      }
+      el.innerHTML = budouci.map(function(a){
+        return '<div class="maser-card">' +
+          '<div style="font-size:18px;font-weight:500;margin-bottom:4px">' + a.nazev + '</div>' +
+          '<div style="font-size:12px;color:var(--txt2)">📅 ' + a.datum_od + (a.cas_od?' · '+a.cas_od:'') + '</div>' +
+          '<div style="font-size:12px;color:var(--txt2);margin-top:2px">📍 ' + (a.misto_konani||a.mesto||'–') + '</div>' +
+          (a.popis?'<div style="font-size:12px;margin-top:6px">'+a.popis+'</div>':'')+
+        '</div>';
+      }).join('');
+    })
+    .catch(function(){
+      el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--txt2)">⏳ Akce se načítají...</div>';
+    });
+}
+
+// ── HELPER ───────────────────────────────────────────────────────────────────
+function G(id){ return document.getElementById(id); }
+
+function checkDov(datum){
+  var warn = G('rez-dov-warn'); if(!warn) return;
+  try{
+    var dov = localStorage.getItem('dovolena');
+    if(dov){
+      var dovObj = JSON.parse(dov);
+      if(datum >= dovObj.od && datum <= dovObj.do){
+        warn.style.display = 'block';
+        var dovDo = new Date(dovObj.do);
+        dovDo.setDate(dovDo.getDate() + 1);
+        warn.textContent = '🌴 Masér je v tomto termínu na dovolené! Dostupný od ' + dovDo.toLocaleDateString('cs-CZ');
+        return;
+      }
+    }
+  }catch(e){}
+  warn.style.display = 'none';
+}
+
+function odeslat_firmy(){
+  var firma = G('f-firma').value.trim();
+  var jmeno = G('f-jmeno').value.trim();
+  var kontakt = G('f-kontakt').value.trim();
+  if(!firma||!jmeno||!kontakt){ notify('Vyplň firmu, jméno a kontakt!'); return; }
+
+  // Uložit do localStorage
+  var poptavky = [];
+  try{ var p = localStorage.getItem('firmy_poptavky'); if(p) poptavky = JSON.parse(p); }catch(e){}
+  poptavky.push({
+    id: Date.now(),
+    firma: firma,
+    jmeno: jmeno,
+    kontakt: kontakt,
+    pocet: G('f-pocet').value,
+    typ: G('f-typ').value,
+    lokalita: G('f-lokalita').value.trim(),
+    note: G('f-note').value.trim(),
+    odeslano: new Date().toLocaleString('cs-CZ'),
+    stav: 'nova'
+  });
+  try{ localStorage.setItem('firmy_poptavky', JSON.stringify(poptavky)); }catch(e){}
+
+  G('f-confirm').style.display = 'block';
+  ['f-firma','f-jmeno','f-kontakt','f-lokalita','f-note'].forEach(function(id){
+    var el = G(id); if(el) el.value = '';
+  });
+  notify('🚂 Poptávka odeslána!');
+}
+
+function notify(msg){
+  var t = G('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(function(){ t.style.display = 'none'; }, 2500);
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+loadMaseri();
+
+// Geolokace - zjistit kraj a zobrazit banner
+function checkGeoKlient(){
+  if(!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(function(pos){
+    var lat = pos.coords.latitude;
+    var lon = pos.coords.longitude;
+    
+    // Přibližné detekce krajů
+    var kraj = null;
+    if(lat>48.5&&lat<49.5&&lon>13.5&&lon<15.5) kraj='Jihočeský kraj';
+    else if(lat>49.5&&lat<50.0&&lon>17.5&&lon<18.5) kraj='Moravskoslezský kraj';
+    else if(lat>49.0&&lat<49.5&&lon>17.5&&lon<18.5) kraj='Zlínský kraj';
+    else if(lat>49.9&&lat<50.2&&lon>14.2&&lon<14.7) kraj='Praha';
+    else if(lat>48.8&&lat<49.3&&lon>16.3&&lon<17.2) kraj='Jihomoravský kraj';
+    else if(lat>49.5&&lat<50.5&&lon>15.5&&lon<17.0) kraj='Pardubický kraj';
+    else if(lat>49.5&&lat<50.2&&lon>13.3&&lon<15.5) kraj='Středočeský kraj';
+    
+    if(!kraj) return;
+    
+    var banner = document.getElementById('geo-banner');
+    var txt = document.getElementById('geo-txt');
+    if(banner && txt){
+      txt.textContent = 'Jste z ' + kraj + '? Objednejte se u našich masérů!';
+      banner.style.display = 'block';
+    }
+  }, function(){}, {timeout:5000});
+}
+
+setTimeout(checkGeoKlient, 1000);
+</script>
+</body>
+</html>

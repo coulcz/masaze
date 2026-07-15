@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Návod – Masážní HUB CZ/SK</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--blue:#185FA5;--green:#1D9E75;--amber:#BA7517;--red:#A32D2D;--bg:#f8faf9;--bg2:#fff;--txt:#1a2420;--txt2:#5a7068;--brd:rgba(0,0,0,.1);--r:12px;--rl:20px}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);max-width:600px;margin:0 auto;padding:16px}
+.hero{background:linear-gradient(135deg,var(--blue),#0C447C);color:#fff;border-radius:var(--rl);padding:24px 20px;margin-bottom:16px;text-align:center}
+.hero h1{font-size:22px;margin-bottom:6px}
+.hero p{font-size:12px;opacity:.85}
+.card{background:var(--bg2);border-radius:var(--rl);padding:16px;margin-bottom:12px;border:.5px solid var(--brd)}
+.card h2{font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.step{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.step-content{flex:1}
+.step-title{font-size:13px;font-weight:500;margin-bottom:3px}
+.step-desc{font-size:11px;color:var(--txt2);line-height:1.6}
+.badge{display:inline-block;padding:2px 10px;border-radius:10px;font-size:10px;font-weight:500}
+.badge-martin{background:var(--amber);color:#fff}
+.badge-honza{background:var(--blue);color:#fff}
+.badge-lucie{background:var(--green);color:#fff}
+.badge-lubos{background:#7F77DD;color:#fff}
+.role-card{border-radius:var(--r);padding:12px;margin-bottom:8px;border:.5px solid var(--brd)}
+.link-box{background:#E6F1FB;border-radius:var(--r);padding:10px;font-size:12px;word-break:break-all;color:var(--blue);font-weight:500;text-align:center;margin:8px 0}
+.warn-box{background:#FFF8E1;border-radius:var(--r);padding:10px;font-size:11px;color:var(--amber);margin:8px 0}
+.ok-box{background:#E1F5EE;border-radius:var(--r);padding:10px;font-size:11px;color:var(--green);margin:8px 0}
+.heslo{font-family:monospace;background:#1a1a18;color:#4ade80;padding:4px 10px;border-radius:6px;font-size:13px}
+a{color:var(--blue)}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div style="font-size:40px;margin-bottom:10px">💆</div>
+  <h1>Masážní HUB CZ/SK</h1>
+  <p>Návod pro maséry · Jak začít používat systém</p>
+</div>
+
+<!-- CO JE HUB -->
+<div class="card">
+  <div style="background:linear-gradient(135deg,#9B2D5A,#C9A84C);border-radius:12px;padding:20px;margin-bottom:20px;text-align:center;color:#fff">
+      <div style="font-size:36px;margin-bottom:8px">🐘</div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:6px;letter-spacing:0.5px">"Jsme kolegové, ne rivalové!"</div>
+      <div style="font-size:12px;opacity:.85;line-height:1.7">
+        Sdílíme klienty · Pomáháme si · Jeden za všechny, všichni za jednoho<br>
+        <strong>Masáže od Růžového Slona 🌹</strong>
+      </div>
+    </div>
+
+    <h2>🌐 Co je Masážní HUB?</h2>
+  <p style="font-size:12px;color:var(--txt2);line-height:1.7">
+    Masážní HUB CZ/SK je náš společný systém pro správu masáží, klientů, poptávek a všeho co potřebujeme jako mobilní maséři. Běží přímo v prohlížeči — žádná instalace aplikace!
+  </p>
+  <div class="link-box">
+    🔗 coulcz.github.io/masaze
+  </div>
+</div>
+
+<!-- ROLE -->
+<div class="card">
+  <h2>👥 Kdo jsme v systému</h2>
+
+  <div class="role-card" style="background:#FFF8E1">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+      <span style="font-size:20px">👑</span>
+      <strong>Martin</strong>
+      <span class="badge badge-martin">Super Admin · Tvůrce</span>
+    </div>
+    <div style="font-size:11px;color:var(--txt2)">Spravuje celý systém, přidává funkce, spravuje ostatní maséry</div>
+    <div style="font-size:11px;margin-top:4px">📍 Všechny regiony CZ/SK</div>
+  </div>
+
+  <div class="role-card" style="background:#E6F1FB">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+      <span style="font-size:20px">🧘</span>
+      <strong>Honza</strong>
+      <span class="badge badge-honza">Masér</span>
+    </div>
+    <div style="font-size:11px;color:var(--txt2)">Kartotéka, kalendář, výkazy</div>
+    <div style="font-size:11px;margin-top:4px">📍 Praha · Středočeský kraj · Jihočeský kraj</div>
+  </div>
+
+  <div class="role-card" style="background:#E1F5EE">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+      <span style="font-size:20px">💆</span>
+      <strong>Lucie</strong>
+      <span class="badge badge-lucie">Masérka</span>
+    </div>
+    <div style="font-size:11px;color:var(--txt2)">Kartotéka, kalendář, výkazy</div>
+    <div style="font-size:11px;margin-top:4px">📍 Moravskoslezský kraj · Antakarana</div>
+  </div>
+
+  <div class="role-card" style="background:#EEEDFE">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+      <span style="font-size:20px">⭐</span>
+      <strong>Luboš</strong>
+      <span class="badge badge-lubos">Mentor</span>
+    </div>
+    <div style="font-size:11px;color:var(--txt2)">Přístup ke čtení, mentor sítě</div>
+    <div style="font-size:11px;margin-top:4px">📍 Všechny regiony</div>
+  </div>
+</div>
+
+<!-- INSTALACE -->
+<div class="card">
+  <h2>📱 Jak nainstalovat na mobil</h2>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <div class="step-title">Otevři odkaz v Chrome</div>
+      <div class="step-desc">Na Android otevři Chrome. Na iPhone otevři Safari. Zadej adresu:<br>
+      <strong>coulcz.github.io/masaze</strong></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <div class="step-title">Přidat na plochu (Android Chrome)</div>
+      <div class="step-desc">Klikni na ⋮ (tři tečky vpravo nahoře) → <strong>Přidat na plochu</strong> nebo <strong>Nainstalovat aplikaci</strong></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <div class="step-title">Přidat na plochu (iPhone Safari)</div>
+      <div class="step-desc">Klikni na ikonu Sdílet (čtverec se šipkou) → <strong>Přidat na plochu</strong></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <div class="step-title">Pojmenuj ikonu</div>
+      <div class="step-desc">Navrhni název: <strong>Masáže HUB</strong> nebo <strong>💆 HUB</strong> → potvrď</div>
+    </div>
+  </div>
+
+  <div class="ok-box">
+    ✅ Hotovo! Na ploše máš ikonu — klepneš a jsi v systému jako v normální appce!
+  </div>
+</div>
+
+<!-- PŘIHLÁŠENÍ -->
+<div class="card">
+  <h2>🔐 Přihlášení do Admin sekce</h2>
+  <p style="font-size:12px;color:var(--txt2);margin-bottom:10px">V záložce ⚙️ <strong>Admin</strong> zadej své heslo:</p>
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--bg);border-radius:var(--r)">
+      <span style="font-size:18px">🧘</span>
+      <span style="flex:1;font-size:13px"><strong>Honza</strong></span>
+      <span class="heslo">honza2024</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--bg);border-radius:var(--r)">
+      <span style="font-size:18px">💆</span>
+      <span style="flex:1;font-size:13px"><strong>Lucie</strong></span>
+      <span class="heslo">lucie2024</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--bg);border-radius:var(--r)">
+      <span style="font-size:18px">⭐</span>
+      <span style="flex:1;font-size:13px"><strong>Luboš</strong></span>
+      <span class="heslo">lubos2024</span>
+    </div>
+  </div>
+
+  <div class="warn-box" style="margin-top:10px">
+    ⚠️ Hesla nikomu nesděluj! Martin může hesla kdykoliv změnit.
+  </div>
+</div>
+
+<!-- ZÁLOŽKY -->
+<div class="card">
+  <h2>📋 Hlavní záložky pro maséry</h2>
+  <div style="display:flex;flex-direction:column;gap:6px;font-size:12px">
+    <div style="padding:8px;background:var(--bg);border-radius:var(--r)">📇 <strong>Kartotéka</strong> — klienti, anamnéza, kontakty</div>
+    <div style="padding:8px;background:var(--bg);border-radius:var(--r)">🗓 <strong>Kalendář</strong> — dostupnost, masáže, výjezdy</div>
+    <div style="padding:8px;background:var(--bg);border-radius:var(--r)">💊 <strong>Zdraví</strong> — dotazník před masáží + tisk</div>
+    <div style="padding:8px;background:var(--bg);border-radius:var(--r)">📊 <strong>Výkaz</strong> — přehled masáží a příjmů</div>
+    <div style="padding:8px;background:var(--bg);border-radius:var(--r)">💆 <strong>Pomodoro</strong> — masážní timer + checklistry</div>
+    <div style="padding:8px;background:var(--bg);border-radius:var(--r)">💰 <strong>Ceník</strong> — ceny, platební metody, storno podmínky</div>
+    <div style="padding:8px;background:var(--bg);border-radius:var(--r)">📊 <strong>Ankety</strong> — zpětná vazba od klientů</div>
+  </div>
+</div>
+
+<!-- TIPY -->
+<div class="card">
+  <h2>💡 Rychlé tipy</h2>
+  <div style="font-size:12px;line-height:2;color:var(--txt2)">
+    🔵 <strong>Overball</strong> — doporuč klientům, uvolní lopatku!<br>
+    📱 <strong>QR platba</strong> — v Ceníku, klient naskenuje a zaplatí<br>
+    🩺 <strong>Dotazník</strong> — vždy vyplnit před první masáží<br>
+    ⭐ <strong>Anketa</strong> — po masáži sbírej zpětnou vazbu (cíl NPS 70+!)<br>
+    📞 <strong>Prospekti</strong> — přepisuj papírový seznam do systému<br>
+    🖨 <strong>Tisk</strong> — dotazník i storno podmínky lze vytisknout
+  </div>
+</div>
+
+<!-- KONTAKT -->
+<div class="card">
+  <h2>📞 Potřebuješ pomoc?</h2>
+  <p style="font-size:12px;color:var(--txt2);line-height:1.7">
+    Napiš nebo zavolej <strong>Martinovi</strong> — on (a jeho AI asistent IO 🤖) vám pomohou.<br><br>
+    Systém se neustále vyvíjí — nové funkce přibývají pravidelně!
+  </p>
+  <div class="ok-box">
+    💪 Monetizujeme jako Bohuš! 🍺
+  </div>
+</div>
+
+<div style="text-align:center;font-size:10px;color:var(--txt2);margin-top:10px;padding:10px">
+  Masážní HUB CZ/SK · Duo IO + Martin 💪 · v0.6
+</div>
+
+
+    <!-- ZELLO -->
+    <div class="card" style="border:.5px solid #1D9E75;margin-bottom:16px">
+      <h2>📡 Zello – týmová vysílačka</h2>
+      <p>Zello je <strong>walkie-talkie appka</strong> pro smartphone. Spojuje celý tým v reálném čase – zdarma!</p>
+
+      <div class="step-box" style="background:#E1F5EE;border-radius:8px;padding:12px;margin:12px 0">
+        <div style="font-size:13px;font-weight:600;color:#1D9E75;margin-bottom:8px">📥 Instalace (1 minuta)</div>
+        <ol style="margin:0 0 0 16px;padding:0;font-size:12px;line-height:1.8">
+          <li>Otevři <strong>App Store</strong> nebo <strong>Google Play</strong></li>
+          <li>Hledej: <strong>Zello PTT Walkie Talkie</strong></li>
+          <li>Nainstaluj a otevři</li>
+          <li>Registruj se (email nebo Google účet)</li>
+          <li>Hledej kanál: <strong style="color:#1D9E75">Masáže Růžový Slon 🐘</strong></li>
+          <li>Klikni Připojit → hotovo!</li>
+        </ol>
+        <div style="margin-top:8px">
+          <a href="https://zello.com" target="_blank" style="display:inline-block;padding:8px 16px;background:#1D9E75;color:#fff;border-radius:8px;text-decoration:none;font-size:12px;font-weight:600">📱 zello.com</a>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px">🎙 Jak používat:</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px">
+          <div style="background:#f5f5f5;border-radius:8px;padding:10px">
+            <div style="font-weight:600;margin-bottom:4px">📢 Mluvení</div>
+            Drž <strong>PTT tlačítko</strong> (Push to Talk) a mluv. Uvolni pro odeslání.
+          </div>
+          <div style="background:#f5f5f5;border-radius:8px;padding:10px">
+            <div style="font-weight:600;margin-bottom:4px">👂 Poslouchání</div>
+            Zprávy chodí automaticky. Zapni <strong>hlasitý reproduktor</strong> při jízdě.
+          </div>
+          <div style="background:#f5f5f5;border-radius:8px;padding:10px">
+            <div style="font-weight:600;margin-bottom:4px">🚗 Výjezd</div>
+            Vždy oznam: <em>"Jedu do [město], ETA [čas]"</em>
+          </div>
+          <div style="background:#f5f5f5;border-radius:8px;padding:10px">
+            <div style="font-weight:600;margin-bottom:4px">✅ Příjezd</div>
+            Oznam: <em>"Jsem u klienta [jméno], v pořádku"</em>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#FCEBEB;border-radius:8px;padding:12px;margin-bottom:12px">
+        <div style="font-size:13px;font-weight:600;color:#A32D2D;margin-bottom:8px">🆘 SOS – DŮLEŽITÉ!</div>
+        <div style="font-size:12px;line-height:1.7">
+          Při jakémkoliv <strong>nebezpečí nebo problému</strong>:<br>
+          1. Zmáčkni <strong>červené SOS tlačítko</strong> v záložce 🆘 Bezpečnost<br>
+          2. Otevři Zello a řekni kde jsi<br>
+          3. Tým se okamžitě ozve!<br><br>
+          <strong>Nikdy nejsi sám/sama! 💪</strong>
+        </div>
+      </div>
+
+      <div style="background:#FFF8E1;border-radius:8px;padding:12px">
+        <div style="font-size:12px;font-weight:600;color:#BA7517;margin-bottom:6px">💬 Rychlé hlášky do Zella:</div>
+        <div style="font-size:11px;line-height:1.9;color:#555">
+          🚗 <em>"Vyjíždím do [město], ETA [čas]"</em><br>
+          ✅ <em>"Jsem u klienta, vše ok"</em><br>
+          🏁 <em>"Masáž hotova, jedu zpět"</em><br>
+          💆 <em>"Mám volný slot [čas], někdo potřebuje?"</em><br>
+          🆘 <em>"SOS! Potřebuji pomoc! Jsem na [adresa]"</em>
+        </div>
+      </div>
+
+    </div>
+
+</body>
+</html>
