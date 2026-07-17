@@ -1,0 +1,31 @@
+{
+  "maseri": [
+    {
+      "id": 1,
+      "jmeno": "Martin",
+      "kraj": "Zlínský",
+      "okres": "Vsetín",
+      "mesto": "Valašské Meziříčí",
+      "delka": "60",
+      "dovednosti": "",
+      "telefon": "",
+      "email": "",
+      "web": "mobilnimaserna.cz",
+      "facebook": "",
+      "instagram": "",
+      "tiktok": "",
+      "cena_od": "",
+      "cena_do": "",
+      "mobilni": true,
+      "poznamka": "Masáže od Růžového Slona",
+      "dostupnost": "",
+      "recenze": ""
+    }
+  ],
+  "mista": [],
+  "akce": [],
+  "bezpecnost": [],
+  "rezervace": [],
+  "aktualizovano": "",
+  "verze": "1.4"
+}

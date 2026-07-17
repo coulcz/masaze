@@ -385,6 +385,7 @@ body.skin-duchodce{--bg:#F5F0E8;--bg2:#EDE5D5;--bg3:#DDD5C5;--txt:#2C1810;--txt2
 body.skin-senior{--bg:#FFF;--bg2:#F0F0F0;--bg3:#E0E0E0;--txt:#000;--txt2:#444;--blue:#00C;--fs:18px;--brd:rgba(0,0,0,.2)}
 body.skin-velky{--bg:#1C1C1E;--bg2:#2C2C2E;--bg3:#141414;--txt:#F2F2F7;--txt2:#8E8E93;--fs:16px;--brd:rgba(255,255,255,.08)}
 body.skin-babicka{--bg:#FFF8F0;--bg2:#FFE4CC;--bg3:#FFD0A8;--txt:#3D1C00;--txt2:#8B4513;--blue:#D2691E;--fs:17px;--brd:rgba(139,69,19,.2)}
+body.skin-genesis{--bg:#FAFAF8;--bg2:#EDE8F8;--bg3:#E8F3EC;--txt:#241A38;--txt2:#5B3FA8;--blue:#5B3FA8;--brd:rgba(91,63,168,.2)}
 
 /* ── TABS BAR ── */
 #tabs-bar{
@@ -499,7 +500,7 @@ body.skin-babicka{--bg:#FFF8F0;--bg2:#FFE4CC;--bg3:#FFD0A8;--txt:#3D1C00;--txt2:
 <div class="view" id="view-mapa">
 <div class="layout">
   <div class="mcol">
-    <div id="mapwrap">
+    <div id="mapwrap" style="display:none">
       <div class="map-tb">
         <span>Zoom:</span>
         <button class="zb" onclick="zBy(-0.3)">−</button>
@@ -534,7 +535,10 @@ body.skin-babicka{--bg:#FFF8F0;--bg2:#FFE4CC;--bg3:#FFD0A8;--txt:#3D1C00;--txt2:
       <div class="map-info" id="map-info">💡 Přesná mapa ČR · klikni na barevný bod = detail okresu · kolečko = zoom · táhni = posun</div>
     </div>
     <div class="card" style="margin-top:7px">
-      <h3>Pokrytí</h3>
+      <div class="card" style="text-align:center;padding:20px;color:var(--txt2)">
+    🗺 Mapa je dočasně vypnutá, brzy zpátky. Přidávání maséra funguje normálně níže. 😊
+  </div>
+  <h3>Pokrytí</h3>
       <div id="cov" style="font-size:11px;color:var(--txt2)">Přidejte maséra.</div>
     </div>
   </div>
@@ -3134,7 +3138,6 @@ body.skin-babicka{--bg:#FFF8F0;--bg2:#FFE4CC;--bg3:#FFD0A8;--txt:#3D1C00;--txt2:
         <button class="btn btn-b" onclick="adminLogin()" style="width:auto;padding:8px 14px">→</button>
       </div>
       <div id="admin-login-err" style="color:var(--red);font-size:11px;margin-top:6px;display:none">Nesprávné heslo</div>
-      <div style="font-size:10px;color:var(--txt2);margin-top:10px">Martin · Lucie · Honza</div>
     </div>
   </div>
 
@@ -3144,7 +3147,21 @@ body.skin-babicka{--bg:#FFF8F0;--bg2:#FFE4CC;--bg3:#FFD0A8;--txt:#3D1C00;--txt2:
     <!-- TOOLBAR -->
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:5px">
       <div style="font-size:12px;color:var(--txt2)">👋 Přihlášen/a: <strong id="admin-who"></strong></div>
+      <button class="btn btn-sm" onclick="skinPanelOpen()">🎨 Vzhled (skin)</button>
       <button class="btn btn-sm" onclick="adminLogout()">🔓 Odhlásit</button>
+    </div>
+
+    <!-- MOJE VOLNÉ SLOTY -->
+    <div class="admin-panel">
+      <h3>🕐 Moje volné sloty (VM)</h3>
+      <p style="font-size:11px;color:var(--txt2);margin-bottom:10px">Označ kdy máš volno — klient si pak vybere jen z toho, ne z libovolného data.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+        <div class="field"><label>Datum</label><input type="date" id="slot-datum"/></div>
+        <div class="field"><label>Od</label><input type="time" id="slot-od" value="09:00"/></div>
+        <div class="field"><label>Do</label><input type="time" id="slot-do" value="17:00"/></div>
+      </div>
+      <button class="btn btn-g btn-full" style="margin-top:8px" onclick="slotPridat()">➕ Přidat slot</button>
+      <div id="slot-list" style="margin-top:10px"><div class="empty">Žádné sloty zatím.</div></div>
     </div>
 
     <!-- VIDITELNOST SEKCÍ -->
@@ -4022,7 +4039,7 @@ body.skin-babicka{--bg:#FFF8F0;--bg2:#FFE4CC;--bg3:#FFD0A8;--txt:#3D1C00;--txt2:
 </div>
 
 <!-- ATMOSFÉRA -->
-<div id="skin-panel" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:9998;padding:20px;overflow-y:auto"><div style="max-width:400px;margin:40px auto;background:var(--bg2);border-radius:16px;padding:20px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h3 style="margin:0">🎨 Skin</h3><button onclick="skinPanelClose()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt)">✕</button></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><button onclick="setSkin('');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #185FA5;background:#185FA5;color:#fff;cursor:pointer;font-size:11px">🔵 Výchozí</button><button onclick="setSkin('dark');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #333;background:#111;color:#eee;cursor:pointer;font-size:11px">🌙 Dark</button><button onclick="setSkin('pink');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #E91E8C;background:#2D0A1F;color:#FFE4F0;cursor:pointer;font-size:11px">🌸 Růžový</button><button onclick="setSkin('green');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #4CAF50;background:#0A1F0E;color:#E0F5E4;cursor:pointer;font-size:11px">🌿 Green</button><button onclick="setSkin('black');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #444;background:#000;color:#ccc;cursor:pointer;font-size:11px">🖤 Black</button><button onclick="setSkin('gold');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #FFD700;background:#1A1200;color:#FFE082;cursor:pointer;font-size:11px">💛 Gold</button><button onclick="setSkin('eliska');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #9C27B0;background:#1A0A2E;color:#F0E6FF;cursor:pointer;font-size:11px">💜 Eliška</button><button onclick="setSkin('duchodce');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #8B4513;background:#F5F0E8;color:#2C1810;cursor:pointer;font-size:11px">👴 Důchodce</button><button onclick="setSkin('senior');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #00C;background:#fff;color:#000;cursor:pointer;font-size:11px">🔠 Senior</button><button onclick="setSkin('velky');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #555;background:#1C1C1E;color:#F2F2F7;cursor:pointer;font-size:11px">🔡 Velký</button><button onclick="setSkin('babicka');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #D2691E;background:#FFF8F0;color:#3D1C00;cursor:pointer;font-size:11px;grid-column:1/-1">👵 Babička</button></div></div></div>
+<div id="skin-panel" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:9998;padding:20px;overflow-y:auto"><div style="max-width:400px;margin:40px auto;background:var(--bg2);border-radius:16px;padding:20px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h3 style="margin:0">🎨 Skin</h3><button onclick="skinPanelClose()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt)">✕</button></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><button onclick="setSkin('');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #185FA5;background:#185FA5;color:#fff;cursor:pointer;font-size:11px">🔵 Výchozí</button><button onclick="setSkin('dark');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #333;background:#111;color:#eee;cursor:pointer;font-size:11px">🌙 Dark</button><button onclick="setSkin('pink');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #E91E8C;background:#2D0A1F;color:#FFE4F0;cursor:pointer;font-size:11px">🌸 Růžový</button><button onclick="setSkin('green');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #4CAF50;background:#0A1F0E;color:#E0F5E4;cursor:pointer;font-size:11px">🌿 Green</button><button onclick="setSkin('black');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #444;background:#000;color:#ccc;cursor:pointer;font-size:11px">🖤 Black</button><button onclick="setSkin('gold');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #FFD700;background:#1A1200;color:#FFE082;cursor:pointer;font-size:11px">💛 Gold</button><button onclick="setSkin('eliska');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #9C27B0;background:#1A0A2E;color:#F0E6FF;cursor:pointer;font-size:11px">💜 Eliška</button><button onclick="setSkin('duchodce');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #8B4513;background:#F5F0E8;color:#2C1810;cursor:pointer;font-size:11px">👴 Důchodce</button><button onclick="setSkin('senior');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #00C;background:#fff;color:#000;cursor:pointer;font-size:11px">🔠 Senior</button><button onclick="setSkin('velky');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #555;background:#1C1C1E;color:#F2F2F7;cursor:pointer;font-size:11px">🔡 Velký</button><button onclick="setSkin('babicka');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #D2691E;background:#FFF8F0;color:#3D1C00;cursor:pointer;font-size:11px;grid-column:1/-1">👵 Babička</button><button onclick="setSkin('genesis');skinPanelClose()" style="padding:10px;border-radius:8px;border:2px solid #5B3FA8;background:#FAFAF8;color:#241A38;cursor:pointer;font-size:11px;grid-column:1/-1">🕰 Genesis</button></div></div></div>
 
 <!-- ATMOSFÉRA -->
 <div class="view" id="view-atmosfera" style="display:none">
@@ -4135,11 +4152,11 @@ body.skin-babicka{--bg:#FFF8F0;--bg2:#FFE4CC;--bg3:#FFD0A8;--txt:#3D1C00;--txt2:
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
           <div>
             <label style="font-size:10px;color:var(--txt2)">Cena masáže (Kč)</label>
-            <input type="number" id="bp-cena" placeholder="800" style="width:100%;padding:7px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg2);color:var(--txt);font-size:12px;margin-top:2px"/>
+            <input type="number" id="bp-cena" placeholder="800" oninput="bpCalc()" style="width:100%;padding:7px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg2);color:var(--txt);font-size:12px;margin-top:2px"/>
           </div>
           <div>
             <label style="font-size:10px;color:var(--txt2)">Masáží za měsíc (cíl)</label>
-            <input type="number" id="bp-pocet" placeholder="30" style="width:100%;padding:7px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg2);color:var(--txt);font-size:12px;margin-top:2px"/>
+            <input type="number" id="bp-pocet" placeholder="30" oninput="bpCalc()" style="width:100%;padding:7px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg2);color:var(--txt);font-size:12px;margin-top:2px"/>
           </div>
         </div>
         <div style="padding:10px;background:var(--bg2);border-radius:var(--r)">
@@ -4163,6 +4180,15 @@ body.skin-babicka{--bg:#FFF8F0;--bg2:#FFE4CC;--bg3:#FFD0A8;--txt:#3D1C00;--txt2:
             <input type="number" id="bp-naklad-auto" placeholder="3000" oninput="bpCalc()" style="width:80px;padding:5px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg2);color:var(--txt);font-size:12px"/>
             <span style="font-size:11px">Kč</span>
           </div>
+          <div style="background:var(--bg2);border-radius:var(--r);padding:8px;margin:2px 0 4px 0">
+            <div style="font-size:10px;color:var(--txt2);margin-bottom:5px">↳ Pomocník: dojezd do VM (25 km tam + 25 km zpět)</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+              <div><label style="font-size:9px;color:var(--txt2)">km jednosměrně</label><input type="number" id="bp-vm-km" value="25" oninput="bpVmCalc()" style="width:100%;padding:4px;border-radius:6px;border:.5px solid var(--brd);background:var(--bg);color:var(--txt);font-size:11px"/></div>
+              <div><label style="font-size:9px;color:var(--txt2)">Kč/km</label><input type="number" id="bp-vm-sazba" value="10" oninput="bpVmCalc()" style="width:100%;padding:4px;border-radius:6px;border:.5px solid var(--brd);background:var(--bg);color:var(--txt);font-size:11px"/></div>
+              <div><label style="font-size:9px;color:var(--txt2)">cest / měsíc</label><input type="number" id="bp-vm-cest" placeholder="0" oninput="bpVmCalc()" style="width:100%;padding:4px;border-radius:6px;border:.5px solid var(--brd);background:var(--bg);color:var(--txt);font-size:11px"/></div>
+            </div>
+            <div style="font-size:10px;color:var(--txt2);margin-top:5px">= <strong id="bp-vm-vysledek" style="color:var(--txt)">0 Kč</strong> → doplněno do Cestovné výše</div>
+          </div>
           <div style="display:flex;align-items:center;gap:8px">
             <label style="font-size:11px;flex:1">📣 Marketing / reklama</label>
             <input type="number" id="bp-naklad-marketing" placeholder="1000" oninput="bpCalc()" style="width:80px;padding:5px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg2);color:var(--txt);font-size:12px"/>
@@ -4182,6 +4208,14 @@ body.skin-babicka{--bg:#FFF8F0;--bg2:#FFE4CC;--bg3:#FFD0A8;--txt:#3D1C00;--txt2:
           <div style="display:flex;justify-content:space-between;margin-top:6px">
             <span style="font-size:13px;font-weight:600">💵 Čistý zisk</span>
             <span id="bp-zisk-total" style="font-size:18px;font-weight:700;color:var(--green)">0 Kč</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:8px;border-top:.5px solid var(--brd);font-size:11px;color:var(--txt2)">
+            <span>📅 Denně: <strong id="bp-zisk-den" style="color:var(--txt)">0 Kč</strong></span>
+            <span>📆 Týdně: <strong id="bp-zisk-tyden" style="color:var(--txt)">0 Kč</strong></span>
+            <span>🗓 Měsíčně: <strong id="bp-zisk-mesic" style="color:var(--txt)">0 Kč</strong></span>
+          </div>
+          <div style="margin-top:8px;padding:8px;background:rgba(230,126,34,.1);border-radius:var(--r);font-size:11px">
+            📊 Minimálně <strong id="bp-min-masazi" style="color:#e67e22">0</strong> masáží/měsíc na pokrytí nákladů (break-even)
           </div>
         </div>
         <button class="btn btn-g" onclick="bpUlozit('finance')">💾 Uložit finance</button>
@@ -4452,8 +4486,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;color:var(--txt)
     <div id="sc-admin-login">
       <div class="card">
         <h2>🔐 Přihlášení maséra</h2>
-        <input type="password" id="adm-pwd" placeholder="Heslo..." style="width:100%;font-size:14px;padding:10px 12px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg2);color:var(--txt);outline:none;margin-bottom:8px" onkeydown="if(event.key==='Enter')adminLogin()"/>
-        <button class="btn-big btn-blue" onclick="adminLogin()">→ Přihlásit</button>
+        <input type="password" id="adm-pwd" placeholder="Heslo..." style="width:100%;font-size:14px;padding:10px 12px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg2);color:var(--txt);outline:none;margin-bottom:8px" onkeydown="if(event.key==='Enter')frontaAdminLogin()"/>
+        <button class="btn-big btn-blue" onclick="frontaAdminLogin()">→ Přihlásit</button>
         <div id="adm-err" style="color:var(--red);font-size:11px;margin-top:6px;display:none">Špatné heslo!</div>
         <button class="btn-sm" onclick="showScreen('sc-role')" style="width:100%;margin-top:8px">← Zpět</button>
       </div>
@@ -4574,7 +4608,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;color:var(--txt)
 
       <div style="display:flex;gap:8px;margin-top:4px">
         <button class="btn-big" style="background:var(--bg2);color:var(--txt);border:.5px solid var(--brd);flex:1" onclick="showScreen('sc-role')">👁 Základní displej</button>
-        <button class="btn-big btn-red" style="flex:1" onclick="adminLogout()">🔓 Odhlásit</button>
+        <button class="btn-big btn-red" style="flex:1" onclick="frontaAdminLogout()">🔓 Odhlásit</button>
       </div>
     </div>
   </div>
@@ -5108,6 +5142,76 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;color:var(--txt)
 
 // ── NAVIGACE ─────────────────────────────────────────────────────────────────
 var G = function(id){ return document.getElementById(id); };
+var _pruvodce={};
+var _ptimers={};
+var _dqOdpovedi={};
+var _dqROdpovedi={};
+var mistoData=[];
+var AUTO_VECI=[];
+var NAK_VYCHOZI=[];
+var NAK_KAT={};
+var PRACE_VYCHOZI=[];
+var BANNERY={};
+var FORMSPREE_URL='https://formspree.io/f/TVUJ_KOD_ZDE';
+var SEK_ODPOVEDI={
+  uvod:'Ahoj! 👋 Jsem tvůj pomocník. Ptej se na maséry, ceny, kontakt nebo pokrytí okresů.',
+  maseri:'Máme {pocet} masérů v síti, například {maser}. 💆',
+  cena:'Ceny se liší podle typu masáže a délky — mrkni na záložku Ceník pro přesný přehled. 💰',
+  kontakt:'Napiš nám přes formulář v Poptávce, nebo mrkni na Kontakty v Másérně. 📞',
+  okres:'Pokrýváme okresy podle toho, kde máme aktivní maséry — zkontroluj mapu. 🗺',
+  nevim:'Tomu úplně nerozumím 🤔 Zkus se zeptat jinak, nebo vyber z nabídky níže.'
+};
+
+// ── PŘÍPRAVNÉ KROKY (checklist s časovačem) ─────────────────────────────────
+var CHK_KROKY_SALON=[
+  {id:'lehatko',ico:'🛏️',nazev:'Lehátko a prostěradlo',cas:120},
+  {id:'oleje',ico:'🧴',nazev:'Oleje a krémy',cas:60},
+  {id:'dezinfekce',ico:'🧼',nazev:'Dezinfekce',cas:60},
+  {id:'ruce',ico:'🧽',nazev:'Umytí rukou',cas:120},
+  {id:'dotaznik',ico:'📋',nazev:'Zdravotní dotazník',cas:180}
+];
+var CHK_KROKY_VYJEZD=[
+  {id:'nalozit',ico:'🚗',nazev:'Naložit vybavení do auta',cas:180},
+  {id:'trasa',ico:'🗺️',nazev:'Kontrola trasy',cas:60},
+  {id:'oleje',ico:'🧴',nazev:'Oleje a pomůcky',cas:60},
+  {id:'dezinfekce',ico:'🧼',nazev:'Dezinfekce',cas:60},
+  {id:'dotaznik',ico:'📋',nazev:'Zdravotní dotazník',cas:180}
+];
+var CHK_KROKY=CHK_KROKY_SALON;
+var chkPovolene={};
+var chkMode='salon';
+var chkHotoveKroky={};
+var chkIndex=0;
+var chkInterval=null;
+var chkZbyvaCas=0;
+
+// ── MBT — časovač masáže po částech těla ────────────────────────────────────
+var MBT_CASTI=[
+  {id:'zada',ico:'🔙',nazev:'Záda'},
+  {id:'ramena',ico:'💪',nazev:'Ramena a šíje'},
+  {id:'ruce',ico:'🤲',nazev:'Ruce'},
+  {id:'nohy',ico:'🦵',nazev:'Nohy'},
+  {id:'chodidla',ico:'🦶',nazev:'Chodidla'}
+];
+var mbtPovolene={};
+var mbtAktualniIndex=0;
+var mbtCasSekund=300;
+var mbtInterval=null;
+var mbtZbyvaCas=0;
+
+// ── TETRIS ───────────────────────────────────────────────────────────────────
+var TET={canvas:null,ctx:null,W:10,H:20};
+var TET_SHAPES=[
+  [[1,1,1,1]],
+  [[1,1],[1,1]],
+  [[0,1,0],[1,1,1]],
+  [[0,1,1],[1,1,0]],
+  [[1,1,0],[0,1,1]],
+  [[1,0,0],[1,1,1]],
+  [[0,0,1],[1,1,1]]
+];
+var TET_COLORS=['#38b6ff','#F5A623','#9C27B0','#1D9E75','#e74c3c','#185FA5','#ff914d'];
+
 
 function sw(tab){
   // Skrýt všechny views
@@ -5590,6 +5694,7 @@ function notify(msg,err){var t=G("toast"),s=G("tmsg");s.textContent=msg;t.classN
 
 
 
+var INFO_SUBS=["kodex","kontra","provoz","vune","dotaznik","hygiena","faq","slovnik"];
 function swInfo(s){
   if(s==='dotaznik') setTimeout(dqInit,50);
   if(s==='po-masazi') setTimeout(poRenderPrehled,50);
@@ -6034,15 +6139,97 @@ function renderAdmPop(){
   var el=G("adm-pop");if(!el)return;
   if(!open.length){el.innerHTML='<div class="empty">Žádné otevřené poptávky.</div>';return;}
   el.innerHTML=open.map(function(p){
+    var matches=maseurs.filter(function(m){ return m.okres===p.okres; });
+    var matchLabel='ve stejném okrese';
+    if(!matches.length){ matches=maseurs.filter(function(m){ return m.kraj===p.kraj; }); matchLabel='ve stejném kraji'; }
+    var matchHtml;
+    if(!matches.length){
+      matchHtml='<div style="font-size:11px;color:var(--txt2);margin-top:4px">Žádný maséř v okrese ani kraji.</div>';
+    } else {
+      matchHtml='<div style="font-size:10px;color:var(--txt2);margin-top:6px">Volní maséři '+matchLabel+':</div>'
+        +'<div style="margin-top:3px;display:flex;flex-wrap:wrap;gap:4px">'
+        +matches.map(function(m){
+          return '<button class="btn btn-sm" onclick="matchP('+p.id+','+m.id+')">✓ '+m.name+'</button>';
+        }).join('')+'</div>';
+    }
     return '<div class="nab-item">'
       +'<div style="display:flex;justify-content:space-between">'
-      +'<div><strong>'+p.jmeno+'</strong> · '+( KRAJ_NAME[p.kraj]||p.kraj||"")+'</div>'
-      +'<button class="btn btn-sm btn-g" onclick="closePop('+p.id+')">✓</button></div>'
-      +(p.pozn?'<div style="font-size:11px;color:var(--txt2);margin-top:2px">'+p.pozn+'</div>':"")
+      +'<div><strong>'+p.jmeno+'</strong> · '+( KRAJ_NAME[p.kraj]||p.kraj||"")+(p.okres?' · '+p.okres:'')+'</div>'
+      +'<button class="btn btn-sm btn-g" onclick="closePop('+p.id+')">✕ Zavřít</button></div>'
+      +(p.note?'<div style="font-size:11px;color:var(--txt2);margin-top:2px">'+p.note+'</div>':"")
+      +matchHtml
       +'</div>';
   }).join("");
 }
-function matchP(id){var p=poptavky.find(function(x){ return x.id===id; });if(p){p.status="matched";renderAdmPop();updPdSt();renderPop();notify("Spárováno ✓");}}
+
+function matchP(popId,maserId){
+  var p=poptavky.find(function(x){ return x.id===popId; });
+  var m=maseurs.find(function(x){ return x.id===maserId; });
+  if(p&&m){
+    p.status="matched";
+    p.matchedMaserId=maserId;
+    p.matchedMaserName=m.name;
+    renderAdmPop();updPdSt();renderPop();
+    notify("Spárováno s "+m.name+" ✓");
+  }
+}
+
+function closePop(id){
+  var p=poptavky.find(function(x){ return x.id===id; });
+  if(p){
+    p.status="closed";
+    renderAdmPop();updPdSt();renderPop();
+    notify("Poptávka zavřena");
+  }
+}
+
+// ── SLOTY (volné termíny pro rezervace) ─────────────────────────────────────
+var sloty=[];
+
+function slotLoad(){
+  try{
+    var saved=localStorage.getItem('sloty');
+    if(saved) sloty=JSON.parse(saved);
+  }catch(e){ sloty=[]; }
+}
+
+function slotSave(){
+  try{ localStorage.setItem('sloty',JSON.stringify(sloty)); }catch(e){}
+}
+
+function slotPridat(){
+  var d=G('slot-datum').value;
+  var od=G('slot-od').value;
+  var doC=G('slot-do').value;
+  if(!d||!od||!doC){ notify('Vyplň datum a časy!',true); return; }
+  if(od>=doC){ notify('Čas "Do" musí být později než "Od"!',true); return; }
+  sloty.push({id:Date.now(),datum:d,casOd:od,casDo:doC,obsazeno:false,poptavkaId:null});
+  sloty.sort(function(a,b){ return (a.datum+a.casOd).localeCompare(b.datum+b.casOd); });
+  slotSave();
+  slotRender();
+  notify('Slot přidán ✓');
+}
+
+function slotSmazat(id){
+  sloty=sloty.filter(function(s){ return s.id!==id; });
+  slotSave();
+  slotRender();
+  notify('Slot smazán');
+}
+
+function slotRender(){
+  slotLoad();
+  var el=G('slot-list'); if(!el) return;
+  if(!sloty.length){ el.innerHTML='<div class="empty">Žádné sloty zatím.</div>'; return; }
+  el.innerHTML=sloty.map(function(s){
+    var stavIco = s.obsazeno ? '🔴 obsazeno' : '🟢 volno';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:var(--bg2);border-radius:var(--r);margin-bottom:4px;font-size:12px">'
+      +'<div><strong>'+s.datum+'</strong> · '+s.casOd+'–'+s.casDo+' · '+stavIco+'</div>'
+      +'<button class="btn btn-sm btn-red" onclick="slotSmazat('+s.id+')">✕</button>'
+      +'</div>';
+  }).join('');
+}
+
 
 
 // ── MÍSTA ────────────────────────────────────────────────────────────────────
@@ -8147,6 +8334,7 @@ function adminLogin(){
     renderVisibilityList();
     renderAdm();
     renderAdmPop();
+    slotRender();
     schInitTabSelect();
     schRenderList();
     slog("Admin přihlášení: " + adminName, "ok");
@@ -9513,7 +9701,7 @@ function tiskStorno(){
   w.document.close();
 }
 
-function setSkin(s){var all=['skin-pink','skin-dark','skin-green','skin-black','skin-gold','skin-eliska','skin-duchodce','skin-senior','skin-velky','skin-babicka'];all.forEach(function(c){document.body.classList.remove(c);});if(s)document.body.classList.add('skin-'+s);try{localStorage.setItem('app_skin',s);}catch(e){}var n={'':'🔵 Výchozí','pink':'🌸 Růžový','dark':'🌙 Dark','green':'🌿 Green','black':'🖤 Black','gold':'💛 Gold','eliska':'💜 Eliška','duchodce':'👴 Důchodce','senior':'🔠 Senior','velky':'🔡 Velký','babicka':'👵 Babička'};notify(n[s]||'Skin! 🎨');}
+function setSkin(s){var all=['skin-pink','skin-dark','skin-green','skin-black','skin-gold','skin-eliska','skin-duchodce','skin-senior','skin-velky','skin-babicka','skin-genesis'];all.forEach(function(c){document.body.classList.remove(c);});if(s)document.body.classList.add('skin-'+s);try{localStorage.setItem('app_skin',s);}catch(e){}var n={'':'🔵 Výchozí','pink':'🌸 Růžový','dark':'🌙 Dark','green':'🌿 Green','black':'🖤 Black','gold':'💛 Gold','eliska':'💜 Eliška','duchodce':'👴 Důchodce','senior':'🔠 Senior','velky':'🔡 Velký','babicka':'👵 Babička','genesis':'🕰 Genesis'};notify(n[s]||'Skin! 🎨');}
 function loadSkin(){try{var s=localStorage.getItem('app_skin')||'';var all=['skin-pink','skin-dark','skin-green','skin-black','skin-gold','skin-eliska','skin-duchodce','skin-senior','skin-velky','skin-babicka'];all.forEach(function(c){document.body.classList.remove(c);});if(s)document.body.classList.add('skin-'+s);}catch(e){}}
 function skinPanelOpen(){var el=document.getElementById('skin-panel');if(el)el.style.display='block';}
 function skinPanelClose(){var el=document.getElementById('skin-panel');if(el)el.style.display='none';}
@@ -12800,7 +12988,7 @@ function buildUI(){
   // modal buttons
   document.getElementById('modal-btns') && (document.getElementById('modal-btns').innerHTML = SECTIONS.map(function(sec){
     return '<div class="modal-group-label">'+sec.label+'</div>'+sec.locs.map(function(l){
-      return '<button class="modal-loc-btn" onclick="confirmMove(\"'+l.id+'\")">'+l.icon+' '+l.name+'</button>';
+      return '<button class="modal-loc-btn" onclick="confirmMove(\''+l.id+'\')">'+l.icon+' '+l.name+'</button>';
     }).join('');
   }).join(''));
 }
@@ -14446,7 +14634,7 @@ function stopKlientTimer(){
 }
 
 // ── ADMIN ─────────────────────────────────────────────────────────────────────
-function adminLogin(){
+function frontaAdminLogin(){
   var pwd = G('adm-pwd').value;
   if(pwd === ADMIN_PWD || pwd === 'martin2024' || pwd === 'lucie2024' || pwd === 'honza2024'){
     isAdmin = true;
@@ -14474,7 +14662,7 @@ function adminLogin(){
   }
 }
 
-function adminLogout(){
+function frontaAdminLogout(){
   isAdmin = false;
   G('sc-admin-login').style.display = 'block';
   G('sc-admin-panel').style.display = 'none';
@@ -15345,6 +15533,16 @@ function bpSwitch(sekce){
   bpNacist(sekce);
 }
 
+function bpVmCalc(){
+  var km=parseFloat(G('bp-vm-km')?G('bp-vm-km').value:0)||0;
+  var sazba=parseFloat(G('bp-vm-sazba')?G('bp-vm-sazba').value:0)||0;
+  var cest=parseFloat(G('bp-vm-cest')?G('bp-vm-cest').value:0)||0;
+  var vysledek=km*2*sazba*cest;
+  var vEl=G('bp-vm-vysledek'); if(vEl) vEl.textContent=vysledek.toLocaleString('cs-CZ')+' Kč';
+  var autoEl=G('bp-naklad-auto'); if(autoEl) autoEl.value=vysledek;
+  bpCalc();
+}
+
 function bpCalc(){
   var cena=parseFloat(G('bp-cena')?G('bp-cena').value:0)||0;
   var pocet=parseFloat(G('bp-pocet')?G('bp-pocet').value:0)||0;
@@ -15360,6 +15558,13 @@ function bpCalc(){
   if(ziEl){
     ziEl.textContent=zisk.toLocaleString('cs-CZ')+' Kč';
     ziEl.style.color=zisk>=0?'var(--green)':'var(--red)';
+  }
+  var denEl=G('bp-zisk-den'); if(denEl) denEl.textContent=Math.round(zisk/30).toLocaleString('cs-CZ')+' Kč';
+  var tydEl=G('bp-zisk-tyden'); if(tydEl) tydEl.textContent=Math.round(zisk/4.33).toLocaleString('cs-CZ')+' Kč';
+  var mesEl=G('bp-zisk-mesic'); if(mesEl) mesEl.textContent=zisk.toLocaleString('cs-CZ')+' Kč';
+  var minEl=G('bp-min-masazi');
+  if(minEl){
+    minEl.textContent = cena>0 ? Math.ceil(naklady/cena) : '—';
   }
 }
 
