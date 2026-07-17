@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pracovní sešity pro maséry – Masážní HUB CZ/SK</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#fff;--bg2:#f5f5f3;--txt:#1a1a18;--txt2:#6b6b67;--brd:rgba(0,0,0,.12);--blue:#185FA5;--green:#1D9E75;--red:#A32D2D;--amber:#BA7517;--r:10px;--rl:14px}
+body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;color:var(--txt);background:var(--bg2);min-height:100vh}
+.header{background:linear-gradient(135deg,#185FA5,#0C447C);color:#fff;padding:16px;display:flex;align-items:center;gap:12px}
+.header h1{font-size:18px;font-weight:500}
+.header p{font-size:11px;opacity:.8;margin-top:2px}
+.wrap{max-width:700px;margin:0 auto;padding:14px}
+.card{background:var(--bg);border:.5px solid var(--brd);border-radius:var(--rl);padding:16px;margin-bottom:12px}
+.card h2{font-size:15px;font-weight:500;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.card h3{font-size:13px;font-weight:500;margin-bottom:8px;color:var(--txt2)}
+
+/* SEŠITY GRID */
+.sesity-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.sesit{background:var(--bg2);border:.5px solid var(--brd);border-radius:var(--r);padding:12px;cursor:pointer;transition:all .15s;text-align:center}
+.sesit:hover,.sesit.on{border-color:var(--blue);background:#E6F1FB}
+.sesit.on{border-width:2px}
+.sesit-ico{font-size:32px;margin-bottom:6px}
+.sesit-name{font-size:12px;font-weight:500}
+.sesit-desc{font-size:10px;color:var(--txt2);margin-top:3px}
+
+/* FORMULÁŘ SEŠITU */
+.sesit-form{display:none}
+.sesit-form.on{display:block}
+.field{margin-bottom:10px}
+.field label{display:block;font-size:12px;color:var(--txt2);margin-bottom:4px;font-weight:500}
+.field input,.field select,.field textarea{width:100%;padding:9px 12px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg2);color:var(--txt);font-size:13px;font-family:inherit;outline:none}
+.field textarea{min-height:70px;resize:vertical}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:10px 16px;border-radius:var(--r);border:none;cursor:pointer;font-size:13px;font-family:inherit;font-weight:500}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-green{background:var(--green);color:#fff}
+.btn-outline{background:transparent;border:.5px solid var(--brd);color:var(--txt)}
+.btn-full{width:100%;justify-content:center}
+
+/* ŠKÁLY */
+.skala{display:flex;gap:4px;margin-top:4px}
+.skala-btn{flex:1;padding:8px 4px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg2);cursor:pointer;font-size:12px;text-align:center;transition:all .1s}
+.skala-btn.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* CHECKBOXY */
+.check-list{display:flex;flex-direction:column;gap:6px}
+.check-item{display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer}
+.check-item input{width:16px;height:16px;cursor:pointer}
+
+/* TISKOVÁ ZÁHLAVÍ */
+.print-header{display:none}
+@media print{
+  .header-nav,.btn,.sesity-grid{display:none!important}
+  .sesit-form{display:block!important}
+  .print-header{display:block;text-align:center;margin-bottom:16px}
+  .print-header h2{font-size:18px}
+  .print-header p{font-size:12px;color:#666}
+  body{background:#fff}
+  .card{border:1px solid #ddd;break-inside:avoid}
+}
+
+/* ULOŽENÉ SEŠITY */
+.ulozeny{border:.5px solid var(--brd);border-radius:var(--r);padding:10px 12px;margin-bottom:6px;background:var(--bg);font-size:12px}
+
+@media(max-width:600px){
+  .sesity-grid{grid-template-columns:1fr 1fr}
+  .r2,.r3{grid-template-columns:1fr}
+}
+@media(prefers-color-scheme:dark){
+  :root{--bg:#1c1c1a;--bg2:#252523;--txt:#f0ede8;--txt2:#a8a89e;--brd:rgba(255,255,255,.12)}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="font-size:28px">📓</div>
+  <div>
+    <h1>Pracovní sešity pro maséry</h1>
+    <p>Masážní HUB CZ/SK · Vyplň · Uložit · Vytisknout</p>
+  </div>
+  <a href="index.html" style="margin-left:auto;font-size:11px;color:rgba(255,255,255,.7);text-decoration:none">← Zpět do HUBu</a>
+</div>
+
+<div class="wrap">
+
+  <!-- VÝBĚR SEŠITU -->
+  <div class="card">
+    <h2>📓 Vyber sešit</h2>
+    <div class="sesity-grid">
+      <div class="sesit" onclick="openSesit('prijem')" id="s-prijem">
+        <div class="sesit-ico">👤</div>
+        <div class="sesit-name">Příjem klienta</div>
+        <div class="sesit-desc">První návštěva, anamnéza</div>
+      </div>
+      <div class="sesit" onclick="openSesit('masaz')" id="s-masaz">
+        <div class="sesit-ico">💆</div>
+        <div class="sesit-name">Záznam masáže</div>
+        <div class="sesit-desc">Průběh, techniky, reakce</div>
+      </div>
+      <div class="sesit" onclick="openSesit('zdravi')" id="s-zdravi">
+        <div class="sesit-ico">🩺</div>
+        <div class="sesit-name">Zdravotní dotazník</div>
+        <div class="sesit-desc">Kontraindikace, anamnéza</div>
+      </div>
+      <div class="sesit" onclick="openSesit('feedback')" id="s-feedback">
+        <div class="sesit-ico">⭐</div>
+        <div class="sesit-name">Zpětná vazba</div>
+        <div class="sesit-desc">Hodnocení, spokojenost</div>
+      </div>
+      <div class="sesit" onclick="openSesit('akce')" id="s-akce">
+        <div class="sesit-ico">🎪</div>
+        <div class="sesit-name">Příprava na akci</div>
+        <div class="sesit-desc">Checklist, vybavení, plán</div>
+      </div>
+      <div class="sesit" onclick="openSesit('faktura')" id="s-faktura">
+        <div class="sesit-ico">🧾</div>
+        <div class="sesit-name">Faktura / Příjem</div>
+        <div class="sesit-desc">Denní přehled plateb</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SEŠIT 1: PŘÍJEM KLIENTA -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="sesit-form card" id="f-prijem">
+    <div class="print-header"><h2>👤 Příjem klienta</h2><p>Masážní HUB CZ/SK · <span id="pr-print-datum"></span></p></div>
+    <h2>👤 Příjem klienta – první návštěva</h2>
+    <div class="r2">
+      <div class="field"><label>Jméno klienta</label><input type="text" id="pr-jmeno" placeholder="Jana Nováková"/></div>
+      <div class="field"><label>Datum</label><input type="date" id="pr-datum"/></div>
+    </div>
+    <div class="r3">
+      <div class="field"><label>Věk</label><input type="number" id="pr-vek" placeholder="35"/></div>
+      <div class="field"><label>Pohlaví</label>
+        <select id="pr-pohlavi"><option>Žena</option><option>Muž</option><option>Neuvedeno</option></select>
+      </div>
+      <div class="field"><label>Telefon</label><input type="tel" id="pr-tel" placeholder="+420..."/></div>
+    </div>
+    <div class="field"><label>Důvod návštěvy / Co trápí</label>
+      <textarea id="pr-duvod" placeholder="Bolesti zad, stres, relaxace..."></textarea>
+    </div>
+    <div class="field"><label>Zdravotní omezení / kontraindikace</label>
+      <div class="check-list">
+        <label class="check-item"><input type="checkbox" id="pr-h1"/> Vysoký krevní tlak</label>
+        <label class="check-item"><input type="checkbox" id="pr-h2"/> Kardiovaskulární onemocnění</label>
+        <label class="check-item"><input type="checkbox" id="pr-h3"/> Těhotenství</label>
+        <label class="check-item"><input type="checkbox" id="pr-h4"/> Onkologické onemocnění</label>
+        <label class="check-item"><input type="checkbox" id="pr-h5"/> Kožní problémy / záněty</label>
+        <label class="check-item"><input type="checkbox" id="pr-h6"/> Alergie (oleje, vůně)</label>
+      </div>
+    </div>
+    <div class="field"><label>Alergie / poznámka ke zdraví</label>
+      <textarea id="pr-alergie" placeholder="Alergie na levanduli, cukrovka..." style="min-height:50px"></textarea>
+    </div>
+    <div class="field"><label>Odkud přišel/a klient</label>
+      <select id="pr-zdroj">
+        <option>Doporučení</option><option>Facebook</option><option>Instagram</option>
+        <option>Google</option><option>Akce venku</option><option>Jiné</option>
+      </select>
+    </div>
+    <div class="field"><label>Souhlas se zpracováním osobních údajů (GDPR)</label>
+      <label class="check-item"><input type="checkbox" id="pr-gdpr"/> Klient souhlasí se zpracováním osobních údajů</label>
+    </div>
+    <div class="field"><label>Podpis klienta</label>
+      <div style="border:.5px solid var(--brd);border-radius:var(--r);height:60px;background:var(--bg2);display:flex;align-items:center;justify-content:center;color:var(--txt2);font-size:11px">
+        ✍️ Podpis při tisku / osobně
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-blue" onclick="ulozSesit('prijem')">💾 Uložit</button>
+      <button class="btn btn-green" onclick="window.print()">🖨 Vytisknout</button>
+      <button class="btn btn-outline" onclick="closeSesit()">← Zpět</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SEŠIT 2: ZÁZNAM MASÁŽE -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="sesit-form card" id="f-masaz">
+    <div class="print-header"><h2>💆 Záznam masáže</h2><p>Masážní HUB CZ/SK</p></div>
+    <h2>💆 Záznam masáže</h2>
+    <div class="r2">
+      <div class="field"><label>Klient</label><input type="text" id="ma-jmeno" placeholder="Jana Nováková"/></div>
+      <div class="field"><label>Datum a čas</label><input type="datetime-local" id="ma-datum"/></div>
+    </div>
+    <div class="r3">
+      <div class="field"><label>Typ masáže</label>
+        <select id="ma-typ">
+          <option>Klasická masáž</option><option>Sportovní masáž</option>
+          <option>Relaxační masáž</option><option>Lymfatická masáž</option>
+          <option>Hot stone</option><option>Prenatální masáž</option>
+          <option>Baňkování</option><option>Jiná</option>
+        </select>
+      </div>
+      <div class="field"><label>Délka (min)</label>
+        <select id="ma-delka"><option>30</option><option>45</option><option selected>60</option><option>90</option><option>120</option></select>
+      </div>
+      <div class="field"><label>Cena (Kč)</label><input type="number" id="ma-cena" placeholder="800"/></div>
+    </div>
+    <div class="field"><label>Použité oleje / přípravky</label>
+      <input type="text" id="ma-oleje" placeholder="Levandulový olej, hřejivý gel..."/>
+    </div>
+    <div class="field"><label>Problematické oblasti (zaměření masáže)</label>
+      <div class="r3">
+        <label class="check-item"><input type="checkbox"/> Šíje / krk</label>
+        <label class="check-item"><input type="checkbox"/> Ramena</label>
+        <label class="check-item"><input type="checkbox"/> Záda horní</label>
+        <label class="check-item"><input type="checkbox"/> Záda dolní</label>
+        <label class="check-item"><input type="checkbox"/> Bederní oblast</label>
+        <label class="check-item"><input type="checkbox"/> Nohy</label>
+        <label class="check-item"><input type="checkbox"/> Ruce / paže</label>
+        <label class="check-item"><input type="checkbox"/> Hlava</label>
+        <label class="check-item"><input type="checkbox"/> Celé tělo</label>
+      </div>
+    </div>
+    <div class="field"><label>Reakce klienta během masáže</label>
+      <textarea id="ma-reakce" placeholder="Bolestivá místa, napětí, spokojenost..."></textarea>
+    </div>
+    <div class="field"><label>Spokojenost klienta</label>
+      <div class="skala" id="ma-skala">
+        <div class="skala-btn" onclick="setSkala('ma-skala',this,'1')">😞 1</div>
+        <div class="skala-btn" onclick="setSkala('ma-skala',this,'2')">😐 2</div>
+        <div class="skala-btn" onclick="setSkala('ma-skala',this,'3')">🙂 3</div>
+        <div class="skala-btn" onclick="setSkala('ma-skala',this,'4')">😊 4</div>
+        <div class="skala-btn" onclick="setSkala('ma-skala',this,'5')">😄 5</div>
+      </div>
+    </div>
+    <div class="field"><label>Doporučení pro příště / poznámky maséra</label>
+      <textarea id="ma-poznamka" placeholder="Doporučit 2x týdně, zaměřit se na..."></textarea>
+    </div>
+    <div class="field"><label>Platba</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <label class="check-item"><input type="radio" name="ma-platba" value="hotovost" checked/> 💵 Hotovost</label>
+        <label class="check-item"><input type="radio" name="ma-platba" value="karta"/> 💳 Karta</label>
+        <label class="check-item"><input type="radio" name="ma-platba" value="prevod"/> 🏦 Převod</label>
+        <label class="check-item"><input type="radio" name="ma-platba" value="zdarma"/> 🎁 Zdarma</label>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-blue" onclick="ulozSesit('masaz')">💾 Uložit</button>
+      <button class="btn btn-green" onclick="window.print()">🖨 Vytisknout</button>
+      <button class="btn btn-outline" onclick="closeSesit()">← Zpět</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SEŠIT 3: ZDRAVOTNÍ DOTAZNÍK -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="sesit-form card" id="f-zdravi">
+    <div class="print-header"><h2>🩺 Zdravotní dotazník</h2><p>Masážní HUB CZ/SK</p></div>
+    <h2>🩺 Zdravotní dotazník</h2>
+    <div class="r2">
+      <div class="field"><label>Jméno</label><input type="text" id="zd-jmeno"/></div>
+      <div class="field"><label>Datum</label><input type="date" id="zd-datum"/></div>
+    </div>
+    <div class="field"><label>Trpíte nebo jste trpěli některým z těchto stavů?</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:6px">
+        <label class="check-item"><input type="checkbox"/> Onemocnění srdce</label>
+        <label class="check-item"><input type="checkbox"/> Vysoký/nízký TK</label>
+        <label class="check-item"><input type="checkbox"/> Cukrovka</label>
+        <label class="check-item"><input type="checkbox"/> Epilepsie</label>
+        <label class="check-item"><input type="checkbox"/> Nádorové onemocnění</label>
+        <label class="check-item"><input type="checkbox"/> Osteoporóza</label>
+        <label class="check-item"><input type="checkbox"/> Křečové žíly</label>
+        <label class="check-item"><input type="checkbox"/> Kožní onemocnění</label>
+        <label class="check-item"><input type="checkbox"/> Pooperační stav</label>
+        <label class="check-item"><input type="checkbox"/> Těhotenství</label>
+        <label class="check-item"><input type="checkbox"/> Alergie</label>
+        <label class="check-item"><input type="checkbox"/> Psychiatrická diagnóza</label>
+      </div>
+    </div>
+    <div class="field"><label>Užívané léky</label>
+      <input type="text" id="zd-leky" placeholder="Warfarin, antidepresiva, nic..."/>
+    </div>
+    <div class="field"><label>Aktuální obtíže / proč přicházíte</label>
+      <textarea id="zd-obtize" placeholder="Bolesti zad 3 měsíce, stres..."></textarea>
+    </div>
+    <div class="field"><label>Prohlášení klienta</label>
+      <div style="background:var(--bg2);border-radius:var(--r);padding:10px;font-size:11px;color:var(--txt2);margin-bottom:8px;line-height:1.7">
+        Prohlašuji, že jsem pravdivě odpověděl/a na výše uvedené otázky a že jsem srozuměn/a s tím, že zamlčení zdravotních informací může ovlivnit průběh masáže.
+      </div>
+      <label class="check-item"><input type="checkbox" id="zd-souhlas"/> Souhlasím s prohlášením a GDPR</label>
+    </div>
+    <div class="field"><label>Podpis</label>
+      <div style="border:.5px solid var(--brd);border-radius:var(--r);height:60px;background:var(--bg2);display:flex;align-items:center;justify-content:center;color:var(--txt2);font-size:11px">
+        ✍️ Podpis klienta
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-blue" onclick="ulozSesit('zdravi')">💾 Uložit</button>
+      <button class="btn btn-green" onclick="window.print()">🖨 Vytisknout</button>
+      <button class="btn btn-outline" onclick="closeSesit()">← Zpět</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SEŠIT 4: ZPĚTNÁ VAZBA -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="sesit-form card" id="f-feedback">
+    <div class="print-header"><h2>⭐ Zpětná vazba</h2><p>Masážní HUB CZ/SK</p></div>
+    <h2>⭐ Zpětná vazba od klienta</h2>
+    <div class="r2">
+      <div class="field"><label>Jméno (dobrovolné)</label><input type="text" id="fb-jmeno" placeholder="Jana N."/></div>
+      <div class="field"><label>Datum</label><input type="date" id="fb-datum"/></div>
+    </div>
+    <div class="field"><label>Celková spokojenost</label>
+      <div class="skala" id="fb-celk">
+        <div class="skala-btn" onclick="setSkala('fb-celk',this,'1')">⭐ 1</div>
+        <div class="skala-btn" onclick="setSkala('fb-celk',this,'2')">⭐ 2</div>
+        <div class="skala-btn" onclick="setSkala('fb-celk',this,'3')">⭐ 3</div>
+        <div class="skala-btn" onclick="setSkala('fb-celk',this,'4')">⭐ 4</div>
+        <div class="skala-btn" onclick="setSkala('fb-celk',this,'5')">⭐ 5</div>
+      </div>
+    </div>
+    <div class="field"><label>Přístup maséra</label>
+      <div class="skala" id="fb-maser">
+        <div class="skala-btn" onclick="setSkala('fb-maser',this,'1')">1</div>
+        <div class="skala-btn" onclick="setSkala('fb-maser',this,'2')">2</div>
+        <div class="skala-btn" onclick="setSkala('fb-maser',this,'3')">3</div>
+        <div class="skala-btn" onclick="setSkala('fb-maser',this,'4')">4</div>
+        <div class="skala-btn" onclick="setSkala('fb-maser',this,'5')">5</div>
+      </div>
+    </div>
+    <div class="field"><label>Prostředí / atmosféra</label>
+      <div class="skala" id="fb-prostr">
+        <div class="skala-btn" onclick="setSkala('fb-prostr',this,'1')">1</div>
+        <div class="skala-btn" onclick="setSkala('fb-prostr',this,'2')">2</div>
+        <div class="skala-btn" onclick="setSkala('fb-prostr',this,'3')">3</div>
+        <div class="skala-btn" onclick="setSkala('fb-prostr',this,'4')">4</div>
+        <div class="skala-btn" onclick="setSkala('fb-prostr',this,'5')">5</div>
+      </div>
+    </div>
+    <div class="field"><label>Co se nejvíce líbilo?</label>
+      <textarea id="fb-libilo" placeholder="Profesionalita, příjemné prostředí..."></textarea>
+    </div>
+    <div class="field"><label>Co bychom mohli zlepšit?</label>
+      <textarea id="fb-zlepsit" placeholder="Vaše návrhy..."></textarea>
+    </div>
+    <div class="field"><label>Doporučili byste nás přátelům?</label>
+      <div style="display:flex;gap:10px;margin-top:4px">
+        <label class="check-item"><input type="radio" name="fb-dopo" value="ano"/> ✅ Ano, určitě</label>
+        <label class="check-item"><input type="radio" name="fb-dopo" value="mozna"/> 🤔 Možná</label>
+        <label class="check-item"><input type="radio" name="fb-dopo" value="ne"/> ❌ Ne</label>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-blue" onclick="ulozSesit('feedback')">💾 Uložit</button>
+      <button class="btn btn-green" onclick="window.print()">🖨 Vytisknout</button>
+      <button class="btn btn-outline" onclick="closeSesit()">← Zpět</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SEŠIT 5: PŘÍPRAVA NA AKCI -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="sesit-form card" id="f-akce">
+    <div class="print-header"><h2>🎪 Příprava na akci</h2><p>Masážní HUB CZ/SK</p></div>
+    <h2>🎪 Příprava na venkovní akci</h2>
+    <div class="r2">
+      <div class="field"><label>Název akce</label><input type="text" id="ak-nazev" placeholder="Festival v Rožnově..."/></div>
+      <div class="field"><label>Datum</label><input type="date" id="ak-datum"/></div>
+    </div>
+    <div class="r2">
+      <div class="field"><label>Místo</label><input type="text" id="ak-misto" placeholder="Rožnov pod Radhoštěm"/></div>
+      <div class="field"><label>Čas masáží</label><input type="text" id="ak-cas" placeholder="10:00 – 18:00"/></div>
+    </div>
+    <div class="field"><label>✅ Vybavení – co vzít</label>
+      <div class="check-list">
+        <label class="check-item"><input type="checkbox"/> Masážní stůl / křeslo</label>
+        <label class="check-item"><input type="checkbox"/> Prostěradla / ručníky (min. 5x)</label>
+        <label class="check-item"><input type="checkbox"/> Masážní oleje</label>
+        <label class="check-item"><input type="checkbox"/> Dezinfekce + papírové utěrky</label>
+        <label class="check-item"><input type="checkbox"/> Pokladna / terminál</label>
+        <label class="check-item"><input type="checkbox"/> Leták / QR kód fronty</label>
+        <label class="check-item"><input type="checkbox"/> Nabíječka telefonu / powerbank</label>
+        <label class="check-item"><input type="checkbox"/> Voda + jídlo pro maséra</label>
+        <label class="check-item"><input type="checkbox"/> ⛺ Stan 3×3m (s bočnicemi ideálně)</label>
+        <label class="check-item"><input type="checkbox"/> Závaží / kotvy na stan (vítr!)</label>
+        <label class="check-item"><input type="checkbox"/> Podlážka / koberec pod stan</label>
+        <label class="check-item"><input type="checkbox"/> Bluetooth reproduktor</label>
+        <label class="check-item"><input type="checkbox"/> Pohodlné boty</label>
+        <label class="check-item"><input type="checkbox"/> Záznamy / sešity</label>
+      </div>
+    </div>
+    <div class="r3">
+      <div class="field"><label>Cena masáže</label><input type="number" id="ak-cena" placeholder="200"/></div>
+      <div class="field"><label>Délka (min)</label><input type="number" id="ak-delka" placeholder="30"/></div>
+      <div class="field"><label>Plán. počet masáží</label><input type="number" id="ak-pocet" placeholder="15"/></div>
+    </div>
+    <div class="field"><label>Plánovaný příjem (Kč)</label>
+      <div id="ak-prijem" style="padding:8px 12px;background:var(--bg2);border-radius:var(--r);font-size:13px;color:var(--green);font-weight:500">Vyplň cenu a počet masáží →</div>
+    </div>
+    <div class="field"><label>Vzdálenost TAM (km) – zpět se počítá automaticky</label><input type="number" id="ak-km" placeholder="20" oninput="calcAkce()"/></div>
+    <div id="ak-kalkulace" style="display:none;background:var(--bg2);border-radius:var(--r);padding:10px;font-size:12px;margin-top:4px"></div>
+    <div class="field"><label>Poznámky / speciální požadavky</label>
+      <textarea id="ak-poznamka" placeholder="Přijede kolegyně Lucie, parkování za 50 Kč..."></textarea>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-blue" onclick="ulozSesit('akce')">💾 Uložit</button>
+      <button class="btn btn-green" onclick="window.print()">🖨 Checklist</button>
+      <button class="btn btn-outline" onclick="closeSesit()">← Zpět</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SEŠIT 6: FAKTURA / PŘÍJEM -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="sesit-form card" id="f-faktura">
+    <div class="print-header"><h2>🧾 Denní přehled příjmů</h2><p>Masážní HUB CZ/SK · <span id="fk-print-datum"></span></p></div>
+    <h2>🧾 Denní přehled příjmů</h2>
+    <div class="r2">
+      <div class="field"><label>Masér</label>
+        <select id="fk-maser"><option>Martin</option><option>Lucie</option><option>Honza</option><option>Luboš</option></select>
+      </div>
+      <div class="field"><label>Datum</label><input type="date" id="fk-datum"/></div>
+    </div>
+    <div id="fk-polozky">
+      <div class="card" style="background:var(--bg2);margin-bottom:6px" id="fk-p-1">
+        <div class="r3" style="gap:5px">
+          <div class="field" style="margin:0"><label style="font-size:10px">Klient</label><input type="text" placeholder="Jana N." style="font-size:12px;padding:6px 8px"/></div>
+          <div class="field" style="margin:0"><label style="font-size:10px">Typ</label>
+            <select style="font-size:12px;padding:6px 8px"><option>Klasická</option><option>Sportovní</option><option>Relaxační</option><option>Hot stone</option></select>
+          </div>
+          <div class="field" style="margin:0"><label style="font-size:10px">Kč</label><input type="number" placeholder="800" style="font-size:12px;padding:6px 8px" oninput="calcFaktura()"/></div>
+        </div>
+      </div>
+    </div>
+    <button onclick="addFakturaPolozka()" class="btn btn-outline" style="margin-bottom:10px;font-size:12px">+ Přidat masáž</button>
+    <div style="background:var(--bg2);border-radius:var(--r);padding:12px;font-size:13px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="color:var(--txt2)">Počet masáží:</span><strong id="fk-pocet">0</strong>
+      </div>
+      <div style="display:flex;justify-content:space-between">
+        <span style="color:var(--txt2)">Celkový příjem:</span><strong id="fk-celkem" style="color:var(--green);font-size:16px">0 Kč</strong>
+      </div>
+    </div>
+    <div class="field" style="margin-top:10px"><label>Poznámka ke dni</label>
+      <textarea id="fk-poznamka" placeholder="Dobrý den, přišla i nová klientka..." style="min-height:50px"></textarea>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-blue" onclick="ulozSesit('faktura')">💾 Uložit</button>
+      <button class="btn btn-green" onclick="window.print()">🖨 Vytisknout</button>
+      <button class="btn btn-outline" onclick="closeSesit()">← Zpět</button>
+    </div>
+  </div>
+
+  <!-- ULOŽENÉ SEŠITY -->
+  <div class="card">
+    <h2>📚 Uložené záznamy</h2>
+    <div style="display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap">
+      <button class="btn-outline btn" style="font-size:11px" onclick="filterUlozene('vse')">Vše</button>
+      <button class="btn-outline btn" style="font-size:11px" onclick="filterUlozene('prijem')">👤 Příjmy</button>
+      <button class="btn-outline btn" style="font-size:11px" onclick="filterUlozene('masaz')">💆 Masáže</button>
+      <button class="btn-outline btn" style="font-size:11px" onclick="filterUlozene('akce')">🎪 Akce</button>
+    </div>
+    <div id="ulozene-list"><div style="text-align:center;padding:16px;color:var(--txt2);font-size:12px">Zatím žádné záznamy.</div></div>
+  </div>
+
+</div>
+
+<script>
+var SESITY_KEY = 'masazhub_sesity';
+var fkPocetPolozek = 1;
+var skalaValues = {};
+
+// ── NAVIGACE ──────────────────────────────────────────────────────────────────
+function openSesit(id){
+  document.querySelectorAll('.sesit').forEach(function(s){ s.classList.remove('on'); });
+  document.querySelectorAll('.sesit-form').forEach(function(f){ f.classList.remove('on'); });
+  var s = document.getElementById('s-'+id);
+  var f = document.getElementById('f-'+id);
+  if(s) s.classList.add('on');
+  if(f) f.classList.add('on');
+  // Nastavit dnešní datum
+  var dnes = new Date().toISOString().split('T')[0];
+  var datumEls = f ? f.querySelectorAll('input[type="date"]') : [];
+  datumEls.forEach(function(el){ if(!el.value) el.value = dnes; });
+  var dtEls = f ? f.querySelectorAll('input[type="datetime-local"]') : [];
+  dtEls.forEach(function(el){ if(!el.value) el.value = new Date().toISOString().slice(0,16); });
+  // Print datum
+  var pd = document.getElementById('pr-print-datum');
+  if(pd) pd.textContent = new Date().toLocaleDateString('cs-CZ');
+  var fd = document.getElementById('fk-print-datum');
+  if(fd) fd.textContent = new Date().toLocaleDateString('cs-CZ');
+  f.scrollIntoView({behavior:'smooth'});
+}
+
+function closeSesit(){
+  document.querySelectorAll('.sesit').forEach(function(s){ s.classList.remove('on'); });
+  document.querySelectorAll('.sesit-form').forEach(function(f){ f.classList.remove('on'); });
+  window.scrollTo(0,0);
+}
+
+// ── ŠKÁLA ─────────────────────────────────────────────────────────────────────
+function setSkala(groupId, el, val){
+  skalaValues[groupId] = val;
+  var btns = document.getElementById(groupId).querySelectorAll('.skala-btn');
+  btns.forEach(function(b){ b.classList.remove('on'); });
+  el.classList.add('on');
+}
+
+// ── ULOŽENÍ SEŠITŮ ────────────────────────────────────────────────────────────
+function ulozSesit(typ){
+  var sesity = loadSesity();
+  var zaznam = {
+    id: Date.now(),
+    typ: typ,
+    datum: new Date().toLocaleString('cs-CZ'),
+    data: {}
+  };
+  // Sbírat data dle typu
+  var form = document.getElementById('f-'+typ);
+  if(form){
+    form.querySelectorAll('input,select,textarea').forEach(function(el){
+      if(el.id) zaznam.data[el.id] = el.type==='checkbox'||el.type==='radio' ? el.checked : el.value;
+    });
+  }
+  sesity.unshift(zaznam);
+  localStorage.setItem(SESITY_KEY, JSON.stringify(sesity));
+  renderUlozene();
+  notify('✅ Sešit uložen!');
+}
+
+function loadSesity(){
+  try{ return JSON.parse(localStorage.getItem(SESITY_KEY)||'[]'); }
+  catch(e){ return []; }
+}
+
+var aktivniFilter = 'vse';
+function filterUlozene(f){ aktivniFilter = f; renderUlozene(); }
+
+function renderUlozene(){
+  var el = document.getElementById('ulozene-list'); if(!el) return;
+  var sesity = loadSesity();
+  var list = aktivniFilter==='vse' ? sesity : sesity.filter(function(s){ return s.typ===aktivniFilter; });
+  if(!list.length){ el.innerHTML='<div style="text-align:center;padding:16px;color:var(--txt2);font-size:12px">Žádné záznamy.</div>'; return; }
+  var typy = {prijem:'👤 Příjem klienta',masaz:'💆 Masáž',zdravi:'🩺 Zdraví',feedback:'⭐ Zpětná vazba',akce:'🎪 Akce',faktura:'🧾 Faktura'};
+  el.innerHTML = list.slice(0,10).map(function(s){
+    var hlavni = s.data['pr-jmeno']||s.data['ma-jmeno']||s.data['zd-jmeno']||s.data['fb-jmeno']||s.data['ak-nazev']||s.data['fk-maser']||'–';
+    return '<div class="ulozeny">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center">' +
+        '<span><strong>'+(typy[s.typ]||s.typ)+'</strong> · '+hlavni+'</span>' +
+        '<div style="display:flex;gap:5px;align-items:center">' +
+          '<span style="font-size:10px;color:var(--txt2)">'+s.datum+'</span>' +
+          '<span onclick="delSesit('+s.id+')" style="cursor:pointer;color:var(--red);font-size:12px">🗑</span>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function delSesit(id){
+  var sesity = loadSesity().filter(function(s){ return s.id!==id; });
+  localStorage.setItem(SESITY_KEY, JSON.stringify(sesity));
+  renderUlozene();
+}
+
+// ── KALKULACE AKCE ────────────────────────────────────────────────────────────
+var KM_SAZBA = 10; // Kč za km (tam + zpět)
+
+function calcAkce(){
+  var cena = parseFloat(document.getElementById('ak-cena').value)||0;
+  var pocet = parseFloat(document.getElementById('ak-pocet').value)||0;
+  var km = parseFloat(document.getElementById('ak-km').value)||0;
+  var prijem = cena * pocet;
+  var kmCelkem = km * 2; // tam + zpět
+  var naklady = Math.round(kmCelkem * KM_SAZBA);
+  var zisk = prijem - naklady;
+  var prEl = document.getElementById('ak-prijem');
+  if(prEl && prijem > 0) prEl.textContent = prijem.toLocaleString('cs-CZ') + ' Kč (plán)';
+  var kalEl = document.getElementById('ak-kalkulace');
+  if(kalEl && km > 0){
+    kalEl.style.display = 'block';
+    kalEl.innerHTML =
+      '📍 Tam + zpět: <strong>' + kmCelkem + ' km</strong> × ' + KM_SAZBA + ' Kč = <strong>' + naklady.toLocaleString('cs-CZ') + ' Kč</strong><br>' +
+      '💆 Tržby: <strong>' + prijem.toLocaleString('cs-CZ') + ' Kč</strong><br>' +
+      '💵 Čistý zisk: <strong style="color:' + (zisk>=0?'var(--green)':'var(--red)') + ';font-size:15px">' + zisk.toLocaleString('cs-CZ') + ' Kč</strong>' +
+      (pocet>0 ? '<br>💶 Zisk na masáž: <strong>' + Math.round(zisk/pocet).toLocaleString('cs-CZ') + ' Kč</strong>' : '');
+  }
+}
+
+// ── FAKTURA POLOŽKY ───────────────────────────────────────────────────────────
+function addFakturaPolozka(){
+  fkPocetPolozek++;
+  var cont = document.getElementById('fk-polozky');
+  var div = document.createElement('div');
+  div.className = 'card';
+  div.style.cssText = 'background:var(--bg2);margin-bottom:6px';
+  div.innerHTML = '<div class="r3" style="gap:5px">' +
+    '<div class="field" style="margin:0"><label style="font-size:10px">Klient</label><input type="text" placeholder="Klient '+fkPocetPolozek+'" style="font-size:12px;padding:6px 8px"/></div>' +
+    '<div class="field" style="margin:0"><label style="font-size:10px">Typ</label><select style="font-size:12px;padding:6px 8px"><option>Klasická</option><option>Sportovní</option><option>Relaxační</option><option>Hot stone</option></select></div>' +
+    '<div class="field" style="margin:0"><label style="font-size:10px">Kč</label><input type="number" placeholder="800" style="font-size:12px;padding:6px 8px" oninput="calcFaktura()"/></div>' +
+  '</div>';
+  cont.appendChild(div);
+}
+
+function calcFaktura(){
+  var inputs = document.querySelectorAll('#fk-polozky input[type="number"]');
+  var celkem = 0; var pocet = 0;
+  inputs.forEach(function(i){ var v = parseFloat(i.value); if(v>0){ celkem+=v; pocet++; } });
+  document.getElementById('fk-pocet').textContent = pocet;
+  document.getElementById('fk-celkem').textContent = celkem.toLocaleString('cs-CZ') + ' Kč';
+}
+
+// ── NOTIFY ────────────────────────────────────────────────────────────────────
+function notify(msg){
+  var t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a18;color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;z-index:9999';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(function(){ t.remove(); }, 2500);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderUlozene();
+// Nastavit dnešní datum v faktuře
+var dnes = new Date().toISOString().split('T')[0];
+var fdEl = document.getElementById('fk-datum');
+if(fdEl) fdEl.value = dnes;
+</script>
+</body>
+</html>

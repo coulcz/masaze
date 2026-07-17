@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Masáže pro ženy – Masážní HUB CZ/SK</title>
+<meta name="description" content="Profesionální masáže pro ženy. Prenatální, relaxační, lymfatická, anti-celulitidová. Rezervace online.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#fff;--bg2:#fdf5f7;--txt:#1a1a18;--txt2:#6b6b67;--brd:rgba(219,112,147,.2);--pink:#D4547A;--pink2:#E8789A;--pink3:#f9e6ed;--green:#1D9E75;--blue:#185FA5;--r:10px;--rl:16px}
+body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;color:var(--txt);background:var(--bg2)}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#D4547A,#9B2D5A);color:#fff;padding:30px 16px;text-align:center;position:relative;overflow:hidden}
+.header::before{content:'💆‍♀️✨💐🌸💅';position:absolute;font-size:40px;opacity:.1;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;letter-spacing:20px}
+.header h1{font-size:24px;font-weight:400;margin-bottom:6px;position:relative}
+.header p{font-size:13px;opacity:.9;position:relative}
+
+/* NAV */
+.nav{display:flex;gap:4px;overflow-x:auto;padding:10px 16px;background:var(--bg);border-bottom:.5px solid var(--brd);scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav-btn{padding:7px 14px;border-radius:20px;border:.5px solid var(--brd);background:var(--bg);cursor:pointer;font-size:12px;white-space:nowrap;flex-shrink:0;color:var(--txt2)}
+.nav-btn.on{background:var(--pink);color:#fff;border-color:var(--pink)}
+
+.wrap{max-width:700px;margin:0 auto;padding:14px}
+.view{display:none}.view.on{display:block}
+
+/* KARTY */
+.card{background:var(--bg);border:.5px solid var(--brd);border-radius:var(--rl);padding:16px;margin-bottom:12px}
+.card h2{font-size:17px;font-weight:500;margin-bottom:8px;color:var(--pink)}
+.card h3{font-size:14px;font-weight:500;margin-bottom:8px;color:var(--pink)}
+.card p{font-size:13px;color:var(--txt2);line-height:1.8;margin-bottom:10px}
+
+/* MASÁŽ KARTA */
+.masaz-karta{background:var(--bg);border:.5px solid var(--brd);border-radius:var(--rl);padding:14px;margin-bottom:10px;transition:box-shadow .15s}
+.masaz-karta:hover{box-shadow:0 2px 12px rgba(212,84,122,.15)}
+.masaz-ico{font-size:36px;margin-bottom:8px}
+.masaz-nazev{font-size:15px;font-weight:500;color:var(--pink);margin-bottom:4px}
+.masaz-popis{font-size:12px;color:var(--txt2);line-height:1.7;margin-bottom:8px}
+
+/* PILLS */
+.pill{display:inline-block;padding:3px 10px;border-radius:10px;font-size:11px;margin:2px}
+.p-pink{background:var(--pink3);color:var(--pink)}
+.p-green{background:#E1F5EE;color:#085041}
+.p-gray{background:var(--bg2);color:var(--txt2)}
+
+/* FORMULÁŘ */
+.field{margin-bottom:10px}
+.field label{display:block;font-size:12px;color:var(--txt2);margin-bottom:4px;font-weight:500}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg2);color:var(--txt);font-size:13px;font-family:inherit;outline:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--pink)}
+.field textarea{min-height:80px;resize:vertical}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* TLAČÍTKA */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:11px 20px;border-radius:var(--r);border:none;cursor:pointer;font-size:13px;font-family:inherit;font-weight:500}
+.btn-pink{background:var(--pink);color:#fff}
+.btn-pink:hover{background:#9B2D5A}
+.btn-outline{background:transparent;border:.5px solid var(--brd);color:var(--txt)}
+.btn-full{width:100%}
+
+/* CENÍK */
+.cena-box{background:var(--pink3);border-radius:var(--r);padding:8px 12px;display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.cena-val{font-size:16px;font-weight:600;color:var(--pink)}
+
+/* TIPY SEKCE */
+.tip-box{background:var(--pink3);border-left:3px solid var(--pink);border-radius:0 var(--r) var(--r) 0;padding:10px 14px;margin-bottom:8px;font-size:12px;line-height:1.7}
+
+/* STARS */
+.stars{color:#F5A623;font-size:16px;margin-bottom:4px}
+
+/* KONTRAINDIKACE */
+.kontra{background:#FCEBEB;border-left:3px solid #A32D2D;border-radius:0 var(--r) var(--r) 0;padding:10px 14px;margin-bottom:8px;font-size:12px;line-height:1.7;color:#A32D2D}
+
+/* FAQ */
+.faq-item{border-bottom:.5px solid var(--brd);padding:12px 0;cursor:pointer}
+.faq-q{font-size:13px;font-weight:500;display:flex;justify-content:space-between;align-items:center}
+.faq-a{font-size:12px;color:var(--txt2);line-height:1.7;margin-top:8px;display:none}
+.faq-item.on .faq-a{display:block}
+.faq-item.on .faq-ico{transform:rotate(180deg)}
+.faq-ico{transition:transform .2s;color:var(--pink)}
+
+/* GRID */
+.masaze-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a18;color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;z-index:9999;display:none}
+
+@media(max-width:600px){
+  .r2{grid-template-columns:1fr}
+  .masaze-grid{grid-template-columns:1fr}
+}
+@media(prefers-color-scheme:dark){
+  :root{--bg:#1c1c1a;--bg2:#252523;--txt:#f0ede8;--txt2:#a8a89e;--brd:rgba(219,112,147,.2);--pink3:rgba(212,84,122,.1)}
+}
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<!-- HEADER -->
+<div class="header">
+  <div style="font-size:48px;margin-bottom:8px;position:relative">💆‍♀️</div>
+  <h1>Masáže pro ženy</h1>
+  <p>Péče o tělo i duši · Masážní HUB CZ/SK</p>
+  <div style="display:flex;justify-content:center;gap:12px;margin-top:12px;position:relative;flex-wrap:wrap">
+    <div style="background:rgba(255,255,255,.15);border-radius:20px;padding:5px 14px;font-size:12px">🌸 Pouze pro ženy</div>
+    <div style="background:rgba(255,255,255,.15);border-radius:20px;padding:5px 14px;font-size:12px">💆‍♀️ Certifikované masérky</div>
+    <div style="background:rgba(255,255,255,.15);border-radius:20px;padding:5px 14px;font-size:12px">🏠 U vás doma</div>
+  </div>
+</div>
+
+<!-- NAVIGACE -->
+<div class="nav">
+  <button class="nav-btn on" onclick="sw('masaze')">💆‍♀️ Masáže</button>
+  <button class="nav-btn" onclick="sw('prenatalni')">🤰 Těhotenství</button>
+  <button class="nav-btn" onclick="sw('rezervace')">📅 Rezervace</button>
+  <button class="nav-btn" onclick="sw('tipy')">💡 Tipy pro ženy</button>
+  <button class="nav-btn" onclick="sw('faq')">❓ FAQ</button>
+  <button class="nav-btn" onclick="sw('onas')">💐 O nás</button>
+</div>
+
+<div class="wrap">
+
+  <!-- ═══ MASÁŽE ═══ -->
+  <div class="view on" id="view-masaze">
+
+    <div class="masaze-grid">
+
+      <div class="masaz-karta">
+        <div class="masaz-ico">🌸</div>
+        <div class="masaz-nazev">Relaxační masáž</div>
+        <div class="masaz-popis">Celotělová relaxace, uvolnění stresu a napětí. Jemné hmatové techniky, aromatické oleje.</div>
+        <div><span class="pill p-pink">60 min</span><span class="pill p-pink">90 min</span></div>
+        <div class="cena-box"><span style="font-size:12px;color:var(--txt2)">Od</span><span class="cena-val">700 Kč</span></div>
+        <button class="btn btn-pink btn-full" style="margin-top:8px;font-size:12px" onclick="sw('rezervace')">📅 Rezervovat</button>
+      </div>
+
+      <div class="masaz-karta">
+        <div class="masaz-ico">💧</div>
+        <div class="masaz-nazev">Lymfatická masáž</div>
+        <div class="masaz-popis">Odvodnění, detox, otoky. Speciálně pro ženy po porodu nebo s lymfatickými problémy.</div>
+        <div><span class="pill p-pink">60 min</span><span class="pill p-pink">90 min</span></div>
+        <div class="cena-box"><span style="font-size:12px;color:var(--txt2)">Od</span><span class="cena-val">800 Kč</span></div>
+        <button class="btn btn-pink btn-full" style="margin-top:8px;font-size:12px" onclick="sw('rezervace')">📅 Rezervovat</button>
+      </div>
+
+      <div class="masaz-karta">
+        <div class="masaz-ico">🍊</div>
+        <div class="masaz-nazev">Anti-celulitidová</div>
+        <div class="masaz-popis">Speciální techniky na problematické partie. Stehna, hýždě, břicho. Viditelné výsledky!</div>
+        <div><span class="pill p-pink">45 min</span><span class="pill p-pink">60 min</span></div>
+        <div class="cena-box"><span style="font-size:12px;color:var(--txt2)">Od</span><span class="cena-val">750 Kč</span></div>
+        <button class="btn btn-pink btn-full" style="margin-top:8px;font-size:12px" onclick="sw('rezervace')">📅 Rezervovat</button>
+      </div>
+
+      <div class="masaz-karta">
+        <div class="masaz-ico">🌹</div>
+        <div class="masaz-nazev">Aromaterapie</div>
+        <div class="masaz-popis">Relaxační masáž s esenciálními oleji. Levandule, růže, bergamot. Tělo i duše v harmonii.</div>
+        <div><span class="pill p-pink">60 min</span><span class="pill p-pink">90 min</span></div>
+        <div class="cena-box"><span style="font-size:12px;color:var(--txt2)">Od</span><span class="cena-val">850 Kč</span></div>
+        <button class="btn btn-pink btn-full" style="margin-top:8px;font-size:12px" onclick="sw('rezervace')">📅 Rezervovat</button>
+      </div>
+
+      <div class="masaz-karta">
+        <div class="masaz-ico">🪨</div>
+        <div class="masaz-nazev">Hot stone</div>
+        <div class="masaz-popis">Horké lávové kameny uvolní i ta nejhlubší napětí. Luxusní zážitek pro tělo i mysl.</div>
+        <div><span class="pill p-pink">90 min</span></div>
+        <div class="cena-box"><span style="font-size:12px;color:var(--txt2)">Od</span><span class="cena-val">1 200 Kč</span></div>
+        <button class="btn btn-pink btn-full" style="margin-top:8px;font-size:12px" onclick="sw('rezervace')">📅 Rezervovat</button>
+      </div>
+
+      <div class="masaz-karta">
+        <div class="masaz-ico">😌</div>
+        <div class="masaz-nazev">Masáž šíje a hlavy</div>
+        <div class="masaz-popis">Migréna, bolesti hlavy, napětí v šíji. Rychlá úleva za 30 minut. Ideální po práci!</div>
+        <div><span class="pill p-pink">30 min</span><span class="pill p-pink">45 min</span></div>
+        <div class="cena-box"><span style="font-size:12px;color:var(--txt2)">Od</span><span class="cena-val">400 Kč</span></div>
+        <button class="btn btn-pink btn-full" style="margin-top:8px;font-size:12px" onclick="sw('rezervace')">📅 Rezervovat</button>
+      </div>
+
+    </div>
+
+    <!-- DÁRKOVÝ POUKAZ -->
+    <div class="card" style="background:linear-gradient(135deg,var(--pink3),#fdf5f7);border-color:var(--pink);text-align:center">
+      <div style="font-size:36px;margin-bottom:8px">🎁</div>
+      <h3>Dárkový poukaz pro ženu</h3>
+      <p>Ideální dárek pro maminku, přítelkyni, kolegyni. Narozeniny, MDŽ, Valentýn...</p>
+      <button class="btn btn-pink" onclick="genPoukazZeny()">🎁 Vytvořit poukaz</button>
+    </div>
+
+  </div>
+
+  <!-- ═══ TĚHOTENSTVÍ ═══ -->
+  <div class="view" id="view-prenatalni">
+    <div class="card" style="background:linear-gradient(135deg,#FFF8E1,#fff);border-color:#F5A623">
+      <div style="font-size:48px;text-align:center;margin-bottom:12px">🤰</div>
+      <h2 style="text-align:center;color:#7D5A00">Prenatální masáž</h2>
+      <p style="text-align:center">Speciální masáž pro těhotné ženy. Bezpečná, jemná, přizpůsobená každému trimestru.</p>
+    </div>
+
+    <div class="card">
+      <h3>✅ Výhody prenatální masáže</h3>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div class="tip-box">😌 <strong>Úleva od bolestí zad</strong> – těhotenství zatěžuje páteř. Masáž pomáhá!</div>
+        <div class="tip-box">💧 <strong>Otoky nohou</strong> – lymfatická masáž pomáhá s otoky v těhotenství</div>
+        <div class="tip-box">😴 <strong>Lepší spánek</strong> – uvolnění svalů = kvalitnější spánek</div>
+        <div class="tip-box">❤️ <strong>Snížení stresu</strong> – pro mámu i miminko!</div>
+        <div class="tip-box">🤱 <strong>Příprava na porod</strong> – uvolnění pánevního dna</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>⚠️ Kdy NEJÍT na masáž v těhotenství</h3>
+      <div class="kontra">❌ 1. trimestr (1-12 týden) – raději počkejte</div>
+      <div class="kontra">❌ Rizikové těhotenství</div>
+      <div class="kontra">❌ Předčasné stahy</div>
+      <div class="kontra">❌ Krvácení nebo bolesti</div>
+      <div class="tip-box" style="margin-top:8px">💡 Vždy konzultujte s gynekologem před první masáží!</div>
+    </div>
+
+    <div class="card">
+      <h3>💰 Ceník prenatální masáže</h3>
+      <div class="cena-box" style="margin-bottom:8px"><span>Prenatální masáž 60 min</span><span class="cena-val">850 Kč</span></div>
+      <div class="cena-box" style="margin-bottom:8px"><span>Prenatální masáž 90 min</span><span class="cena-val">1 200 Kč</span></div>
+      <div class="cena-box"><span>Masáž po porodu 60 min</span><span class="cena-val">800 Kč</span></div>
+      <button class="btn btn-pink btn-full" style="margin-top:12px" onclick="sw('rezervace')">📅 Rezervovat prenatální masáž</button>
+    </div>
+  </div>
+
+  <!-- ═══ REZERVACE ═══ -->
+  <div class="view" id="view-rezervace">
+    <div class="card">
+      <h2>📅 Rezervace masáže</h2>
+      <div class="field"><label>Jméno <span style="color:var(--pink)">*</span></label>
+        <input type="text" id="rez-jmeno" placeholder="Jana Nováková"/>
+      </div>
+      <div class="field"><label>Telefon <span style="color:var(--pink)">*</span></label>
+        <input type="tel" id="rez-tel" placeholder="+420 777 123 456"/>
+      </div>
+      <div class="r2">
+        <div class="field"><label>Typ masáže</label>
+          <select id="rez-typ">
+            <option>🌸 Relaxační masáž</option>
+            <option>💧 Lymfatická masáž</option>
+            <option>🍊 Anti-celulitidová</option>
+            <option>🌹 Aromaterapie</option>
+            <option>🪨 Hot stone</option>
+            <option>😌 Šíje a hlava</option>
+            <option>🤰 Prenatální masáž</option>
+          </select>
+        </div>
+        <div class="field"><label>Délka</label>
+          <select id="rez-delka">
+            <option>30 min</option>
+            <option>45 min</option>
+            <option selected>60 min</option>
+            <option>90 min</option>
+          </select>
+        </div>
+      </div>
+      <div class="r2">
+        <div class="field"><label>Datum</label>
+          <input type="date" id="rez-datum"/>
+        </div>
+        <div class="field"><label>Čas</label>
+          <select id="rez-cas">
+            <option>09:00</option><option>10:00</option><option>11:00</option>
+            <option>12:00</option><option>13:00</option><option>14:00</option>
+            <option>15:00</option><option>16:00</option><option>17:00</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Kde chcete masáž</label>
+        <select id="rez-kde">
+          <option value="klientka">🏠 U mě doma</option>
+          <option value="studio">💆 Ve studiu</option>
+        </select>
+      </div>
+      <div class="field"><label>Zdravotní poznámka / speciální přání</label>
+        <textarea id="rez-note" placeholder="Těhotenství 2. trimester, bolesti zad, alergie na levanduli..."></textarea>
+      </div>
+      <div style="background:var(--pink3);border-radius:var(--r);padding:10px;font-size:11px;margin-bottom:12px;line-height:1.7">
+        🔒 Vaše údaje jsou v bezpečí. Zpracováváme je pouze pro účely rezervace v souladu s GDPR.
+      </div>
+      <button class="btn btn-pink btn-full" onclick="odeslat_rez()">💆‍♀️ Odeslat rezervaci</button>
+      <div id="rez-confirm" style="display:none;margin-top:12px;background:#E1F5EE;border-radius:var(--r);padding:14px;text-align:center">
+        <div style="font-size:32px;margin-bottom:6px">🎉</div>
+        <strong>Rezervace přijata!</strong>
+        <p style="font-size:12px;color:var(--txt2);margin-top:4px">Ozveme se vám do 2 hodin pro potvrzení.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TIPY PRO ŽENY ═══ -->
+  <div class="view" id="view-tipy">
+    <div class="card">
+      <h2>💡 Tipy před masáží</h2>
+      <div class="tip-box">🚿 <strong>Sprcha před masáží</strong> – čistá pokožka = příjemnější zážitek</div>
+      <div class="tip-box">🍽 <strong>Lehce najíst</strong> – 1-2 hodiny před masáží, ne hned po jídle</div>
+      <div class="tip-box">💧 <strong>Vypít vodu</strong> – hydratace pomáhá při detoxu</div>
+      <div class="tip-box">👗 <strong>Pohodlné oblečení</strong> – snadno svléknout a obléknout</div>
+      <div class="tip-box">🌺 <strong>Bez silných parfémů</strong> – mohou kolidovat s oleji</div>
+      <div class="tip-box">💬 <strong>Říct masérce vše</strong> – zdravotní stav, bolesti, přání</div>
+    </div>
+
+    <div class="card">
+      <h2>💡 Tipy po masáži</h2>
+      <div class="tip-box">💧 <strong>Pít hodně vody</strong> – min. 1-2 litry, detox organismu</div>
+      <div class="tip-box">😴 <strong>Odpočívat</strong> – dopřejte si hodinu klidu</div>
+      <div class="tip-box">🛁 <strong>Teplá sprcha</strong> – ne studená, ne horká</div>
+      <div class="tip-box">🏋 <strong>Vynechat sport</strong> – min. 4-6 hodin po masáži</div>
+      <div class="tip-box">🍷 <strong>Alkohol ne</strong> – masáž zrychluje vstřebávání</div>
+    </div>
+
+    <div class="card">
+      <h2>🌸 Jak často chodit na masáž?</h2>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div class="tip-box">💆 <strong>Relaxace / stres:</strong> 1x za 2-4 týdny</div>
+        <div class="tip-box">💧 <strong>Lymfatická:</strong> série 5-10 masáží, pak 1x měsíčně</div>
+        <div class="tip-box">🍊 <strong>Anti-celulitida:</strong> série 10-15, pak udržovací</div>
+        <div class="tip-box">🤰 <strong>Prenatální:</strong> od 2. trimestru, 1x za 2-3 týdny</div>
+        <div class="tip-box">😌 <strong>Šíje / bolesti:</strong> dle potřeby, akutně i 2x týdně</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FAQ ═══ -->
+  <div class="view" id="view-faq">
+    <div class="card">
+      <h2>❓ Časté otázky</h2>
+      <div id="faq-list">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Je masáž bezpečná v těhotenství? <span class="faq-ico">▼</span></div>
+          <div class="faq-a">Ano, od 2. trimestru je prenatální masáž bezpečná a prospěšná. Vždy konzultujte s gynekologem. Naše masérky mají specializaci na prenatální masáže.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Mohu mít masáž při menstruaci? <span class="faq-ico">▼</span></div>
+          <div class="faq-a">Záleží na vaší toleranci. Lehká relaxační masáž může pomoci s křečemi. Silné techniky a lymfatická masáž se nedoporučují první 1-2 dny. Řekněte masérce – přizpůsobí se.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Musím se svléknout úplně? <span class="faq-ico">▼</span></div>
+          <div class="faq-a">Ne! Záleží jen na vás a typu masáže. Intimní části jsou vždy zakryty. Vaše pohodlí je na prvním místě – vždy říkejte co vám vyhovuje.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Mohu si vybrat ženskou masérku? <span class="faq-ico">▼</span></div>
+          <div class="faq-a">Samozřejmě! Při rezervaci si vyberte masérku. Lucie v Ostravě nebo jiná masérka z našeho týmu. Váš komfort je priorita.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Pomáhá masáž při PMS? <span class="faq-ico">▼</span></div>
+          <div class="faq-a">Ano! Relaxační masáž nebo masáž zad a beder pomáhá snížit bolesti při PMS. Doporučujeme přijít 2-3 dny před menstruací.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Jak rychle uvidím výsledky anti-celulitidové masáže? <span class="faq-ico">▼</span></div>
+          <div class="faq-a">První výsledky po 5-6 masážích. Pro trvalé výsledky doporučujeme sérii 10-15 masáží kombinovanou s dostatkem vody a pohybem.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Jedete i domů? <span class="faq-ico">▼</span></div>
+          <div class="faq-a">Ano! Jsme mobilní masérna. Přijedeme za vámi domů, do práce nebo kamkoli potřebujete. Cena zahrnuje dopravu dle vzdálenosti.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ O NÁS ═══ -->
+  <div class="view" id="view-onas">
+    <div class="card" style="text-align:center">
+      <div style="font-size:48px;margin-bottom:12px">💐</div>
+      <h2>Masáže pro ženy</h2>
+      <p>Jsme součástí Masážní HUB CZ/SK – platformy která spojuje profesionální maséry s klienty po celé ČR a SR.</p>
+    </div>
+
+    <div class="card">
+      <h3>👩 Naše masérky</h3>
+      <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--bg2);border-radius:var(--r);margin-bottom:8px">
+        <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--pink),#9B2D5A);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">💆</div>
+        <div>
+          <div style="font-size:13px;font-weight:500">Lucie</div>
+          <div style="font-size:11px;color:var(--txt2)">Ostrava · Antakarana · Specialistka na ženské masáže</div>
+          <div><span class="pill p-pink">Prenatální</span><span class="pill p-pink">Lymfatická</span><span class="pill p-pink">Relaxační</span></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--bg2);border-radius:var(--r)">
+        <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--green),#0d6b4f);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🧘</div>
+        <div>
+          <div style="font-size:13px;font-weight:500">Martin</div>
+          <div style="font-size:11px;color:var(--txt2)">Ostrava · Val. Meziříčí · Mobilní masér</div>
+          <div><span class="pill p-green">Klasická</span><span class="pill p-green">Sportovní</span><span class="pill p-green">Hot stone</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="stars">⭐⭐⭐⭐⭐</div>
+      <p style="font-style:italic">"Lucie je úžasná masérka! Prenatální masáž mi pomohla s bolestmi zad v 7. měsíci těhotenství. Vřele doporučuji!"</p>
+      <div style="font-size:11px;color:var(--txt2);margin-top:4px">— Jana K., Ostrava</div>
+    </div>
+
+    <div class="card">
+      <div class="stars">⭐⭐⭐⭐⭐</div>
+      <p style="font-style:italic">"Anti-celulitidová masáž funguje! Po sérii 10 masáží vidím výrazné zlepšení. Martin přijede přímo domů – super!"</p>
+      <div style="font-size:11px;color:var(--txt2);margin-top:4px">— Petra M., Valašské Meziříčí</div>
+    </div>
+
+    <div style="text-align:center;margin-top:8px">
+      <a href="index.html" style="font-size:12px;color:var(--txt2);text-decoration:none">← Zpět do Masážní HUB CZ/SK</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function sw(tab){
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('on'); });
+  document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('on'); });
+  var v = document.getElementById('view-'+tab); if(v) v.classList.add('on');
+  document.querySelectorAll('.nav-btn').forEach(function(b){
+    if(b.getAttribute('onclick') && b.getAttribute('onclick').includes("'"+tab+"'")) b.classList.add('on');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleFaq(el){
+  el.classList.toggle('on');
+}
+
+function odeslat_rez(){
+  var jmeno = document.getElementById('rez-jmeno').value.trim();
+  var tel = document.getElementById('rez-tel').value.trim();
+  if(!jmeno||!tel){ notify('Vyplň jméno a telefon!'); return; }
+  // Uložit do localStorage
+  var rez = [];
+  try{ var r = localStorage.getItem('rezervace_cekajici'); if(r) rez = JSON.parse(r); }catch(e){}
+  rez.push({
+    id: Date.now(),
+    klient_jmeno: jmeno,
+    klient_tel: tel,
+    maser_jmeno: 'Lucie / Martin',
+    datum: document.getElementById('rez-datum').value,
+    cas: document.getElementById('rez-cas').value,
+    typ: document.getElementById('rez-typ').value,
+    note: document.getElementById('rez-note').value,
+    kde: document.getElementById('rez-kde').value,
+    stav: 'ceka',
+    odeslano: new Date().toLocaleString('cs-CZ'),
+    zdroj: 'masaze_zeny.html'
+  });
+  try{ localStorage.setItem('rezervace_cekajici', JSON.stringify(rez)); }catch(e){}
+  document.getElementById('rez-confirm').style.display = 'block';
+  notify('💆‍♀️ Rezervace odeslána!');
+}
+
+function genPoukazZeny(){
+  var w = window.open('','_blank');
+  var kod = 'ZEN-' + Date.now().toString(36).toUpperCase();
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Dárkový poukaz</title><style>body{font-family:sans-serif;background:#fdf5f7;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px}.cert{background:#fff;max-width:500px;width:100%;padding:40px;border:3px solid #D4547A;border-radius:16px;text-align:center;box-shadow:0 10px 40px rgba(212,84,122,.2)}.ico{font-size:56px;margin-bottom:12px}.nazev{font-size:24px;color:#D4547A;margin-bottom:4px}.sub{font-size:13px;color:#999;margin-bottom:20px}.pro{font-size:18px;margin-bottom:4px}.hodnota{font-size:48px;font-weight:bold;color:#D4547A;margin:16px 0}.kod{font-size:18px;letter-spacing:4px;color:#D4547A;border:2px dashed #D4547A;padding:10px 20px;border-radius:8px;margin:16px 0}.platnost{font-size:12px;color:#999;margin-top:16px}</style></head><body><div class="cert"><div class="ico">💐</div><div class="nazev">Dárkový poukaz</div><div class="sub">Masáže pro ženy · Masážní HUB CZ/SK</div><div class="pro">Pro vaši výjimečnou ženu 💆‍♀️</div><div class="hodnota">800 Kč</div><div class="kod">'+kod+'</div><div class="platnost">Platný 12 měsíců · '+new Date().toLocaleDateString('cs-CZ')+'</div></div><br><button onclick="window.print()" style="padding:12px 24px;background:#D4547A;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer">🖨 Vytisknout</button></body></html>');
+  w.document.close();
+  notify('🎁 Poukaz vygenerován!');
+}
+
+function notify(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  setTimeout(function(){ t.style.display = 'none'; }, 2500);
+}
+
+// Nastavit min datum
+var dnes = new Date().toISOString().split('T')[0];
+var dd = document.getElementById('rez-datum');
+if(dd){ dd.min = dnes; dd.value = dnes; }
+</script>
+</body>
+</html>

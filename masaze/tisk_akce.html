@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tisk na akce – Masážní HUB</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--blue:#185FA5;--green:#1D9E75;--bg:#f8faf9;--bg2:#fff;--txt:#1a2420;--txt2:#5a7068;--brd:rgba(0,0,0,.1);--r:12px;--rl:20px}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);max-width:700px;margin:0 auto;padding:16px}
+.hero{background:linear-gradient(135deg,var(--blue),#0C447C);color:#fff;border-radius:var(--rl);padding:20px;margin-bottom:16px;text-align:center}
+.hero h1{font-size:20px;margin-bottom:4px}
+.hero p{font-size:11px;opacity:.85}
+.tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.tab{padding:8px 14px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg2);cursor:pointer;font-size:12px;font-weight:500}
+.tab.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.card{background:var(--bg2);border-radius:var(--rl);padding:16px;margin-bottom:12px;border:.5px solid var(--brd)}
+.card h2{font-size:15px;margin-bottom:12px}
+.field{margin-bottom:10px}
+.field label{display:block;font-size:11px;color:var(--txt2);margin-bottom:4px;font-weight:500}
+.field input,.field select,.field textarea{width:100%;padding:9px 12px;border-radius:var(--r);border:.5px solid var(--brd);background:var(--bg);color:var(--txt);font-size:13px;font-family:inherit}
+.btn{padding:12px;border-radius:var(--r);border:none;background:linear-gradient(135deg,var(--blue),#0C447C);color:#fff;font-size:13px;font-weight:600;cursor:pointer;width:100%;font-family:inherit;margin-bottom:6px}
+.btn-g{background:linear-gradient(135deg,var(--green),#0d6b4f)}
+.btn-sm{padding:7px 14px;width:auto;font-size:11px;border-radius:8px;background:var(--bg);color:var(--txt);border:.5px solid var(--brd);cursor:pointer}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nahled{border:.5px solid var(--brd);border-radius:var(--r);overflow:hidden;margin-top:10px}
+.sekce{display:none}
+.sekce.on{display:block}
+@media print{.no-print{display:none}}
+</style>
+</head>
+<body>
+
+<div class="hero no-print">
+  <div style="font-size:36px;margin-bottom:8px">🖨</div>
+  <h1>Tisk na akce</h1>
+  <p>Pexeso · Letáky · Nápisy · Cedule</p>
+</div>
+
+<!-- TABS -->
+<div class="tabs no-print">
+  <div class="tab on" onclick="sw('pexeso')">🃏 Pexeso</div>
+  <div class="tab" onclick="sw('letaky')">📄 Letáky A6</div>
+  <div class="tab" onclick="sw('napisy')">🔤 Nápisy MASAZE</div>
+  <div class="tab" onclick="sw('cedule')">🪧 Cedule stanu</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- PEXESO -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="sekce on" id="sekce-pexeso">
+  <div class="card no-print">
+    <h2>🃏 Masážní pexeso</h2>
+    <div class="grid">
+      <div class="field">
+        <label>Barva karet</label>
+        <select id="pex-barva" onchange="pexNahled()">
+          <option value="#185FA5">🔵 Modrá</option>
+          <option value="#1D9E75">🟢 Zelená</option>
+          <option value="#9B2D5A">🔴 Vínová</option>
+          <option value="#BA7517">🟡 Zlatá</option>
+          <option value="#1a1a18">⚫ Černá</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Velikost karet</label>
+        <select id="pex-velikost">
+          <option value="60">Malé (60×60mm)</option>
+          <option value="80" selected>Střední (80×80mm)</option>
+          <option value="100">Velké (100×100mm)</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Název na rubu karet</label>
+      <input type="text" id="pex-nazev" value="💆 Masážní HUB" oninput="pexNahled()"/>
+    </div>
+    <button class="btn" onclick="tiskPexeso()">🖨 Tisknout pexeso (8 párů = 16 karet)</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- LETÁKY A6 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="sekce" id="sekce-letaky">
+  <div class="card no-print">
+    <h2>📄 Letáky A6 na akci</h2>
+    <div class="grid">
+      <div class="field">
+        <label>Masér/ka</label>
+        <select id="let-maser">
+          <option>Martin</option>
+          <option>Lucie</option>
+          <option>Honza</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Telefon</label>
+        <input type="tel" id="let-tel" value="+420 777 000 000"/>
+      </div>
+    </div>
+    <div class="field">
+      <label>Akce / místo</label>
+      <input type="text" id="let-akce" value="Wellness Festival 2025"/>
+    </div>
+    <div class="field">
+      <label>Sleva / akční nabídka</label>
+      <input type="text" id="let-sleva" value="10% sleva pro návštěvníky akce!"/>
+    </div>
+    <div class="field">
+      <label>QR kód URL</label>
+      <input type="text" id="let-url" value="https://coulcz.github.io/masaze"/>
+    </div>
+    <button class="btn" onclick="tiskLetaky()">🖨 Tisknout letáky (4× A6 na A4)</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- NÁPISY MASAZE -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="sekce" id="sekce-napisy">
+  <div class="card no-print">
+    <h2>🔤 Nápisy MASAZE × 4</h2>
+    <p style="font-size:11px;color:var(--txt2);margin-bottom:12px">4 velké nápisy na stan — jeden na každou stranu</p>
+    <div class="grid">
+      <div class="field">
+        <label>Barva textu</label>
+        <select id="nap-barva">
+          <option value="#185FA5">🔵 Modrá</option>
+          <option value="#1D9E75">🟢 Zelená</option>
+          <option value="#fff">⚪ Bílá</option>
+          <option value="#FFD700">🟡 Zlatá</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Barva pozadí</label>
+        <select id="nap-bg">
+          <option value="#fff">⚪ Bílá</option>
+          <option value="#185FA5">🔵 Modrá</option>
+          <option value="#1a1a18">⚫ Černá</option>
+          <option value="#1D9E75">🟢 Zelená</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Text pod nápisem (nepovinné)</label>
+      <input type="text" id="nap-sub" value="Mobilní masáže · Přijďte se uvolnit!"/>
+    </div>
+    <div class="field">
+      <label>Telefon</label>
+      <input type="text" id="nap-tel" value="+420 777 000 000"/>
+    </div>
+    <button class="btn" onclick="tiskNapisy()">🖨 Tisknout 4× nápis MASAZE (A4 na výšku)</button>
+    <button class="btn btn-g" onclick="tiskNapisyA3()">🖨 Tisknout 4× nápis MASAZE (A3 – velké!)</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- CEDULE STANU -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="sekce" id="sekce-cedule">
+  <div class="card no-print">
+    <h2>🪧 Cedule/banner stanu</h2>
+    <p style="font-size:11px;color:var(--txt2);margin-bottom:12px">Profesionální cedule s QR kódem pro stan</p>
+    <div class="field">
+      <label>Hlavní text</label>
+      <input type="text" id="ced-hlavni" value="MOBILNÍ MASÁŽE"/>
+    </div>
+    <div class="field">
+      <label>Podtext</label>
+      <input type="text" id="ced-sub" value="Přijďte se uvolnit · Relaxační · Sportovní · Léčebná"/>
+    </div>
+    <div class="field">
+      <label>Masér + telefon</label>
+      <input type="text" id="ced-kontakt" value="Martin · +420 777 000 000"/>
+    </div>
+    <div class="field">
+      <label>QR kód URL</label>
+      <input type="text" id="ced-url" value="https://coulcz.github.io/masaze"/>
+    </div>
+    <div class="grid">
+      <div class="field">
+        <label>Barva</label>
+        <select id="ced-barva">
+          <option value="#185FA5">🔵 Modrá</option>
+          <option value="#1D9E75">🟢 Zelená</option>
+          <option value="#1a1a18">⚫ Černá</option>
+          <option value="#9B2D5A">🔴 Vínová</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Formát</label>
+        <select id="ced-format">
+          <option value="a4l">A4 na šířku</option>
+          <option value="a4p">A4 na výšku</option>
+          <option value="a3l">A3 na šířku</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn" onclick="tiskCedule()">🖨 Tisknout ceduli</button>
+  </div>
+</div>
+
+<script>
+function sw(tab){
+  document.querySelectorAll('.tab').forEach(function(el){
+    el.classList.toggle('on', el.textContent.toLowerCase().includes(tab) ||
+      el.getAttribute('onclick').includes("'"+tab+"'"));
+  });
+  document.querySelectorAll('.sekce').forEach(function(el){
+    el.classList.toggle('on', el.id === 'sekce-'+tab);
+  });
+}
+
+// ── PEXESO ────────────────────────────────────────────────────────────────────
+var PEXESO_KARTY = [
+  {ico:'💆', text:'Masáž zad'},
+  {ico:'🙆', text:'Masáž šíje'},
+  {ico:'🦵', text:'Masáž nohou'},
+  {ico:'💪', text:'Masáž paží'},
+  {ico:'🔵', text:'Overball'},
+  {ico:'🌿', text:'Aromatherapie'},
+  {ico:'🪨', text:'Hot stone'},
+  {ico:'🧘', text:'Relaxace'},
+];
+
+function tiskPexeso(){
+  var barva = document.getElementById('pex-barva').value;
+  var nazev = document.getElementById('pex-nazev').value;
+  var vel = parseInt(document.getElementById('pex-velikost').value);
+  var mm = vel + 'mm';
+
+  // Generovat 16 karet (8 párů)
+  var rubHTML = PEXESO_KARTY.map(function(){
+    return `<div class="karta rub">
+      <div class="karta-inner rub-inner">
+        <div style="font-size:28px;margin-bottom:6px">💆</div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:1px">${nazev}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  var licHTML = PEXESO_KARTY.map(function(k){
+    return `<div class="karta lic">
+      <div class="karta-inner lic-inner">
+        <div style="font-size:36px">${k.ico}</div>
+        <div style="font-size:10px;margin-top:6px;font-weight:500">${k.text}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  var w = window.open('','_blank','width=900,height=700');
+  w.document.write(`<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<title>Masážní Pexeso</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;padding:10mm;background:#fff}
+  h2{font-size:14px;margin-bottom:8px;color:#185FA5}
+  .karty{display:flex;flex-wrap:wrap;gap:4mm;margin-bottom:10mm}
+  .karta{width:${mm};height:${mm};border-radius:4mm;overflow:hidden;cursor:pointer;flex-shrink:0}
+  .rub-inner{background:${barva};color:#fff;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4px}
+  .lic-inner{background:#f5f5f5;border:2px solid ${barva};width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:3mm;text-align:center;padding:4px;color:#1a1a1a}
+  .rub-inner{border-radius:3mm}
+  .no-print{margin-bottom:10px}
+  p{font-size:11px;color:#666;margin-bottom:6px;line-height:1.5}
+  @media print{.no-print{display:none}body{padding:5mm}@page{size:A4;margin:10mm}}
+</style>
+</head>
+<body>
+  <div class="no-print">
+    <button onclick="window.print()" style="padding:10px 24px;background:#185FA5;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;margin-right:8px">🖨 Tisknout</button>
+    <button onclick="window.close()" style="padding:10px 14px;background:#666;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕</button>
+  </div>
+
+  <h2>🃏 Masážní pexeso – RUB (vytiskni 1×)</h2>
+  <p>Vystřihni karty podél čárek · Zalaminuj pro delší životnost · Přelož a zahraj!</p>
+  <div class="karty">${rubHTML}${rubHTML}</div>
+
+  <h2>🃏 Masážní pexeso – LÍC (vytiskni 1×)</h2>
+  <div class="karty">${licHTML}${licHTML}</div>
+</body>
+</html>`);
+  w.document.close();
+}
+
+// ── LETÁKY A6 ─────────────────────────────────────────────────────────────────
+function tiskLetaky(){
+  var maser  = document.getElementById('let-maser').value;
+  var tel    = document.getElementById('let-tel').value;
+  var akce   = document.getElementById('let-akce').value;
+  var sleva  = document.getElementById('let-sleva').value;
+  var url    = document.getElementById('let-url').value;
+
+  var letak = `
+    <div style="width:105mm;height:148mm;background:linear-gradient(135deg,#185FA5,#0C447C);color:#fff;padding:8mm;border-radius:3mm;display:flex;flex-direction:column;gap:4mm;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-10mm;right:-10mm;font-size:60pt;opacity:.08">💆</div>
+      <div style="text-align:center">
+        <div style="font-size:22pt;margin-bottom:2mm">💆</div>
+        <div style="font-size:13pt;font-weight:700;line-height:1.2">Mobilní masáže</div>
+        <div style="font-size:8pt;opacity:.8;margin-top:1mm">${akce}</div>
+      </div>
+      <div style="background:rgba(255,255,255,.2);border-radius:3mm;padding:4mm;text-align:center">
+        <div style="font-size:11pt;font-weight:700;margin-bottom:2mm">🎁 ${sleva}</div>
+        <div style="font-size:8pt;opacity:.9">Stačí ukázat tento leták</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2mm;font-size:8pt">
+        <div style="background:rgba(255,255,255,.15);border-radius:2mm;padding:3mm;text-align:center">🚗 Mobilní<br><strong>u vás doma</strong></div>
+        <div style="background:rgba(255,255,255,.15);border-radius:2mm;padding:3mm;text-align:center">✅ Certifikát<br><strong>profesionál</strong></div>
+        <div style="background:rgba(255,255,255,.15);border-radius:2mm;padding:3mm;text-align:center">💰 Od<br><strong>400 Kč/hod</strong></div>
+        <div style="background:rgba(255,255,255,.15);border-radius:2mm;padding:3mm;text-align:center">⏰ Flexibilní<br><strong>7 dní/týden</strong></div>
+      </div>
+      <div style="text-align:center">
+        <div style="background:#fff;border-radius:3mm;padding:3mm;display:inline-block" id="letak-qr-${Math.random().toString(36).substr(2,5)}">
+        </div>
+        <div style="font-size:7pt;margin-top:1mm;opacity:.8">Naskenuj → objednej online</div>
+      </div>
+      <div style="text-align:center;font-size:9pt">
+        <div style="font-weight:600">💆 ${maser}</div>
+        <div>📞 ${tel}</div>
+        <div style="font-size:7pt;opacity:.7">mobilnimaserna.cz</div>
+      </div>
+    </div>`;
+
+  var w = window.open('','_blank','width=900,height=800');
+  w.document.write(`<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<title>Letáky A6</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\\/script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:#e0e0e0;padding:10mm}
+  .a4{width:210mm;background:#fff;padding:10mm;display:grid;grid-template-columns:1fr 1fr;gap:5mm}
+  .no-print{margin-bottom:10px}
+  @media print{.no-print{display:none}body{background:#fff;padding:0}.a4{margin:0}@page{size:A4;margin:5mm}}
+</style>
+</head>
+<body>
+<div class="no-print">
+  <button onclick="window.print()" style="padding:10px 24px;background:#185FA5;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;margin-right:8px">🖨 Tisknout (4× A6 na A4)</button>
+  <button onclick="window.close()" style="padding:10px 14px;background:#666;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕</button>
+</div>
+<div class="a4">
+  ${letak}${letak}${letak}${letak}
+</div>
+<script>
+window.onload = function(){
+  document.querySelectorAll('[id^="letak-qr-"]').forEach(function(el){
+    try{
+      new QRCode(el, {text:'${url}',width:70,height:70,correctLevel:QRCode.CorrectLevel.H,colorDark:'#185FA5',colorLight:'#ffffff'});
+    }catch(e){}
+  });
+};
+<\\/script>
+</body>
+</html>`);
+  w.document.close();
+}
+
+// ── NÁPISY MASAZE × 4 ─────────────────────────────────────────────────────────
+function tiskNapisy(){ _tiskNapisy('A4'); }
+function tiskNapisyA3(){ _tiskNapisy('A3'); }
+
+function _tiskNapisy(format){
+  var barva = document.getElementById('nap-barva').value;
+  var bg    = document.getElementById('nap-bg').value;
+  var sub   = document.getElementById('nap-sub').value;
+  var tel   = document.getElementById('nap-tel').value;
+  var isA3  = format === 'A3';
+
+  var napis = `
+    <div style="width:100%;height:${isA3?'420mm':'297mm'};background:${bg};display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:15mm;page-break-after:always">
+      <div style="font-size:${isA3?'120pt':'80pt'};font-weight:900;color:${barva};letter-spacing:${isA3?'12mm':'8mm'};line-height:1;font-family:Arial Black,Arial,sans-serif">MASÁŽE</div>
+      <div style="width:80%;height:3px;background:${barva};margin:8mm auto;border-radius:2px"></div>
+      <div style="font-size:${isA3?'22pt':'16pt'};color:${barva};font-weight:500;margin-bottom:4mm">💆 ${sub}</div>
+      <div style="font-size:${isA3?'18pt':'13pt'};color:${barva};opacity:.8">📞 ${tel}</div>
+    </div>`;
+
+  var w = window.open('','_blank','width=900,height=800');
+  w.document.write(`<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<title>Nápisy MASAZE × 4</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif}
+  .no-print{padding:10px;background:#e0e0e0}
+  @media print{.no-print{display:none}@page{size:${format} portrait;margin:0}}
+</style>
+</head>
+<body>
+<div class="no-print">
+  <button onclick="window.print()" style="padding:10px 24px;background:#185FA5;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;margin-right:8px">🖨 Tisknout 4× nápis (${format})</button>
+  <button onclick="window.close()" style="padding:10px 14px;background:#666;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕</button>
+</div>
+${napis}${napis}${napis}${napis}
+</body>
+</html>`);
+  w.document.close();
+}
+
+// ── CEDULE STANU ──────────────────────────────────────────────────────────────
+function tiskCedule(){
+  var hlavni  = document.getElementById('ced-hlavni').value;
+  var sub     = document.getElementById('ced-sub').value;
+  var kontakt = document.getElementById('ced-kontakt').value;
+  var url     = document.getElementById('ced-url').value;
+  var barva   = document.getElementById('ced-barva').value;
+  var format  = document.getElementById('ced-format').value;
+  var isLand  = format.includes('l');
+  var isA3    = format.includes('a3');
+  var pageSize = isA3 ? 'A3' : 'A4';
+  var orient  = isLand ? 'landscape' : 'portrait';
+
+  var w = window.open('','_blank','width=900,height=700');
+  w.document.write(`<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<title>Cedule stanu</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\\/script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:#e0e0e0}
+  .cedule{width:100%;min-height:100vh;background:linear-gradient(135deg,${barva},${barva}dd);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:15mm;gap:8mm}
+  h1{font-size:${isA3?'72pt':isLand?'54pt':'42pt'};font-weight:900;letter-spacing:6mm;font-family:Arial Black,Arial,sans-serif;line-height:1}
+  .linka{width:70%;height:3px;background:rgba(255,255,255,.5);border-radius:2px}
+  .sub{font-size:${isA3?'18pt':'14pt'};opacity:.9;line-height:1.5}
+  .kontakt-row{display:flex;align-items:center;gap:15mm;justify-content:center}
+  .qr-box{background:#fff;border-radius:4mm;padding:4mm}
+  .no-print{position:fixed;top:10px;right:10px;z-index:999}
+  @media print{.no-print{display:none}body{background:#fff}@page{size:${pageSize} ${orient};margin:0}}
+</style>
+</head>
+<body>
+<div class="no-print">
+  <button onclick="window.print()" style="padding:10px 20px;background:${barva};color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;margin-right:6px">🖨 Tisknout</button>
+  <button onclick="window.close()" style="padding:10px 14px;background:#666;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer">✕</button>
+</div>
+
+<div class="cedule">
+  <div style="font-size:48pt">💆</div>
+  <h1>${hlavni}</h1>
+  <div class="linka"></div>
+  <div class="sub">${sub}</div>
+  <div class="kontakt-row">
+    <div>
+      <div style="font-size:16pt;font-weight:600;margin-bottom:2mm">📞 ${kontakt}</div>
+      <div style="font-size:11pt;opacity:.8">🌐 mobilnimaserna.cz</div>
+    </div>
+    <div class="qr-box" id="ced-qr"></div>
+  </div>
+</div>
+
+<script>
+window.onload = function(){
+  try{
+    new QRCode(document.getElementById('ced-qr'), {
+      text:'${url}',width:120,height:120,
+      correctLevel:QRCode.CorrectLevel.H,
+      colorDark:'${barva}',colorLight:'#ffffff'
+    });
+  }catch(e){}
+};
+<\\/script>
+</body>
+</html>`);
+  w.document.close();
+}
+</script>
+
+</body>
+</html>

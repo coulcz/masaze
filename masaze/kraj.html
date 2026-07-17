@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Profesionální mobilní masáže ve vašem kraji. Přijedeme k vám domů nebo do kanceláře.">
+<title id="page-title">Masáže – Jihočeský kraj</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --kraj-color:#1D9E75;
+  --kraj-dark:#0d6b4f;
+  --bg:#f8faf9;
+  --bg2:#fff;
+  --txt:#1a2420;
+  --txt2:#5a7068;
+  --brd:rgba(0,0,0,.1);
+  --r:12px;
+  --rl:20px;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+
+/* HERO */
+.hero{
+  background:linear-gradient(135deg,var(--kraj-color),var(--kraj-dark));
+  color:#fff;padding:40px 20px 60px;text-align:center;position:relative;overflow:hidden
+}
+.hero::before{
+  content:'💆';font-size:200px;position:absolute;top:-40px;right:-30px;
+  opacity:.08;transform:rotate(15deg);pointer-events:none
+}
+.hero-badge{
+  display:inline-block;background:rgba(255,255,255,.2);
+  border-radius:20px;padding:4px 14px;font-size:11px;
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:16px
+}
+.hero h1{font-size:28px;font-weight:700;margin-bottom:8px;line-height:1.3}
+.hero p{font-size:15px;opacity:.9;margin-bottom:24px;line-height:1.6}
+.hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn-primary{
+  background:#fff;color:var(--kraj-color);
+  padding:12px 24px;border-radius:var(--r);
+  font-weight:600;font-size:14px;text-decoration:none;
+  transition:transform .15s;display:inline-block
+}
+.btn-primary:active{transform:scale(.97)}
+.btn-secondary{
+  background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);
+  padding:12px 24px;border-radius:var(--r);
+  font-weight:500;font-size:14px;text-decoration:none;
+  display:inline-block
+}
+
+/* STATS */
+.stats{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  background:var(--bg2);border-radius:var(--rl);
+  margin:20px;box-shadow:0 2px 20px rgba(0,0,0,.08);
+  overflow:hidden;transform:translateY(-20px)
+}
+.stat{padding:16px 8px;text-align:center;border-right:.5px solid var(--brd)}
+.stat:last-child{border-right:none}
+.stat-num{font-size:22px;font-weight:700;color:var(--kraj-color)}
+.stat-label{font-size:10px;color:var(--txt2);margin-top:2px}
+
+/* SEKCE */
+.sekce{padding:0 16px 24px;max-width:600px;margin:0 auto}
+.sekce h2{font-size:18px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+
+/* MASÁŽE */
+.masaze-grid{display:flex;flex-direction:column;gap:8px}
+.masaz-card{
+  background:var(--bg2);border-radius:var(--r);padding:14px;
+  border:.5px solid var(--brd);display:flex;align-items:center;gap:12px
+}
+.masaz-ico{font-size:28px;flex-shrink:0}
+.masaz-info{flex:1}
+.masaz-nazev{font-size:13px;font-weight:500;margin-bottom:2px}
+.masaz-popis{font-size:11px;color:var(--txt2)}
+.masaz-cena{font-size:14px;font-weight:600;color:var(--kraj-color);text-align:right;flex-shrink:0}
+
+/* MASÉR KARTA */
+.maser-card{
+  background:linear-gradient(135deg,var(--kraj-color),var(--kraj-dark));
+  color:#fff;border-radius:var(--rl);padding:20px;
+  display:flex;gap:16px;align-items:center;margin-bottom:12px
+}
+.maser-avatar{
+  width:56px;height:56px;border-radius:50%;
+  background:rgba(255,255,255,.2);display:flex;
+  align-items:center;justify-content:center;font-size:26px;flex-shrink:0
+}
+.maser-info{flex:1}
+.maser-name{font-size:16px;font-weight:600;margin-bottom:4px}
+.maser-role{font-size:11px;opacity:.85}
+.maser-badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.badge{background:rgba(255,255,255,.2);border-radius:10px;padding:3px 10px;font-size:10px}
+
+/* PROČ MY */
+.proc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.proc-item{background:var(--bg2);border-radius:var(--r);padding:12px;border:.5px solid var(--brd)}
+.proc-ico{font-size:20px;margin-bottom:6px}
+.proc-txt{font-size:11px;color:var(--txt2);line-height:1.5}
+.proc-title{font-size:12px;font-weight:600;margin-bottom:3px}
+
+/* POPTÁVKA FORM */
+.form-card{background:var(--bg2);border-radius:var(--rl);padding:20px;border:.5px solid var(--brd)}
+.field{margin-bottom:10px}
+.field label{display:block;font-size:11px;color:var(--txt2);margin-bottom:4px;font-weight:500}
+.field input,.field select,.field textarea{
+  width:100%;padding:10px 12px;border-radius:var(--r);
+  border:.5px solid var(--brd);background:var(--bg);
+  color:var(--txt);font-size:13px;font-family:inherit;outline:none
+}
+.field textarea{min-height:70px;resize:vertical}
+.btn-submit{
+  width:100%;padding:14px;border-radius:var(--r);border:none;
+  background:linear-gradient(135deg,var(--kraj-color),var(--kraj-dark));
+  color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit
+}
+
+/* RECENZE */
+.recenze-card{background:var(--bg2);border-radius:var(--r);padding:14px;border:.5px solid var(--brd);margin-bottom:8px}
+.recenze-stars{color:#F59E0B;font-size:13px;margin-bottom:6px}
+.recenze-text{font-size:12px;color:var(--txt2);line-height:1.6;font-style:italic;margin-bottom:8px}
+.recenze-autor{font-size:11px;font-weight:500}
+
+/* POTVRZENÍ */
+.potvrz{display:none;text-align:center;padding:30px 0}
+.potvrz-ico{font-size:56px;margin-bottom:12px}
+.potvrz h3{font-size:18px;font-weight:500;margin-bottom:8px;color:var(--kraj-color)}
+.potvrz p{font-size:12px;color:var(--txt2);line-height:1.7}
+
+/* FOOTER */
+footer{
+  background:var(--txt);color:rgba(255,255,255,.7);
+  text-align:center;padding:20px;font-size:11px;margin-top:10px
+}
+footer a{color:rgba(255,255,255,.9);text-decoration:none}
+
+/* KRAJ PŘEPÍNAČ (admin) */
+.kraj-switcher{
+  position:fixed;top:10px;right:10px;z-index:999;
+  background:rgba(255,255,255,.95);border-radius:var(--r);
+  padding:8px;box-shadow:0 2px 12px rgba(0,0,0,.15);
+  display:none
+}
+.kraj-switcher select{font-size:11px;padding:4px 8px;border-radius:6px;border:.5px solid var(--brd)}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+  background:#1a1a18;color:#fff;padding:10px 18px;border-radius:20px;
+  font-size:13px;z-index:9999;display:none;white-space:nowrap}
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<!-- KRAJ PŘEPÍNAČ (skrytý, zobrazí se dvojklikem na hero) -->
+<div class="kraj-switcher" id="kraj-switcher">
+  <select onchange="setKraj(this.value)">
+    <optgroup label="🇨🇿 Česká republika">
+      <option value="Praha">Praha</option>
+      <option value="jihoceskykraj">Jihočeský kraj</option>
+      <option value="jihomoravskykraj">Jihomoravský kraj</option>
+      <option value="karlovarskykraj">Karlovarský kraj</option>
+      <option value="kralovehradeckykraj">Královéhradecký kraj</option>
+      <option value="libereckykraj">Liberecký kraj</option>
+      <option value="moravskoslezskykraj">Moravskoslezský kraj</option>
+      <option value="olomouckykraj">Olomoucký kraj</option>
+      <option value="pardubickykraj">Pardubický kraj</option>
+      <option value="plzenskyraj">Plzeňský kraj</option>
+      <option value="stredoceskykraj">Středočeský kraj</option>
+      <option value="usteckykraj">Ústecký kraj</option>
+      <option value="vysocina">Kraj Vysočina</option>
+      <option value="zlinskyraj">Zlínský kraj</option>
+    </optgroup>
+    <optgroup label="🇸🇰 Slovenská republika">
+      <option value="bratislavskykraj">Bratislavský kraj</option>
+      <option value="trnavskykraj">Trnavský kraj</option>
+      <option value="trencianskykraj">Trenčianský kraj</option>
+      <option value="nitrianskykraj">Nitrianský kraj</option>
+      <option value="zilinaskykraj">Žilinský kraj</option>
+      <option value="banskobystrickykraj">Banskobystrický kraj</option>
+      <option value="presovskykraj">Prešovský kraj</option>
+      <option value="kosickykraj">Košický kraj</option>
+    </optgroup>
+    <optgroup label="⚙️ Vlastní">
+      <option value="custom">Vlastní kraj...</option>
+    </optgroup>
+  </select>
+</div>
+
+<!-- HERO -->
+<div class="hero" ondblclick="document.getElementById('kraj-switcher').style.display='block'">
+  <div class="hero-badge" id="hero-badge">Jihočeský kraj</div>
+  <h1 id="hero-title">Profesionální masáže<br>přímo u vás doma</h1>
+  <p id="hero-popis">Certifikovaný masér přijede za vámi. Relaxační, sportovní i léčebné masáže v pohodlí vašeho domova nebo kanceláře.</p>
+  <div class="hero-btns">
+    <a href="#poptavka" class="btn-primary">📅 Objednat masáž</a>
+    <a href="tel:+420777000000" class="btn-secondary" id="hero-tel">📞 Zavolat</a>
+  </div>
+</div>
+
+<!-- STATISTIKY -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-num" id="stat-masaze">500+</div>
+    <div class="stat-label">masáží</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num" id="stat-roky">5+</div>
+    <div class="stat-label">let zkušeností</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">⭐4.9</div>
+    <div class="stat-label">hodnocení</div>
+  </div>
+</div>
+
+<!-- MASÉR -->
+<div class="sekce">
+  <h2>🧘 Váš masér</h2>
+  <div class="maser-card">
+    <div class="maser-avatar" id="maser-avatar">🧘</div>
+    <div class="maser-info">
+      <div class="maser-name" id="maser-name">Martin K.</div>
+      <div class="maser-role" id="maser-role">Certifikovaný masér · Mobilní masérna</div>
+      <div class="maser-badges">
+        <span class="badge">✅ Certifikát</span>
+        <span class="badge">🚗 Mobilní</span>
+        <span class="badge" id="maser-badge-kraj">📍 JČ kraj</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NABÍDKA MASÁŽÍ -->
+<div class="sekce">
+  <h2>💆 Nabídka masáží</h2>
+  <div class="masaze-grid">
+    <div class="masaz-card">
+      <div class="masaz-ico">😌</div>
+      <div class="masaz-info">
+        <div class="masaz-nazev">Relaxační masáž</div>
+        <div class="masaz-popis">Celotělová relaxace · 60 nebo 90 minut</div>
+      </div>
+      <div class="masaz-cena">od 400 Kč</div>
+    </div>
+    <div class="masaz-card">
+      <div class="masaz-ico">🏋</div>
+      <div class="masaz-info">
+        <div class="masaz-nazev">Sportovní masáž</div>
+        <div class="masaz-popis">Regenerace svalů · Uvolnění napětí</div>
+      </div>
+      <div class="masaz-cena">od 450 Kč</div>
+    </div>
+    <div class="masaz-card">
+      <div class="masaz-ico">🔵</div>
+      <div class="masaz-info">
+        <div class="masaz-nazev">Masáž s overballem</div>
+        <div class="masaz-popis">Uvolnění lopatky, zad · Fascial release</div>
+      </div>
+      <div class="masaz-cena">od 420 Kč</div>
+    </div>
+    <div class="masaz-card">
+      <div class="masaz-ico">🪨</div>
+      <div class="masaz-info">
+        <div class="masaz-nazev">Hot stone masáž</div>
+        <div class="masaz-popis">Lávové kameny · Hluboké uvolnění</div>
+      </div>
+      <div class="masaz-cena">od 550 Kč</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROČ MY -->
+<div class="sekce">
+  <h2>✨ Proč si vybrat nás?</h2>
+  <div class="proc-grid">
+    <div class="proc-item">
+      <div class="proc-ico">🚗</div>
+      <div class="proc-title">Přijedeme k vám</div>
+      <div class="proc-txt">Mobilní masáže přímo domů, do kanceláře nebo hotelu</div>
+    </div>
+    <div class="proc-item">
+      <div class="proc-ico">✅</div>
+      <div class="proc-title">Certifikovaný masér</div>
+      <div class="proc-txt">Profesionální přístup a hygienické standardy</div>
+    </div>
+    <div class="proc-item">
+      <div class="proc-ico">⏱</div>
+      <div class="proc-title">Flexibilní časy</div>
+      <div class="proc-txt">Ráno, večer, víkendy — podle vás</div>
+    </div>
+    <div class="proc-item">
+      <div class="proc-ico">💰</div>
+      <div class="proc-title">Férové ceny</div>
+      <div class="proc-txt">Žádné skryté poplatky, platba po masáži</div>
+    </div>
+  </div>
+</div>
+
+<!-- RECENZE -->
+<div class="sekce">
+  <h2>⭐ Co říkají klienti</h2>
+  <div class="recenze-card">
+    <div class="recenze-stars">★★★★★</div>
+    <div class="recenze-text">"Skvělá masáž, masér přijel přesně na čas a byl velmi profesionální. Záda mě přestala bolet hned po první návštěvě!"</div>
+    <div class="recenze-autor">Jana M., České Budějovice</div>
+  </div>
+  <div class="recenze-card">
+    <div class="recenze-stars">★★★★★</div>
+    <div class="recenze-text">"Konečně masáž přímo doma! Nemusím nikam jezdit, přijede sám. Doporučuji všem, kteří nemají čas navštěvovat salony."</div>
+    <div class="recenze-autor">Pavel K., Písek</div>
+  </div>
+</div>
+
+<!-- POPTÁVKA -->
+<div class="sekce" id="poptavka">
+  <h2>📅 Objednat masáž</h2>
+  <div class="form-card">
+    <div id="formular">
+      <div class="field">
+        <label>Vaše jméno *</label>
+        <input type="text" id="p-jmeno" placeholder="Jana Nováková"/>
+      </div>
+      <div class="field">
+        <label>Telefon *</label>
+        <input type="tel" id="p-tel" placeholder="+420 777 123 456"/>
+      </div>
+      <div class="field">
+        <label>Typ masáže</label>
+        <select id="p-typ">
+          <option>😌 Relaxační masáž</option>
+          <option>🏋 Sportovní masáž</option>
+          <option>🔵 Masáž s overballem</option>
+          <option>🪨 Hot stone masáž</option>
+          <option>💆 Jiné / poradit</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Město / obec</label>
+        <input type="text" id="p-mesto" placeholder="České Budějovice"/>
+      </div>
+      <div class="field">
+        <label>Kdy vám to vyhovuje?</label>
+        <select id="p-kdy">
+          <option>Co nejdříve</option>
+          <option>Tento týden</option>
+          <option>Do měsíce</option>
+          <option>Po dohodě</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Poznámka (zdravotní omezení, přání...)</label>
+        <textarea id="p-pozn" placeholder="Mám napětí v šíji, preferuji silný tlak..."></textarea>
+      </div>
+      <button class="btn-submit" onclick="odeslat()">📨 Odeslat poptávku</button>
+      <p style="font-size:10px;color:var(--txt2);text-align:center;margin-top:8px">🔒 Vaše údaje jsou v bezpečí (GDPR)</p>
+    </div>
+
+    <!-- POTVRZENÍ -->
+    <div class="potvrz" id="potvrz">
+      <div class="potvrz-ico">🎉</div>
+      <h3>Poptávka odeslána!</h3>
+      <p>Ozveme se vám do 2 hodin.<br>Těšíme se na vás! 💆</p>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<!-- FORMSPREE NÁVOD (skrytý, viditelný jen v admin módu) -->
+<div id="formspree-info" style="display:none;background:#E6F1FB;padding:16px;margin:0 16px 16px;border-radius:12px;font-size:12px;color:#185FA5">
+  <strong>💡 Jak nastavit email notifikace:</strong><br><br>
+  1. Jdi na <a href="https://formspree.io" target="_blank" style="color:#185FA5"><strong>formspree.io</strong></a><br>
+  2. Registruj se (ZDARMA – 50 poptávek/měsíc)<br>
+  3. Vytvoř nový formulář → dostaneš kód jako <code>xabc1234</code><br>
+  4. V souboru kraj.html najdi:<br>
+  <code style="background:#fff;padding:4px 8px;border-radius:6px;display:inline-block;margin:6px 0">var FORMSPREE_URL = '...TVUJ_KOD_ZDE...'</code><br>
+  5. Nahraď <strong>TVUJ_KOD_ZDE</strong> svým kódem<br>
+  6. Každá poptávka → email! ✅<br><br>
+  <button onclick="document.getElementById('formspree-info').style.display='none'" style="padding:6px 14px;border-radius:8px;border:none;background:#185FA5;color:#fff;cursor:pointer;font-size:11px">✕ Zavřít</button>
+</div>
+
+<footer ondblclick="document.getElementById('formspree-info').style.display='block'">
+  💆 <strong style="color:#fff">Mobilní masérna</strong> ·
+  <a href="https://mobilnimaserna.cz">mobilnimaserna.cz</a> ·
+  <a href="https://coulcz.github.io/masaze">Masážní HUB CZ/SK</a><br>
+  <span id="footer-kraj" style="margin-top:6px;display:block">Jihočeský kraj · Profesionální mobilní masáže</span>
+</footer>
+
+<script>
+// ── DATA PRO KRAJE ────────────────────────────────────────────────────────────
+var KRAJE = {
+  'jihoceskykraj': {
+    nazev: 'Jihočeský kraj',
+    maser: 'Honza K.',
+    avatar: '🧘',
+    role: 'Certifikovaný masér · Praha & JČ kraj',
+    tel: '+420777000000',
+    badge: '📍 JČ kraj',
+    color: '#1D9E75',
+    dark: '#0d6b4f',
+    masaze: '200+',
+    roky: '4+'
+  },
+  'moravskoslezskykraj': {
+    nazev: 'Moravskoslezský kraj',
+    maser: 'Martin K.',
+    avatar: '💆',
+    role: 'Certifikovaný masér · Ostrava & okolí',
+    tel: '+420777000000',
+    badge: '📍 MSK kraj',
+    color: '#185FA5',
+    dark: '#0C447C',
+    masaze: '500+',
+    roky: '5+'
+  },
+  'zlinskyraj': {
+    nazev: 'Zlínský kraj',
+    maser: 'Martin K.',
+    avatar: '🧘',
+    role: 'Certifikovaný masér · Val. Meziříčí & RpR',
+    tel: '+420777000000',
+    badge: '📍 Zlínský kraj',
+    color: '#9B2D5A',
+    dark: '#6b1d3a',
+    masaze: '300+',
+    roky: '5+'
+  },
+  'Praha': {
+    nazev: 'Praha',
+    maser: 'Honza K.',
+    avatar: '🧘',
+    role: 'Certifikovaný masér · Praha',
+    tel: '+420777000000',
+    badge: '📍 Praha',
+    color: '#BA7517',
+    dark: '#7D4E0E',
+    masaze: '400+',
+    roky: '4+'
+  },
+  // 🇨🇿 Zbývající české kraje
+  'jihomoravskykraj': {
+    nazev: 'Jihomoravský kraj',
+    maser: 'Martin K.', avatar: '🧘',
+    role: 'Certifikovaný masér · Brno & okolí',
+    tel: '+420777000000', badge: '📍 JMK',
+    color: '#9B2D5A', dark: '#6b1d3a', masaze: '300+', roky: '4+'
+  },
+  'pardubickykraj': {
+    nazev: 'Pardubický kraj',
+    maser: 'Martin K.', avatar: '🧘',
+    role: 'Certifikovaný masér · Pardubický kraj',
+    tel: '+420777000000', badge: '📍 PAK',
+    color: '#185FA5', dark: '#0C447C', masaze: '200+', roky: '3+'
+  },
+  'vysocina': {
+    nazev: 'Kraj Vysočina',
+    maser: 'Martin K.', avatar: '💆',
+    role: 'Certifikovaný masér · Vysočina',
+    tel: '+420777000000', badge: '📍 Vysočina',
+    color: '#1D9E75', dark: '#0d6b4f', masaze: '150+', roky: '3+'
+  },
+  'plzenskyraj': {
+    nazev: 'Plzeňský kraj',
+    maser: 'Honza K.', avatar: '🧘',
+    role: 'Certifikovaný masér · Plzeňský kraj',
+    tel: '+420777000000', badge: '📍 PLK',
+    color: '#BA7517', dark: '#7D4E0E', masaze: '200+', roky: '4+'
+  },
+  'karlovarskykraj': {
+    nazev: 'Karlovarský kraj',
+    maser: 'Honza K.', avatar: '🧘',
+    role: 'Certifikovaný masér · Karlovarský kraj',
+    tel: '+420777000000', badge: '📍 KVK',
+    color: '#A32D2D', dark: '#6b1d1d', masaze: '100+', roky: '3+'
+  },
+  'usteckykraj': {
+    nazev: 'Ústecký kraj',
+    maser: 'Honza K.', avatar: '💆',
+    role: 'Certifikovaný masér · Ústecký kraj',
+    tel: '+420777000000', badge: '📍 ÚLK',
+    color: '#185FA5', dark: '#0C447C', masaze: '150+', roky: '3+'
+  },
+  'libereckykraj': {
+    nazev: 'Liberecký kraj',
+    maser: 'Honza K.', avatar: '🧘',
+    role: 'Certifikovaný masér · Liberecký kraj',
+    tel: '+420777000000', badge: '📍 LBK',
+    color: '#1D9E75', dark: '#0d6b4f', masaze: '120+', roky: '3+'
+  },
+  'kralovehradeckykraj': {
+    nazev: 'Královéhradecký kraj',
+    maser: 'Honza K.', avatar: '💆',
+    role: 'Certifikovaný masér · HK kraj',
+    tel: '+420777000000', badge: '📍 HKK',
+    color: '#9B2D5A', dark: '#6b1d3a', masaze: '180+', roky: '4+'
+  },
+  'stredoceskykraj': {
+    nazev: 'Středočeský kraj',
+    maser: 'Honza K.', avatar: '🧘',
+    role: 'Certifikovaný masér · Středočeský kraj',
+    tel: '+420777000000', badge: '📍 STC',
+    color: '#BA7517', dark: '#7D4E0E', masaze: '250+', roky: '4+'
+  },
+  'olomouckykraj': {
+    nazev: 'Olomoucký kraj',
+    maser: 'Martin K.', avatar: '🧘',
+    role: 'Certifikovaný masér · Olomoucký kraj',
+    tel: '+420777000000', badge: '📍 OLK',
+    color: '#185FA5', dark: '#0C447C', masaze: '180+', roky: '4+'
+  },
+
+  // 🇸🇰 Slovenské kraje
+  'bratislavskykraj': {
+    nazev: 'Bratislavský kraj',
+    maser: 'Martin K.', avatar: '💆',
+    role: 'Certifikovaný masér · Bratislava',
+    tel: '+421900000000', badge: '📍 BA kraj',
+    color: '#1D9E75', dark: '#0d6b4f', masaze: '150+', roky: '3+'
+  },
+  'trnavskykraj': {
+    nazev: 'Trnavský kraj',
+    maser: 'Martin K.', avatar: '🧘',
+    role: 'Certifikovaný masér · Trnavský kraj',
+    tel: '+421900000000', badge: '📍 TT kraj',
+    color: '#9B2D5A', dark: '#6b1d3a', masaze: '100+', roky: '3+'
+  },
+  'trencianskykraj': {
+    nazev: 'Trenčianský kraj',
+    maser: 'Martin K.', avatar: '💆',
+    role: 'Certifikovaný masér · Trenčín & okolí',
+    tel: '+421900000000', badge: '📍 TN kraj',
+    color: '#185FA5', dark: '#0C447C', masaze: '120+', roky: '3+'
+  },
+  'nitrianskykraj': {
+    nazev: 'Nitrianský kraj',
+    maser: 'Martin K.', avatar: '🧘',
+    role: 'Certifikovaný masér · Nitrianský kraj',
+    tel: '+421900000000', badge: '📍 NR kraj',
+    color: '#BA7517', dark: '#7D4E0E', masaze: '100+', roky: '3+'
+  },
+  'zilinaskykraj': {
+    nazev: 'Žilinský kraj',
+    maser: 'Martin K.', avatar: '💆',
+    role: 'Certifikovaný masér · Žilina & okolí',
+    tel: '+421900000000', badge: '📍 ZA kraj',
+    color: '#1D9E75', dark: '#0d6b4f', masaze: '130+', roky: '3+'
+  },
+  'banskobystrickykraj': {
+    nazev: 'Banskobystrický kraj',
+    maser: 'Martin K.', avatar: '🧘',
+    role: 'Certifikovaný masér · BB kraj',
+    tel: '+421900000000', badge: '📍 BB kraj',
+    color: '#A32D2D', dark: '#6b1d1d', masaze: '100+', roky: '3+'
+  },
+  'presovskykraj': {
+    nazev: 'Prešovský kraj',
+    maser: 'Martin K.', avatar: '💆',
+    role: 'Certifikovaný masér · Prešovský kraj',
+    tel: '+421900000000', badge: '📍 PO kraj',
+    color: '#9B2D5A', dark: '#6b1d3a', masaze: '90+', roky: '2+'
+  },
+  'kosickykraj': {
+    nazev: 'Košický kraj',
+    maser: 'Martin K.', avatar: '🧘',
+    role: 'Certifikovaný masér · Košice & okolí',
+    tel: '+421900000000', badge: '📍 KE kraj',
+    color: '#185FA5', dark: '#0C447C', masaze: '100+', roky: '3+'
+  },
+
+  'custom': {
+    nazev: '',
+    maser: '',
+    avatar: '💆',
+    role: 'Certifikovaný masér',
+    tel: '+420777000000',
+    badge: '📍 Váš kraj',
+    color: '#1D9E75',
+    dark: '#0d6b4f',
+    masaze: '300+',
+    roky: '4+'
+  }
+};
+
+// Výchozí kraj z URL parametru nebo geolokace
+var aktuKraj = 'jihoceskykraj';
+
+function setKraj(krajId){
+  var data = KRAJE[krajId] || KRAJE['jihoceskykraj'];
+  aktuKraj = krajId;
+
+  // Pokud custom - zeptat se na název
+  if(krajId === 'custom'){
+    var nazev = prompt('Zadej název kraje:') || 'Váš kraj';
+    data = Object.assign({}, KRAJE['custom'], {nazev: nazev, badge: '📍 ' + nazev});
+  }
+
+  // Aktualizovat barvy
+  document.documentElement.style.setProperty('--kraj-color', data.color);
+  document.documentElement.style.setProperty('--kraj-dark', data.dark);
+
+  // Aktualizovat texty
+  document.title = 'Masáže – ' + data.nazev;
+  var el;
+  el = document.getElementById('page-title'); if(el) el.textContent = 'Masáže – ' + data.nazev;
+  el = document.getElementById('hero-badge'); if(el) el.textContent = data.nazev;
+  el = document.getElementById('hero-tel'); if(el) el.href = 'tel:' + data.tel.replace(/\s/g,'');
+  el = document.getElementById('maser-name'); if(el) el.textContent = data.maser;
+  el = document.getElementById('maser-role'); if(el) el.textContent = data.role;
+  el = document.getElementById('maser-avatar'); if(el) el.textContent = data.avatar;
+  el = document.getElementById('maser-badge-kraj'); if(el) el.textContent = data.badge;
+  el = document.getElementById('stat-masaze'); if(el) el.textContent = data.masaze;
+  el = document.getElementById('stat-roky'); if(el) el.textContent = data.roky;
+  el = document.getElementById('footer-kraj'); if(el) el.textContent = data.nazev + ' · Profesionální mobilní masáže';
+
+  // Uložit
+  try{ localStorage.setItem('kraj_landing', krajId); }catch(e){}
+  notify('🗺 ' + data.nazev + ' aktivován!');
+}
+
+// Načíst kraj z URL ?kraj=xxx nebo z localStorage
+function initKraj(){
+  var urlParams = new URLSearchParams(window.location.search);
+  var krajParam = urlParams.get('kraj');
+  var savedKraj = null;
+  try{ savedKraj = localStorage.getItem('kraj_landing'); }catch(e){}
+
+  var kraj = krajParam || savedKraj || 'jihoceskykraj';
+
+  // Nastavit select
+  var sel = document.querySelector('#kraj-switcher select');
+  if(sel) sel.value = kraj;
+
+  setKraj(kraj);
+}
+
+// FORMSPREE ENDPOINT - vyplň po registraci na formspree.io
+var FORMSPREE_URL = 'https://formspree.io/f/TVUJ_KOD_ZDE';
+
+// FORMULÁŘ
+function odeslat(){
+  var jmeno = document.getElementById('p-jmeno').value.trim();
+  var tel = document.getElementById('p-tel').value.trim();
+  if(!jmeno || !tel){ notify('Zadej jméno a telefon!'); return; }
+
+  var data = {
+    jmeno: jmeno,
+    telefon: tel,
+    typ: document.getElementById('p-typ').value,
+    mesto: document.getElementById('p-mesto').value.trim(),
+    kdy: document.getElementById('p-kdy').value,
+    poznamka: document.getElementById('p-pozn').value.trim(),
+    kraj: aktuKraj,
+    odeslano: new Date().toLocaleString('cs-CZ'),
+    zdroj: 'kraj-landing · ' + window.location.href
+  };
+
+  // Uložit lokálně
+  var poptavky = [];
+  try{ var p = localStorage.getItem('poptavky'); if(p) poptavky = JSON.parse(p); }catch(e){}
+  poptavky.push(Object.assign({id: Date.now(), status: 'nova'}, data));
+  try{ localStorage.setItem('poptavky', JSON.stringify(poptavky)); }catch(e){}
+
+  // Odeslat přes Formspree (email notifikace)
+  var btn = document.querySelector('.btn-submit');
+  if(btn){ btn.textContent = '⏳ Odesílám...'; btn.disabled = true; }
+
+  if(FORMSPREE_URL.includes('TVUJ_KOD_ZDE')){
+    // Demo mode - bez Formspree
+    zobrazitPotvrzeni();
+    return;
+  }
+
+  fetch(FORMSPREE_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+    body: JSON.stringify(data)
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(r){
+    if(r.ok){ zobrazitPotvrzeni(); }
+    else { notify('Chyba odeslání, zkuste znovu'); if(btn){ btn.textContent='📨 Odeslat poptávku'; btn.disabled=false; } }
+  })
+  .catch(function(){
+    // Fallback - zobrazit potvrzení i bez internetu
+    zobrazitPotvrzeni();
+  });
+}
+
+function zobrazitPotvrzeni(){
+  document.getElementById('formular').style.display = 'none';
+  document.getElementById('potvrz').style.display = 'block';
+  window.scrollTo(0,0);
+}
+
+function notify(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(function(){ t.style.display = 'none'; }, 2500);
+}
+
+// START
+initKraj();
+
+// ── POPUP NABÍDKA ─────────────────────────────────────────────────────────────
+var popupZobrazen = false;
+
+function initPopup(){
+  try{
+    var cfg = JSON.parse(localStorage.getItem('popup_nastaveni')||'{}');
+    if(!cfg.aktivni) return;
+
+    var dnes = new Date().toISOString().split('T')[0];
+    if(cfg.freq === 'once' && localStorage.getItem('popup_shown_date') === dnes) return;
+    if(cfg.freq === 'session' && sessionStorage.getItem('popup_shown')) return;
+
+    var delay = parseInt(cfg.delay || 5) * 1000;
+    var scrollPct = parseInt(cfg.scroll || 0);
+
+    setTimeout(function(){
+      if(!popupZobrazen) zobrazitPopupCfg(cfg);
+    }, delay);
+
+    if(scrollPct > 0){
+      window.addEventListener('scroll', function onScroll(){
+        var pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+        if(pct >= scrollPct && !popupZobrazen){
+          zobrazitPopupCfg(cfg); window.removeEventListener('scroll', onScroll);
+        }
+      });
+    }
+  }catch(e){}
+}
+
+function zobrazitPopupCfg(cfg){
+  popupZobrazen = true;
+  var el = document.createElement('div');
+  el.id = 'masaz-popup';
+  el.style.cssText = 'position:fixed;bottom:20px;right:16px;left:16px;max-width:380px;margin:0 auto;' +
+    'background:'+(cfg.barva||'#185FA5')+';color:#fff;border-radius:16px;padding:20px;z-index:99999;' +
+    'box-shadow:0 8px 32px rgba(0,0,0,.3);animation:popupIn .3s ease;font-family:Segoe UI,sans-serif';
+  el.innerHTML = '<style>@keyframes popupIn{from{transform:translateY(100px);opacity:0}to{transform:translateY(0);opacity:1}}</style>' +
+    '<button onclick="document.getElementById(&quot;masaz-popup&quot;).remove()" style="position:absolute;top:10px;right:12px;background:rgba(255,255,255,.2);border:none;color:#fff;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:14px">✕</button>' +
+    '<div style="font-size:16px;font-weight:600;margin-bottom:8px;padding-right:20px">'+(cfg.nadpis||'💆 Chcete masáž?')+'</div>' +
+    '<div style="font-size:12px;opacity:.9;line-height:1.6;margin-bottom:14px">'+(cfg.text||'')+'</div>' +
+    '<div style="display:flex;gap:8px">' +
+      '<a href="'+(cfg.btnUrl||'#')+'" style="flex:1;padding:10px;background:#fff;color:'+(cfg.barva||'#185FA5')+';border-radius:10px;text-align:center;text-decoration:none;font-weight:600;font-size:13px">'+(cfg.btnText||'📅 Objednat')+'</a>' +
+      '<button onclick="document.getElementById(&quot;masaz-popup&quot;).remove()" style="padding:10px 14px;background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:10px;cursor:pointer;font-size:12px">Zavřít</button>' +
+    '</div>';
+  document.body.appendChild(el);
+  try{ localStorage.setItem('popup_shown_date', new Date().toISOString().split('T')[0]); sessionStorage.setItem('popup_shown','1'); }catch(e){}
+}
+
+window.addEventListener('load', initPopup);
+
+</script>
+</body>
+</html>

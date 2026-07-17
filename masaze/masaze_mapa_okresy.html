@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Masérský systém ČR – mapa 77 okresů</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;font-size:13px;background:#f0f0ee}
+.app{max-width:1100px;margin:0 auto;padding:10px}
+h1{font-size:16px;font-weight:500;margin-bottom:8px;color:#1a1a18}
+.map-container{position:relative;border-radius:12px;overflow:hidden;border:.5px solid rgba(0,0,0,.15);background:#fff}
+.map-img{width:100%;display:block}
+.overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
+.okres-dot{position:absolute;width:10px;height:10px;border-radius:50%;border:1.5px solid rgba(255,255,255,.8);cursor:pointer;pointer-events:all;transform:translate(-50%,-50%);transition:all .15s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.okres-dot:hover{width:14px;height:14px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.4);z-index:10}
+.okres-dot.sel{width:16px;height:16px;border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.5);z-index:20}
+.tip{position:absolute;background:#fff;border:.5px solid rgba(0,0,0,.2);border-radius:8px;padding:5px 9px;font-size:11px;pointer-events:none;display:none;z-index:30;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.info-bar{background:#fff;border-top:.5px solid rgba(0,0,0,.1);padding:6px 12px;font-size:11px;color:#6b6b67;min-height:28px}
+.controls{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.btn{font-size:11px;padding:4px 10px;border-radius:7px;border:.5px solid rgba(0,0,0,.2);background:#fff;cursor:pointer}
+.btn:hover{background:#f0f0ee}
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.li{display:flex;align-items:center;gap:4px;font-size:11px;color:#6b6b67}
+.ld{width:10px;height:10px;border-radius:50%}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>🗺 Mapa ČR – 77 okresů</h1>
+<div class="controls">
+  <button class="btn" onclick="zoomIn()">+ Přiblížit</button>
+  <button class="btn" onclick="zoomOut()">− Oddálit</button>
+  <button class="btn" onclick="zoomReset()">↺ Reset</button>
+</div>
+<div class="map-container" id="mc">
+  <img class="map-img" id="mapimg" src="Mobilnimaserna.svg" alt="Mapa ČR"/>
+  <div class="overlay" id="overlay">
+    <div class="tip" id="tip"></div>
+  </div>
+</div>
+<div class="info-bar" id="info">Klikni na barevný bod pro detail okresu</div>
+<div class="legend">
+  <div class="li"><div class="ld" style="background:#185FA5"></div>Já (masér)</div>
+  <div class="li"><div class="ld" style="background:#1D9E75"></div>Kolega</div>
+  <div class="li"><div class="ld" style="background:#7F77DD"></div>Oba</div>
+  <div class="li"><div class="ld" style="background:#D85A30"></div>Poptávka</div>
+</div>
+</div>
+
+<script>
+// Data 76 okresů s pozicemi v SVG souřadnicovém systému 842x595
+const OKRESY = [{"name": "Benešov", "tx": 301, "ty": 300, "fill": "#5e17eb", "kraj": "STC"}, {"name": "Beroun", "tx": 227, "ty": 286, "fill": "#5e17eb", "kraj": "STC"}, {"name": "Blansko", "tx": 445, "ty": 333, "fill": "#7ed957", "kraj": "JHM"}, {"name": "Brno-město", "tx": 591, "ty": 423, "fill": "#ff914d", "kraj": "JHM"}, {"name": "Brno-venkov", "tx": 440, "ty": 461, "fill": "#b71cc4", "kraj": "JHM"}, {"name": "Bruntál", "tx": 624, "ty": 464, "fill": "#b71cc4", "kraj": "MSK"}, {"name": "Břeclav", "tx": 472, "ty": 409, "fill": "#b71cc4", "kraj": "JHM"}, {"name": "Cheb", "tx": 56, "ty": 214, "fill": "#b71cc4", "kraj": "KVK"}, {"name": "Chomutov", "tx": 185, "ty": 170, "fill": "#7ed957", "kraj": "ULK"}, {"name": "Chrudim", "tx": 426, "ty": 255, "fill": "#38b6ff", "kraj": "PAK"}, {"name": "Domažlice", "tx": 56, "ty": 297, "fill": "#38b6ff", "kraj": "PLK"}, {"name": "Děčín", "tx": 317, "ty": 161, "fill": "#ff914d", "kraj": "ULK"}, {"name": "Frýdek-Místek", "tx": 649, "ty": 319, "fill": "#38b6ff", "kraj": "MSK"}, {"name": "Havlíčkův Brod", "tx": 366, "ty": 319, "fill": "#5e17eb", "kraj": "VYS"}, {"name": "Hodonín", "tx": 526, "ty": 416, "fill": "#aeadab", "kraj": "JHM"}, {"name": "Hradec Králové", "tx": 473, "ty": 225, "fill": "#aeadab", "kraj": "HKK"}, {"name": "Jablonec nad Nisou", "tx": 370, "ty": 165, "fill": "#aeadab", "kraj": "LBK"}, {"name": "Jeseník", "tx": 530, "ty": 245, "fill": "#aeadab", "kraj": "OLK"}, {"name": "Jihlava", "tx": 370, "ty": 355, "fill": "#ff5757", "kraj": "VYS"}, {"name": "Jindřichův Hradec", "tx": 342, "ty": 414, "fill": "#b71cc4", "kraj": "JHC"}, {"name": "Jičín", "tx": 410, "ty": 221, "fill": "#38b6ff", "kraj": "HKK"}, {"name": "Karlovy Vary", "tx": 144, "ty": 180, "fill": "#7ed957", "kraj": "KVK"}, {"name": "Karviná", "tx": 720, "ty": 310, "fill": "#38b6ff", "kraj": "MSK"}, {"name": "Kladno", "tx": 244, "ty": 240, "fill": "#5e17eb", "kraj": "STC"}, {"name": "Klatovy", "tx": 136, "ty": 319, "fill": "#38b6ff", "kraj": "PLK"}, {"name": "Kolín", "tx": 350, "ty": 265, "fill": "#5e17eb", "kraj": "STC"}, {"name": "Kroměříž", "tx": 580, "ty": 370, "fill": "#ff914d", "kraj": "ZLK"}, {"name": "Kutná Hora", "tx": 373, "ty": 280, "fill": "#5e17eb", "kraj": "STC"}, {"name": "Liberec", "tx": 345, "ty": 150, "fill": "#ff914d", "kraj": "LBK"}, {"name": "Litoměřice", "tx": 260, "ty": 194, "fill": "#7ed957", "kraj": "ULK"}, {"name": "Louny", "tx": 200, "ty": 210, "fill": "#7ed957", "kraj": "ULK"}, {"name": "Mladá Boleslav", "tx": 349, "ty": 207, "fill": "#5e17eb", "kraj": "STC"}, {"name": "Most", "tx": 212, "ty": 154, "fill": "#7ed957", "kraj": "ULK"}, {"name": "Mělník", "tx": 297, "ty": 221, "fill": "#5e17eb", "kraj": "STC"}, {"name": "Nový Jičín", "tx": 630, "ty": 310, "fill": "#ff914d", "kraj": "MSK"}, {"name": "Nymburk", "tx": 340, "ty": 253, "fill": "#aeadab", "kraj": "STC"}, {"name": "Náchod", "tx": 457, "ty": 188, "fill": "#38b6ff", "kraj": "HKK"}, {"name": "Olomouc", "tx": 550, "ty": 310, "fill": "#7ed957", "kraj": "OLK"}, {"name": "Opava", "tx": 660, "ty": 285, "fill": "#ff914d", "kraj": "MSK"}, {"name": "Ostrava-město", "tx": 690, "ty": 305, "fill": "#38b6ff", "kraj": "MSK"}, {"name": "Pardubice", "tx": 430, "ty": 248, "fill": "#b71cc4", "kraj": "PAK"}, {"name": "Pelhřimov", "tx": 335, "ty": 360, "fill": "#ff5757", "kraj": "VYS"}, {"name": "Plzeň-jih", "tx": 145, "ty": 340, "fill": "#38b6ff", "kraj": "PLK"}, {"name": "Plzeň-město", "tx": 155, "ty": 305, "fill": "#38b6ff", "kraj": "PLK"}, {"name": "Plzeň-sever", "tx": 131, "ty": 279, "fill": "#38b6ff", "kraj": "PLK"}, {"name": "Prachatice", "tx": 175, "ty": 405, "fill": "#38b6ff", "kraj": "JHC"}, {"name": "Praha", "tx": 280, "ty": 258, "fill": "#7ed957", "kraj": "PHA"}, {"name": "Praha-východ", "tx": 308, "ty": 265, "fill": "#ff5757", "kraj": "STC"}, {"name": "Praha-západ", "tx": 255, "ty": 265, "fill": "#ff5757", "kraj": "STC"}, {"name": "Prostějov", "tx": 540, "ty": 330, "fill": "#aeadab", "kraj": "OLK"}, {"name": "Písek", "tx": 215, "ty": 355, "fill": "#5e17eb", "kraj": "JHC"}, {"name": "Přerov", "tx": 570, "ty": 340, "fill": "#b71cc4", "kraj": "OLK"}, {"name": "Příbram", "tx": 230, "ty": 320, "fill": "#5e17eb", "kraj": "STC"}, {"name": "Rakovník", "tx": 190, "ty": 248, "fill": "#5e17eb", "kraj": "STC"}, {"name": "Rokycany", "tx": 174, "ty": 307, "fill": "#38b6ff", "kraj": "PLK"}, {"name": "Rychnov nad Kněžnou", "tx": 475, "ty": 230, "fill": "#b71cc4", "kraj": "HKK"}, {"name": "Semily", "tx": 375, "ty": 175, "fill": "#ff914d", "kraj": "LBK"}, {"name": "Sokolov", "tx": 100, "ty": 200, "fill": "#b71cc4", "kraj": "KVK"}, {"name": "Strakonice", "tx": 195, "ty": 385, "fill": "#ff5757", "kraj": "JHC"}, {"name": "Svitavy", "tx": 470, "ty": 255, "fill": "#38b6ff", "kraj": "PAK"}, {"name": "Tachov", "tx": 78, "ty": 265, "fill": "#b71cc4", "kraj": "PLK"}, {"name": "Teplice", "tx": 248, "ty": 160, "fill": "#7ed957", "kraj": "ULK"}, {"name": "Trutnov", "tx": 415, "ty": 175, "fill": "#ff914d", "kraj": "HKK"}, {"name": "Tábor", "tx": 290, "ty": 345, "fill": "#5e17eb", "kraj": "JHC"}, {"name": "Třebíč", "tx": 400, "ty": 375, "fill": "#b71cc4", "kraj": "VYS"}, {"name": "Uherské Hradiště", "tx": 600, "ty": 395, "fill": "#38b6ff", "kraj": "ZLK"}, {"name": "Vsetín", "tx": 625, "ty": 365, "fill": "#ff914d", "kraj": "ZLK"}, {"name": "Vyškov", "tx": 519, "ty": 350, "fill": "#7ed957", "kraj": "JHM"}, {"name": "Zlín", "tx": 610, "ty": 370, "fill": "#38b6ff", "kraj": "ZLK"}, {"name": "Znojmo", "tx": 420, "ty": 420, "fill": "#b71cc4", "kraj": "JHM"}, {"name": "Ústí nad Labem", "tx": 275, "ty": 152, "fill": "#7ed957", "kraj": "ULK"}, {"name": "Ústí nad Orlicí", "tx": 460, "ty": 245, "fill": "#aeadab", "kraj": "PAK"}, {"name": "České Budějovice", "tx": 255, "ty": 415, "fill": "#ff5757", "kraj": "JHC"}, {"name": "Český Krumlov", "tx": 215, "ty": 445, "fill": "#ff5757", "kraj": "JHC"}, {"name": "Šumperk", "tx": 510, "ty": 268, "fill": "#38b6ff", "kraj": "OLK"}, {"name": "Žďár nad Sázavou", "tx": 445, "ty": 320, "fill": "#7ed957", "kraj": "VYS"}];
+const KRAJ_NAME = {"PHA": "Praha", "STC": "Středočeský", "JHC": "Jihočeský", "PLK": "Plzeňský", "KVK": "Karlovarský", "ULK": "Ústecký", "LBK": "Liberecký", "HKK": "Královéhradecký", "PAK": "Pardubický", "VYS": "Vysočina", "JHM": "Jihomoravský", "OLK": "Olomoucký", "ZLK": "Zlínský", "MSK": "Moravskoslezský"};
+
+// SVG viewBox
+const VW = 842.25, VH = 595.5;
+
+let maseurs = [], poptavky = [];
+let selOkres = null;
+let scale = 1, offX = 0, offY = 0;
+
+function oCol(name, kraj) {
+  const m = maseurs.some(x => (x.okres === name || (!x.okres && x.kraj === kraj)) && x.type === 'me');
+  const c = maseurs.some(x => (x.okres === name || (!x.okres && x.kraj === kraj)) && x.type === 'col');
+  const d = poptavky.some(x => x.okres === name && x.status === 'open');
+  if (m && c) return '#7F77DD';
+  if (m) return '#185FA5';
+  if (c) return '#1D9E75';
+  if (d) return '#D85A30';
+  return null; // výchozí barva z SVG
+}
+
+function buildDots() {
+  const overlay = document.getElementById('overlay');
+  const tip = document.getElementById('tip');
+  const mc = document.getElementById('mc');
+  
+  // Odstranit staré tečky
+  overlay.querySelectorAll('.okres-dot').forEach(d => d.remove());
+  
+  const img = document.getElementById('mapimg');
+  const iw = img.clientWidth || img.offsetWidth;
+  const ih = img.clientHeight || img.offsetHeight;
+  
+  OKRESY.forEach(o => {
+    const col = oCol(o.name, o.kraj) || o.fill;
+    
+    // Přepočítat SVG souřadnice na % pozice
+    const px = (o.tx / VW) * 100;
+    const py = (o.ty / VH) * 100;
+    
+    const dot = document.createElement('div');
+    dot.className = 'okres-dot' + (selOkres === o.name ? ' sel' : '');
+    dot.style.left = px + '%';
+    dot.style.top = py + '%';
+    dot.style.background = col;
+    dot.title = o.name;
+    
+    dot.addEventListener('mouseenter', (ev) => {
+      tip.innerHTML = '<strong>' + o.name + '</strong><br>' + (KRAJ_NAME[o.kraj] || o.kraj);
+      tip.style.display = 'block';
+      const r = mc.getBoundingClientRect();
+      tip.style.left = (ev.clientX - r.left + 10) + 'px';
+      tip.style.top = (ev.clientY - r.top - 30) + 'px';
+    });
+    dot.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+    dot.addEventListener('click', () => {
+      selOkres = o.name;
+      document.querySelectorAll('.okres-dot').forEach(d => d.classList.remove('sel'));
+      dot.classList.add('sel');
+      const ms = maseurs.filter(x => x.okres === o.name || (!x.okres && x.kraj === o.kraj));
+      const mInfo = ms.length ? ms.map(m => (m.type==='me'?'Já':'Kolega') + ': ' + m.name).join(', ') : 'bez maséra';
+      document.getElementById('info').innerHTML = '<strong>' + o.name + '</strong> · ' + (KRAJ_NAME[o.kraj]||o.kraj) + ' · ' + mInfo;
+    });
+    
+    overlay.appendChild(dot);
+  });
+}
+
+// Zoom
+function zoomIn() { scale = Math.min(3, scale + 0.3); applyZoom(); }
+function zoomOut() { scale = Math.max(0.5, scale - 0.3); applyZoom(); }
+function zoomReset() { scale = 1; offX = 0; offY = 0; applyZoom(); }
+function applyZoom() {
+  const mc = document.getElementById('mc');
+  mc.style.transform = `scale(${scale})`;
+  mc.style.transformOrigin = '0 0';
+}
+
+// Init
+window.addEventListener('load', () => {
+  buildDots();
+  window.addEventListener('resize', buildDots);
+});
+
+// Export pro systém
+window.refreshMapDots = buildDots;
+window.maseurs = maseurs;
+window.poptavky = poptavky;
+</script>
+</body>
+</html>
